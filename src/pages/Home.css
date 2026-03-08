@@ -38,19 +38,9 @@
     align-items: center;
 }
 
-.hero-copy {
-    width: min(100%, 560px);
-}
-
-.hero-copy p {
-    font-size: 1rem;
-    color: var(--color-text);
-    margin-top: 0.75rem;
-}
-
 .posts-section {
     width: min(100%, 560px);
-    margin-top: 2rem;
+    margin-top: 1.15rem;
     padding-top: 1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     display: grid;
@@ -64,7 +54,7 @@
 }
 
 .posts-intro h2 {
-    color: var(--color-accent-2);
+    color: var(--color-primary);
     font-size: 1.05rem;
     font-family: var(--font-mono);
     line-height: 1.1;
@@ -208,10 +198,6 @@
     .hero-logo-wrap {
         width: 100%;
         margin-top: 0.75rem;
-    }
-
-    .hero-copy {
-        width: 100%;
     }
 
     .posts-section {
