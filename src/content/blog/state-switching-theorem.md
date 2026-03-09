@@ -12,8 +12,6 @@ tags:
   - state-detection
 ---
 
-# A Scientific Framework for Probabilistic State-Switching Detection in Individual Equities
-
 ## Abstract
 
 Detecting regime changes in financial time series is a central problem in quantitative finance because return dynamics, volatility clustering, and risk premia are not stable over time. This article presents a scientific framework for identifying state switches at the individual-stock level using a three-state endogenous regime-switching model with time-varying transition probabilities, duration dependence, and heteroskedastic state-conditional emissions.
