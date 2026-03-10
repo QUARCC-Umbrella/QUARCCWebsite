@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "quarccwebsite",
+  "name": "quarcc-website",
   "compatibility_date": "2026-03-08",
   "assets": {
     "directory": "./dist",
