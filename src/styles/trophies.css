@@ -1,0 +1,237 @@
+/* ── trophies Page ────────────────────────────────────────────────── */
+
+.trophies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  padding: 0.25rem 0;
+}
+
+.trophy-card {
+  border: 1px solid var(--color-border);
+  background: linear-gradient(160deg, rgba(10, 10, 14, 0.98), rgba(8, 8, 12, 0.98));
+  padding: 1.15rem 1.25rem 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  display: grid;
+  gap: 0.38rem;
+  text-align: left;
+  font-family: var(--font-mono);
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.trophy-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(209, 186, 255, 0.04), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.trophy-card:hover {
+  border-color: rgba(209, 186, 255, 0.3);
+  background: linear-gradient(160deg, rgba(13, 12, 20, 0.99), rgba(10, 10, 16, 0.99));
+  transform: translateY(-2px);
+}
+
+.trophy-card:hover::after {
+  opacity: 1;
+}
+
+.trophy-emoji {
+  font-size: 1.75rem;
+  line-height: 1;
+  margin-bottom: 0.15rem;
+}
+
+.trophy-placement {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trophy-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.25;
+}
+
+.trophy-competition {
+  font-size: 0.84rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+.trophy-date {
+  font-size: 0.78rem;
+  color: var(--color-text-soft);
+  margin-top: 0.2rem;
+}
+
+.trophy-summary {
+  font-size: 0.86rem;
+  color: var(--color-text);
+  line-height: 1.5;
+  margin-top: 0.35rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.trophy-cta {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--color-primary);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.trophy-card:hover .trophy-cta {
+  opacity: 1;
+}
+
+/* ── Modal ─────────────────────────────────────────────────────────── */
+
+.trophy-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 4, 6, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.trophy-modal-overlay.open {
+  display: flex;
+}
+
+.trophy-modal {
+  background: var(--color-bg);
+  border: 1px solid rgba(209, 186, 255, 0.2);
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem 2.25rem;
+  position: relative;
+  font-family: var(--font-mono);
+  animation: modal-in 0.2s ease forwards;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trophy-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.4rem;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  transition: color 0.15s ease;
+}
+
+.trophy-modal-close:hover {
+  color: var(--color-primary);
+}
+
+.trophy-modal-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.trophy-modal-placement {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.trophy-modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+}
+
+.trophy-modal-competition {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.15rem;
+}
+
+.trophy-modal-date {
+  font-size: 0.8rem;
+  color: var(--color-text-soft);
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.trophy-modal-detail {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  line-height: 1.75;
+  white-space: pre-line;
+}
+
+.trophy-modal-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.trophy-modal-images img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+}
+
+.trophy-modal-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-size: 0.84rem;
+  color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+  .trophy-modal {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .trophies-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

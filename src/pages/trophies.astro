@@ -1,0 +1,134 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SystemBox from "../components/SystemBox.astro";
+import { gettrophies } from "../lib/content";
+import "../styles/trophies.css";
+
+const trophies = (await gettrophies()).map((entry) => ({
+  id: entry.id,
+  ...entry.data,
+}));
+---
+
+<BaseLayout
+  title="trophies - QUARCC"
+  description="Celebrating QUARCC's competition wins, hackathon trophies, and achievements in quantitative finance."
+>
+  <div style="max-width: 860px; margin: 0 auto;">
+    <SystemBox title="Club trophies">
+      {
+        trophies.length ? (
+          <div class="trophies-grid">
+            {trophies.map((v) => (
+              <button
+                class="trophy-card"
+                data-trophy-id={v.id}
+                aria-label={`View details for ${v.title}`}
+              >
+                <div class="trophy-emoji">{v.emoji}</div>
+                <div class="trophy-placement">{v.placement}</div>
+                <div class="trophy-title">{v.title}</div>
+                <div class="trophy-competition">{v.competition}</div>
+                <div class="trophy-date">{v.date}</div>
+                <p class="trophy-summary">{v.summary}</p>
+                <div class="trophy-cta">── click to expand ──</div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p>No trophies recorded yet. Check back soon!</p>
+        )
+      }
+    </SystemBox>
+  </div>
+
+  <!-- Modal overlay -->
+  <div id="trophy-modal-overlay" class="trophy-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="trophy-modal">
+      <button class="trophy-modal-close" id="trophy-modal-close" aria-label="Close">✕</button>
+      <div class="trophy-modal-emoji" id="modal-emoji"></div>
+      <div class="trophy-modal-placement" id="modal-placement"></div>
+      <div class="trophy-modal-title" id="modal-title"></div>
+      <div class="trophy-modal-competition" id="modal-competition"></div>
+      <div class="trophy-modal-date" id="modal-date"></div>
+      <div class="trophy-modal-detail" id="modal-detail"></div>
+      <div class="trophy-modal-images" id="modal-images"></div>
+      <a class="trophy-modal-link" id="modal-link" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">→ External Link</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<!-- Inline trophy data for JS -->
+<script define:vars={{ trophies }}>
+  const overlay = document.getElementById("trophy-modal-overlay");
+  const closeBtn = document.getElementById("trophy-modal-close");
+
+  const fields = {
+    emoji: document.getElementById("modal-emoji"),
+    placement: document.getElementById("modal-placement"),
+    title: document.getElementById("modal-title"),
+    competition: document.getElementById("modal-competition"),
+    date: document.getElementById("modal-date"),
+    detail: document.getElementById("modal-detail"),
+    images: document.getElementById("modal-images"),
+    link: document.getElementById("modal-link"),
+  };
+
+  function openModal(v) {
+    fields.emoji.textContent = v.emoji || "🏆";
+    fields.placement.textContent = v.placement;
+    fields.title.textContent = v.title;
+    fields.competition.textContent = v.competition;
+    fields.date.textContent = v.date;
+    fields.detail.textContent = v.detail;
+
+    // Images
+    fields.images.innerHTML = "";
+    if (v.images && v.images.length) {
+      v.images.forEach((src) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = v.title;
+        fields.images.appendChild(img);
+      });
+      fields.images.style.display = "grid";
+    } else {
+      fields.images.style.display = "none";
+    }
+
+    // External link
+    if (v.link) {
+      fields.link.href = v.link;
+      fields.link.style.display = "inline-block";
+    } else {
+      fields.link.style.display = "none";
+    }
+
+    overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    overlay.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  // Wire up cards
+  document.querySelectorAll(".trophy-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const id = card.getAttribute("data-trophy-id");
+      const v = trophies.find((x) => x.id === id);
+      if (v) openModal(v);
+    });
+  });
+
+  // Close handlers
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+</script>
+
