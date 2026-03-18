@@ -1,11 +1,11 @@
 {
-  "title": "McGill Financial Asset Management Hackathon",
-  "competition": "Inter-University Quant Hackathon",
-  "placement": "1st Place",
-  "date": "2025-11-15",
-  "summary": "QUARCC swept the podium at the Inter-University Quant Hackathon, defeating 18 teams across 6 universities.",
-  "detail": "Our team of four built a fully automated market-making strategy in under 24 hours, leveraging mean-reversion signals and real-time order book imbalance. The judges praised the implementation's Sharpe ratio of 3.2 and its clean, modular codebase.\n\nThe competition required teams to deploy live on a simulated exchange with latency penalties, adding an infrastructure challenge on top of the quant problem. QUARCC's entry stood out for both performance and presentation clarity.\n\nThis victory marks QUARCC's first first-place finish at an inter-university hackathon and earns us an invitation to the national finals in the spring.",
-  "emoji": "🏆",
+  "title": "Cornell Trading Competition",
+  "competition": "",
+  "placement": "3rd Place",
+  "date": "2025-10-15",
+  "summary": "QUARCC placed third at the Cornell Trading Competition, outperforming many ivy league school's teams.",
+  "detail": "QUARCC placed third at the Cornell Trading Competition, outperforming many ivy league school's teams.",
+  "emoji": "🥉",
   "images": [],
   "link": "",
   "order": 1
