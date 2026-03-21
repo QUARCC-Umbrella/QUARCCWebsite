@@ -115,6 +115,22 @@ const join = defineCollection({
   }),
 });
 
+const trophies = defineCollection({
+  type: "data",
+  schema: z.object({
+    title: z.string(),
+    competition: z.string(),
+    placement: z.string(),
+    date: z.string(),
+    summary: z.string(),
+    detail: z.string(),
+    emoji: z.string().default("🏆"),
+    images: z.array(z.string()).default([]),
+    link: z.string().optional(),
+    order: z.number().default(0),
+  }),
+});
+
 export const collections = {
   blog,
   events,
@@ -123,4 +139,6 @@ export const collections = {
   home,
   about,
   join,
+  trophies,
 };
+

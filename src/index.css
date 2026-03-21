@@ -2,19 +2,19 @@
 @import './styles/animations.css';
 
 :root {
-  --color-bg: #030303;
+  --color-bg: #080808;
   --color-surface: #080808;
   --surface-elevated: #0b0b0b;
   --color-text: #d4d4d8;
-  --color-text-muted: #a1a1aa;
+  --color-text-muted: #aaa1a8;
   --color-text-soft: #71717a;
   --color-heading: #f5f5f5;
-  --color-primary: #8b5cf6;
-  --color-border: #27272a;
-  --color-accent: #d482ab;
-  --color-accent-2: #b8ffcc;
-  --color-success: #86efac;
-  --color-danger: #fb7185;
+  --color-primary: #d1baff;
+  --color-border: #1c1c1c;
+  --color-accent: #d1baff;
+  --color-accent-2: #dacbf9;
+  --color-success: #d1baff;
+  --color-danger: #d1baff;
 
   --font-mono: "IBM Plex Mono", "Roboto Mono", "JetBrains Mono", monospace;
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
@@ -52,16 +52,16 @@ body {
 
 a {
   color: var(--color-accent);
-  text-decoration: none;
+  text-decoration: underline;
   text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.14em;
+  text-underline-offset: 0.4em;
   text-decoration-color: transparent;
-  transition: color 0.16s ease, text-decoration-color 0.16s ease;
+  transition: color 0.3s ease, text-decoration-color 0.3s ease, text-underline-offset 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 a:hover {
-  text-decoration: underline;
   text-decoration-color: currentColor;
+  text-underline-offset: 0.14em;
 }
 
 h1,

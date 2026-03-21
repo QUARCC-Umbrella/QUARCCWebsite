@@ -63,7 +63,7 @@
   color: var(--color-accent);
   text-decoration: underline;
   text-underline-offset: 0.18em;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
 }
 
 .blog-preview-title:hover {

@@ -51,6 +51,11 @@ export async function getJoinContent() {
   return entry.data;
 }
 
+export async function gettrophies() {
+  const trophies = await getCollection("trophies");
+  return trophies.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+}
+
 export function formatDate(date: Date) {
   return date.toLocaleDateString("en-CA", {
     year: "numeric",
@@ -58,3 +63,4 @@ export function formatDate(date: Date) {
     day: "numeric",
   });
 }
+
