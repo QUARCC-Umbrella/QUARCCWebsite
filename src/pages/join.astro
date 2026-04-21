@@ -27,6 +27,10 @@ const join = await getJoinContent();
               <>
                 LinkedIn: <a href={line.replace("LinkedIn: ", "")}>{line.replace("LinkedIn: ", "")}</a>
               </>
+            ) : line.startsWith("Discord: ") ? (
+              <>
+                Discord: <a href={line.replace("Discord: ", "")}>{line.replace("Discord: ", "")}</a>
+              </>
             ) : (
               line
             )}
