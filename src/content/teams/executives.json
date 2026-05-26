@@ -1,35 +1,49 @@
 {
-  "name": "Executives",
+  "name": "Executive Council",
   "description": "Leadership team responsible for operations, strategy, and execution.",
   "leadLabel": "Executive Team",
   "order": 1,
   "members": [
     {
       "name": "Carter Cameron",
-      "role": "President",
+      "role": "Executive Council Member",
       "email": "president@quarcc.com",
       "linkedin": "https://linkedin.com/in/cartercameronfina",
       "website": ""
     },
     {
       "name": "Nicolas Romero",
-      "role": "Co-Director of Research",
+      "role": "Executive Council Member",
       "email": "sma@quarcc.com",
       "linkedin": "https://linkedin.com/in/nicolasdavidromero",
       "website": ""
     },
     {
       "name": "Chanakya Basupally",
-      "role": "Co-Director of Research",
+      "role": "Executive Council Member",
       "email": "operations@quarcc.com",
       "linkedin": "https://www.linkedin.com/in/chanakyabasupally/",
       "website": ""
     },
     {
-      "name": "Hani Hishmih",
-      "role": "VP Finance",
-      "email": "finance@quarcc.com",
-      "linkedin": "https://www.linkedin.com/in/hanihishmih/",
+      "name": "Andrew Koumoudjian",
+      "role": "Executive Council Member",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/andrewkoumoudjian/",
+      "website": ""
+    },
+    {
+      "name": "Rifat Katranci",
+      "role": "Executive Council Member",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/rifat-katranci-a30405287/",
+      "website": ""
+    },
+    {
+      "name": "Hubert Lefebvre",
+      "role": "Executive Council Member",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/hubert-lefebvre-476a26321/",
       "website": ""
     },
     {
@@ -44,13 +58,6 @@
       "role": "VP Marketing",
       "email": "marketing@quarcc.com",
       "linkedin": "https://www.linkedin.com/in/alexander-nendsa-9aa927272/",
-      "website": ""
-    },
-    {
-      "name": "Cloe Monteith",
-      "role": "VP Internal",
-      "email": "internal@quarcc.com",
-      "linkedin": "https://www.linkedin.com/in/cloe-monteith-a435301a9/",
       "website": ""
     }
   ]
