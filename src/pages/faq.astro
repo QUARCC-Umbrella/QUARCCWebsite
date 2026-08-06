@@ -1,0 +1,120 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SystemBox from "../components/SystemBox.astro";
+---
+
+<BaseLayout
+  title="FAQ - QUARCC"
+  description="Frequently Asked Questions about QUARCC."
+>
+  <div style="max-width: 800px; margin: 0 auto;">
+    <SystemBox title="Frequently Asked Questions">
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3 class="faq-question">Question 1: Who can join the club?</h3>
+          <p class="faq-answer">Answer 1: Anyone! The ideal candidate is a STEM student, but it is not required. Any education level is fine as long as you are willing to learn.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">Question 2: What are the prerequisites to join?</h3>
+          <p class="faq-answer">Answer 2: None, as long as you are eager to learn.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">Question 3: When and where do you usually meet?</h3>
+          <p class="faq-answer">Answer 3: Tuesdays after work hours normally.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">Question 4: Do you offer any workshops or training?</h3>
+          <p class="faq-answer">Answer 4: We do workshops and have a drive library of books and projects that members can use available on discord.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">Question 5: How do I apply?</h3>
+          <p class="faq-answer">Answer 5: Shoot us a message on discord and we'll get you sorted out. Or show up to a meeting and introduce yourself.</p>
+        </div>
+      </div>
+    </SystemBox>
+  </div>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who can join the club?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Anyone! The ideal candidate is a STEM student, but it is not required. Any education level is fine as long as you are willing to learn."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the prerequisites to join?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "None, as long as you are eager to learn."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When and where do you usually meet?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tuesdays after work hours normally."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer any workshops or training?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We do workshops and have a drive library of books and projects that members can use available on discord."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I apply?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Shoot us a message on discord and we'll get you sorted out. Or show up to a meeting and introduce yourself."
+          }
+        }
+      ]
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .faq-item {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+    padding-bottom: 1rem;
+  }
+  
+  .faq-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .faq-question {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+  }
+
+  .faq-answer {
+    color: #e0e0e0;
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>
