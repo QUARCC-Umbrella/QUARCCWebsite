@@ -182,6 +182,16 @@
     text-underline-offset: 0.14em;
 }
 
+.faq-link {
+    text-decoration: none;
+}
+
+.faq-link:hover {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 0.14em;
+}
+
 @media (max-width: 768px) {
     .home-container {
         flex-direction: column;
