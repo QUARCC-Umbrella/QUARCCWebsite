@@ -30,6 +30,8 @@ python live/refresh.py --no-intraday   # completed closes only
 `public/portfolios` is the zero-infrastructure feed: the static site serves it
 at `/portfolios`, so `PUBLIC_PAPER_FUND_API_BASE=https://www.quarcc.com` works
 without a separate server. The FastAPI service is for intraday refreshes.
+Each run also writes `live/latest_holdings.csv` with current weights, prices,
+share counts and unrealised P&L — the file to hand to an execution system.
 
 ## API
 

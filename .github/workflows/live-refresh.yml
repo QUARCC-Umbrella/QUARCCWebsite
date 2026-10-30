@@ -37,7 +37,7 @@ jobs:
         run: |
           git config user.name "quarcc-live-bot"
           git config user.email "bot@quarcc.com"
-          git add public/portfolios src/content/portfolios/quarcc-v4b.json
+          git add public/portfolios src/content/portfolios/quarcc-v4b.json live/latest_holdings.csv
           if git diff --cached --quiet; then
             echo "no change"
             exit 0

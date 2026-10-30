@@ -31,6 +31,7 @@ LIVE = Path(__file__).resolve().parent
 PUBLIC_JSON = ROOT / "public" / "portfolios"
 CONTENT_JSON = ROOT / "src" / "content" / "portfolios" / "quarcc-v4b.json"
 CACHE = LIVE / "cache" / "bars.parquet"
+LATEST_CSV = LIVE / "latest_holdings.csv"
 
 DATA_BASE = "https://data.alpaca.markets"
 TRADING_BASE = "https://paper-api.alpaca.markets"
@@ -256,6 +257,7 @@ def main() -> int:
 
     entry_pos = weight[usable] * nav_entry * scale
     holdings = []
+    book_rows = []
     for ticker in usable:
         price = float(current_price.get(ticker, entry_price.get(ticker, 0.0)))
         if not price:
@@ -269,7 +271,23 @@ def main() -> int:
             "currentPrice": f"{price:.2f}",
             "pl": f"{pl:.2f}",
         })
+        book_rows.append({
+            "symbol": ticker.replace(".", "/"),
+            "side": "long" if pos[ticker] > 0 else "short",
+            "current_weight": float(pos[ticker] / nav),
+            "target_weight": float(weight[ticker]),
+            "entry_price": float(entry_price[ticker]),
+            "current_price": price,
+            "qty": qty,
+            "market_value_usd": float(pos[ticker]),
+            "unrealized_pnl_usd": pl,
+        })
     holdings.sort(key=lambda h: abs(float(h["pl"])), reverse=True)
+    if not args.dry_run:
+        frame = pd.DataFrame(book_rows).sort_values(
+            "market_value_usd", key=lambda s: s.abs(), ascending=False
+        )
+        frame.to_csv(LATEST_CSV, index=False, float_format="%.6f")
 
     sector = {p["ticker"]: p["sector"] for p in book["positions"]}
     exposure = {}
