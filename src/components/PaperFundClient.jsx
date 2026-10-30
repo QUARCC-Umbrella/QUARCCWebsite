@@ -52,7 +52,10 @@ export default function PaperFundClient({ portfolios = [], showDashboardHeader =
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const apiBase = import.meta.env.PUBLIC_PAPER_FUND_API_BASE;
+    const configured = import.meta.env.PUBLIC_PAPER_FUND_API_BASE;
+    // The checked-in /portfolios snapshot is served from the site root, so the
+    // page works without a separate API. A configured base overrides it.
+    const apiBase = configured || window.location.origin;
 
     if (!apiBase) {
       setStatus("disabled");
