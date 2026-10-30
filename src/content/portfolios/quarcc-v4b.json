@@ -3,10 +3,10 @@
   "strategy": "Market-Neutral Equity",
   "status": "Active",
   "summary": "Systematic US equity market-neutral book from the v4b E-LASSO pipeline. Live marks on the 24 Aug 2026 formation: 326 names, dollar- and beta-neutral, 183% gross.",
-  "asOf": "2026-10-30T18:23:34.816192+00:00",
+  "asOf": "2026-10-30T18:26:23.362169+00:00",
   "stats": {
-    "equity": "$1,516,786,304",
-    "dayChange": "+0.64%",
+    "equity": "$1,516,367,351",
+    "dayChange": "+0.61%",
     "sharpe": "0.91",
     "beta": "0.00"
   },
@@ -15,99 +15,92 @@
       "symbol": "LRCX",
       "qty": 179708.28,
       "avgPrice": "309.84",
-      "currentPrice": "233.75",
-      "pl": "-13695891.02"
+      "currentPrice": "233.89",
+      "pl": "-13670731.86"
     },
     {
       "symbol": "IBKR",
       "qty": 624842.21,
       "avgPrice": "92.97",
-      "currentPrice": "75.59",
-      "pl": "-10873966.19"
+      "currentPrice": "75.51",
+      "pl": "-10923953.56"
     },
     {
       "symbol": "VEEV",
       "qty": 93459.53,
       "avgPrice": "248.46",
-      "currentPrice": "310.59",
-      "pl": "5808136.92"
+      "currentPrice": "310.05",
+      "pl": "5757668.78"
     },
     {
       "symbol": "ABNB",
       "qty": 213090.82,
       "avgPrice": "190.21",
-      "currentPrice": "164.44",
-      "pl": "-5502156.16"
+      "currentPrice": "164.34",
+      "pl": "-5522399.79"
     },
     {
       "symbol": "ABBV",
       "qty": 152118.42,
       "avgPrice": "262.91",
-      "currentPrice": "294.66",
-      "pl": "4835261.18"
+      "currentPrice": "294.81",
+      "pl": "4858078.94"
     },
     {
       "symbol": "AVGO",
       "qty": 113344.33,
       "avgPrice": "358.11",
-      "currentPrice": "321.01",
-      "pl": "-4212155.42"
+      "currentPrice": "320.85",
+      "pl": "-4231423.96"
     },
     {
       "symbol": "PM",
       "qty": 191375.33,
       "avgPrice": "189.83",
-      "currentPrice": "209.06",
-      "pl": "3674049.17"
+      "currentPrice": "209.01",
+      "pl": "3664480.40"
     },
     {
       "symbol": "HWM",
       "qty": -54967.01,
       "avgPrice": "263.29",
-      "currentPrice": "199.85",
-      "pl": "3465673.73"
-    },
-    {
-      "symbol": "EXPD",
-      "qty": 310360.49,
-      "avgPrice": "187.83",
-      "currentPrice": "199.03",
-      "pl": "3464283.91"
+      "currentPrice": "199.71",
+      "pl": "3473369.11"
     },
     {
       "symbol": "CRWD",
       "qty": -62351.78,
       "avgPrice": "190.68",
-      "currentPrice": "246.13",
-      "pl": "-3453308.65"
+      "currentPrice": "246.26",
+      "pl": "-3461414.38"
+    },
+    {
+      "symbol": "EXPD",
+      "qty": 310360.49,
+      "avgPrice": "187.83",
+      "currentPrice": "198.76",
+      "pl": "3382038.38"
     },
     {
       "symbol": "MCK",
       "qty": 26696.27,
       "avgPrice": "872.86",
-      "currentPrice": "998.19",
-      "pl": "3335153.77"
+      "currentPrice": "997.13",
+      "pl": "3306855.71"
     },
     {
       "symbol": "INTC",
       "qty": -139410.38,
       "avgPrice": "87.26",
-      "currentPrice": "63.90",
-      "pl": "3258644.78"
+      "currentPrice": "63.78",
+      "pl": "3274676.98"
     },
     {
       "symbol": "FTNT",
       "qty": 192156.05,
       "avgPrice": "151.99",
-      "currentPrice": "135.22",
-      "pl": "-3224556.60"
-    },
-    {
-      "symbol": "AAPL",
-      "qty": 94053.98,
-      "avgPrice": "310.34",
-      "currentPrice": "343.80",
-      "pl": "3141190.34"
+      "currentPrice": "135.31",
+      "pl": "-3206301.77"
     },
     {
       "symbol": "ARWR",
@@ -117,200 +110,221 @@
       "pl": "3132336.88"
     },
     {
+      "symbol": "AAPL",
+      "qty": 94053.98,
+      "avgPrice": "310.34",
+      "currentPrice": "343.50",
+      "pl": "3112974.14"
+    },
+    {
       "symbol": "JBL",
       "qty": 83596.02,
       "avgPrice": "304.89",
-      "currentPrice": "268.94",
-      "pl": "-3009262.57"
+      "currentPrice": "268.69",
+      "pl": "-3030161.57"
     },
     {
       "symbol": "COST",
       "qty": 61271.31,
       "avgPrice": "969.97",
-      "currentPrice": "1020.11",
-      "pl": "2997451.76"
+      "currentPrice": "1019.96",
+      "pl": "2988261.06"
     },
     {
       "symbol": "BA",
       "qty": -71982.35,
       "avgPrice": "210.46",
-      "currentPrice": "170.64",
-      "pl": "2870285.68"
+      "currentPrice": "170.50",
+      "pl": "2880363.21"
     },
     {
       "symbol": "MRVL",
       "qty": -70073.57,
       "avgPrice": "229.24",
-      "currentPrice": "191.15",
-      "pl": "2667262.90"
+      "currentPrice": "190.96",
+      "pl": "2680927.25"
     },
     {
       "symbol": "SNPS",
       "qty": -39732.66,
       "avgPrice": "394.51",
-      "currentPrice": "460.93",
-      "pl": "-2644798.97"
+      "currentPrice": "461.08",
+      "pl": "-2650957.53"
     },
     {
       "symbol": "SNDK",
       "qty": 6948.03,
       "avgPrice": "1493.12",
-      "currentPrice": "1128.51",
-      "pl": "-2538702.10"
+      "currentPrice": "1128.74",
+      "pl": "-2537104.05"
     },
     {
       "symbol": "APP",
       "qty": -34899.48,
       "avgPrice": "298.59",
-      "currentPrice": "227.40",
-      "pl": "2489399.33"
+      "currentPrice": "227.47",
+      "pl": "2487130.86"
     },
     {
       "symbol": "TTWO",
       "qty": -58075.66,
       "avgPrice": "233.50",
-      "currentPrice": "190.83",
-      "pl": "2476685.98"
+      "currentPrice": "190.70",
+      "pl": "2484235.82"
     },
     {
       "symbol": "ANET",
       "qty": 119472.55,
       "avgPrice": "188.15",
-      "currentPrice": "167.65",
-      "pl": "-2446746.83"
+      "currentPrice": "167.62",
+      "pl": "-2450331.00"
     },
     {
       "symbol": "WMT",
       "qty": -139428.58,
       "avgPrice": "106.49",
-      "currentPrice": "123.98",
-      "pl": "-2439303.05"
+      "currentPrice": "123.99",
+      "pl": "-2440000.19"
     },
     {
       "symbol": "PRU",
       "qty": 478363.02,
       "avgPrice": "121.27",
-      "currentPrice": "116.37",
-      "pl": "-2339015.08"
+      "currentPrice": "116.23",
+      "pl": "-2405985.90"
     },
     {
       "symbol": "LLY",
       "qty": -13106.66,
       "avgPrice": "1246.93",
-      "currentPrice": "1422.59",
-      "pl": "-2305171.13"
+      "currentPrice": "1422.85",
+      "pl": "-2308578.86"
     },
     {
       "symbol": "NEM",
       "qty": -84983.95,
       "avgPrice": "131.57",
-      "currentPrice": "104.71",
-      "pl": "2281668.91"
+      "currentPrice": "104.62",
+      "pl": "2289317.46"
     },
     {
       "symbol": "MET",
       "qty": 600633.75,
       "avgPrice": "96.21",
-      "currentPrice": "99.94",
-      "pl": "2243229.44"
+      "currentPrice": "99.85",
+      "pl": "2189172.40"
     },
     {
       "symbol": "TXN",
       "qty": -58024.37,
       "avgPrice": "257.68",
-      "currentPrice": "295.89",
-      "pl": "-2145094.08"
+      "currentPrice": "296.06",
+      "pl": "-2154958.22"
     },
     {
       "symbol": "AMZN",
       "qty": 88413.57,
       "avgPrice": "262.07",
-      "currentPrice": "238.30",
-      "pl": "-2098739.20"
-    },
-    {
-      "symbol": "XOM",
-      "qty": -89434.47,
-      "avgPrice": "164.05",
-      "currentPrice": "186.52",
-      "pl": "-2019998.63"
+      "currentPrice": "237.82",
+      "pl": "-2140735.65"
     },
     {
       "symbol": "HOOD",
       "qty": -94788.96,
       "avgPrice": "103.62",
-      "currentPrice": "82.61",
-      "pl": "1988361.23"
+      "currentPrice": "82.62",
+      "pl": "1987887.29"
     },
     {
       "symbol": "FCX",
       "qty": -125105.95,
       "avgPrice": "77.55",
-      "currentPrice": "61.73",
-      "pl": "1979176.15"
+      "currentPrice": "61.74",
+      "pl": "1977925.09"
+    },
+    {
+      "symbol": "XOM",
+      "qty": -89434.47,
+      "avgPrice": "164.05",
+      "currentPrice": "186.01",
+      "pl": "-1974387.05"
     },
     {
       "symbol": "LVS",
       "qty": -197891.86,
       "avgPrice": "46.97",
-      "currentPrice": "37.08",
-      "pl": "1959659.92"
-    },
-    {
-      "symbol": "PSX",
-      "qty": 48296.99,
-      "avgPrice": "241.96",
-      "currentPrice": "281.44",
-      "pl": "1904871.22"
+      "currentPrice": "37.09",
+      "pl": "1958670.46"
     },
     {
       "symbol": "SYF",
       "qty": 381521.7,
       "avgPrice": "80.02",
-      "currentPrice": "75.07",
-      "pl": "-1890515.60"
+      "currentPrice": "74.97",
+      "pl": "-1928667.77"
+    },
+    {
+      "symbol": "PSX",
+      "qty": 48296.99,
+      "avgPrice": "241.96",
+      "currentPrice": "281.66",
+      "pl": "1915255.07"
     },
     {
       "symbol": "KLAC",
       "qty": 75578.39,
       "avgPrice": "181.57",
-      "currentPrice": "156.88",
-      "pl": "-1888160.06"
+      "currentPrice": "156.80",
+      "pl": "-1894206.33"
     },
     {
       "symbol": "STT",
       "qty": -84165.2,
       "avgPrice": "189.91",
-      "currentPrice": "168.36",
-      "pl": "1812840.05"
+      "currentPrice": "168.15",
+      "pl": "1830514.74"
     },
     {
       "symbol": "BAC",
       "qty": -147946.62,
       "avgPrice": "62.01",
-      "currentPrice": "49.88",
-      "pl": "1794592.45"
+      "currentPrice": "49.87",
+      "pl": "1796071.91"
     },
     {
       "symbol": "REGN",
       "qty": 19307.87,
       "avgPrice": "828.50",
-      "currentPrice": "918.19",
-      "pl": "1762982.70"
+      "currentPrice": "919.00",
+      "pl": "1778525.54"
     },
     {
       "symbol": "MAR",
       "qty": -42384.0,
       "avgPrice": "360.20",
-      "currentPrice": "401.61",
-      "pl": "-1750707.50"
+      "currentPrice": "401.28",
+      "pl": "-1736932.70"
     },
     {
       "symbol": "HCA",
       "qty": -33785.41,
       "avgPrice": "428.45",
-      "currentPrice": "477.47",
-      "pl": "-1656766.34"
+      "currentPrice": "477.01",
+      "pl": "-1641225.06"
+    },
+    {
+      "symbol": "MA",
+      "qty": 40367.03,
+      "avgPrice": "598.95",
+      "currentPrice": "638.99",
+      "pl": "1611720.06"
+    },
+    {
+      "symbol": "GEV",
+      "qty": 17387.06,
+      "avgPrice": "941.55",
+      "currentPrice": "850.13",
+      "pl": "-1608885.83"
     },
     {
       "symbol": "ZM",
@@ -320,60 +334,46 @@
       "pl": "-1607045.83"
     },
     {
-      "symbol": "MA",
-      "qty": 40367.03,
-      "avgPrice": "598.95",
-      "currentPrice": "638.72",
-      "pl": "1601022.80"
-    },
-    {
-      "symbol": "ADP",
-      "qty": 106311.11,
-      "avgPrice": "281.21",
-      "currentPrice": "296.16",
-      "pl": "1588306.02"
-    },
-    {
-      "symbol": "GEV",
-      "qty": 17387.06,
-      "avgPrice": "941.55",
-      "currentPrice": "851.43",
-      "pl": "-1586282.65"
+      "symbol": "ADI",
+      "qty": -42785.88,
+      "avgPrice": "370.04",
+      "currentPrice": "407.26",
+      "pl": "-1595413.83"
     },
     {
       "symbol": "ASTS",
       "qty": -68932.08,
       "avgPrice": "62.35",
-      "currentPrice": "39.55",
-      "pl": "1573647.11"
+      "currentPrice": "39.43",
+      "pl": "1581918.96"
     },
     {
-      "symbol": "ADI",
-      "qty": -42785.88,
-      "avgPrice": "370.04",
-      "currentPrice": "406.73",
-      "pl": "-1572737.31"
-    },
-    {
-      "symbol": "FNF",
-      "qty": 252565.46,
-      "avgPrice": "46.86",
-      "currentPrice": "40.69",
-      "pl": "-1553921.52"
+      "symbol": "ADP",
+      "qty": 106311.11,
+      "avgPrice": "281.21",
+      "currentPrice": "296.07",
+      "pl": "1578738.02"
     },
     {
       "symbol": "APO",
       "qty": -92932.78,
       "avgPrice": "132.79",
-      "currentPrice": "116.09",
-      "pl": "1550416.13"
+      "currentPrice": "115.98",
+      "pl": "1560638.74"
     },
     {
       "symbol": "COP",
       "qty": -77910.47,
       "avgPrice": "133.35",
-      "currentPrice": "153.17",
-      "pl": "-1546262.95"
+      "currentPrice": "153.21",
+      "pl": "-1548989.82"
+    },
+    {
+      "symbol": "FNF",
+      "qty": 252565.46,
+      "avgPrice": "46.86",
+      "currentPrice": "40.71",
+      "pl": "-1548870.21"
     },
     {
       "symbol": "RS",
@@ -393,15 +393,15 @@
       "symbol": "KR",
       "qty": -189688.02,
       "avgPrice": "59.08",
-      "currentPrice": "66.77",
-      "pl": "-1457001.07"
+      "currentPrice": "66.79",
+      "pl": "-1460794.83"
     },
     {
       "symbol": "GOOGL",
       "qty": -20868.51,
       "avgPrice": "347.84",
-      "currentPrice": "278.13",
-      "pl": "1447989.75"
+      "currentPrice": "278.27",
+      "pl": "1445172.50"
     },
     {
       "symbol": "ASGN",
@@ -414,15 +414,15 @@
       "symbol": "GH",
       "qty": -100295.85,
       "avgPrice": "163.18",
-      "currentPrice": "176.97",
-      "pl": "-1379988.60"
+      "currentPrice": "176.76",
+      "pl": "-1359427.95"
     },
     {
       "symbol": "TGT",
       "qty": -78553.38,
       "avgPrice": "169.89",
-      "currentPrice": "153.00",
-      "pl": "1326280.26"
+      "currentPrice": "152.99",
+      "pl": "1326673.03"
     },
     {
       "symbol": "AIT",
@@ -435,113 +435,113 @@
       "symbol": "CRWV",
       "qty": -40825.47,
       "avgPrice": "86.25",
-      "currentPrice": "53.95",
-      "pl": "1319242.41"
+      "currentPrice": "53.93",
+      "pl": "1320058.92"
     },
     {
       "symbol": "HLT",
       "qty": -47520.88,
       "avgPrice": "330.07",
-      "currentPrice": "357.69",
-      "pl": "-1317123.13"
+      "currentPrice": "357.42",
+      "pl": "-1304530.09"
     },
     {
       "symbol": "BIIB",
       "qty": 35324.39,
       "avgPrice": "218.12",
-      "currentPrice": "253.53",
-      "pl": "1246515.68"
+      "currentPrice": "253.58",
+      "pl": "1248281.90"
     },
     {
       "symbol": "CVX",
       "qty": -38329.11,
       "avgPrice": "203.09",
-      "currentPrice": "234.91",
-      "pl": "-1220641.23"
-    },
-    {
-      "symbol": "LNG",
-      "qty": -25606.64,
-      "avgPrice": "280.79",
-      "currentPrice": "328.17",
-      "pl": "-1214144.48"
+      "currentPrice": "234.66",
+      "pl": "-1211250.59"
     },
     {
       "symbol": "CHTR",
       "qty": 30381.17,
       "avgPrice": "150.30",
-      "currentPrice": "110.41",
-      "pl": "-1210648.29"
+      "currentPrice": "110.84",
+      "pl": "-1197432.47"
+    },
+    {
+      "symbol": "LNG",
+      "qty": -25606.64,
+      "avgPrice": "280.79",
+      "currentPrice": "327.48",
+      "pl": "-1196475.89"
     },
     {
       "symbol": "AMD",
       "qty": -29765.07,
       "avgPrice": "456.75",
-      "currentPrice": "496.95",
-      "pl": "-1194184.37"
+      "currentPrice": "495.87",
+      "pl": "-1162038.09"
     },
     {
       "symbol": "SPGI",
       "qty": -38519.82,
       "avgPrice": "434.44",
-      "currentPrice": "464.73",
-      "pl": "-1171124.73"
+      "currentPrice": "464.48",
+      "pl": "-1161494.78"
     },
     {
       "symbol": "FICO",
       "qty": -2523.97,
       "avgPrice": "1166.40",
-      "currentPrice": "707.34",
-      "pl": "1157492.88"
+      "currentPrice": "708.61",
+      "pl": "1154287.44"
     },
     {
       "symbol": "IBM",
       "qty": -45045.21,
       "avgPrice": "231.04",
-      "currentPrice": "256.01",
-      "pl": "-1131427.49"
+      "currentPrice": "255.93",
+      "pl": "-1127823.87"
     },
     {
       "symbol": "TSLA",
       "qty": 24279.95,
       "avgPrice": "348.95",
-      "currentPrice": "395.52",
-      "pl": "1129982.19"
+      "currentPrice": "395.07",
+      "pl": "1119056.21"
     },
     {
       "symbol": "RVTY",
       "qty": -33777.67,
       "avgPrice": "122.95",
-      "currentPrice": "156.01",
-      "pl": "-1117860.65"
+      "currentPrice": "156.03",
+      "pl": "-1118367.31"
     },
     {
       "symbol": "LMT",
       "qty": -14216.65,
       "avgPrice": "560.67",
-      "currentPrice": "638.61",
-      "pl": "-1106735.74"
+      "currentPrice": "638.13",
+      "pl": "-1099982.84"
     },
     {
       "symbol": "VZ",
       "qty": -252947.12,
       "avgPrice": "49.38",
-      "currentPrice": "45.05",
-      "pl": "1098287.57"
+      "currentPrice": "45.06",
+      "pl": "1095758.10"
     },
     {
       "symbol": "SNOW",
       "qty": -43778.27,
       "avgPrice": "322.78",
-      "currentPrice": "297.88",
-      "pl": "1089651.03"
+      "currentPrice": "298.43",
+      "pl": "1065572.98"
     },
     {
       "symbol": "MSFT",
       "qty": -32209.64,
       "avgPrice": "487.31",
-      "currentPrice": "520.28",
-      "pl": "-1054549.84"
+      "currentPrice": "520.29",
+      "pl": "-1054871.93"
     },
     {
       "symbol": "EBAY",
@@ -555,49 +555,42 @@
       "qty": -27662.21,
       "avgPrice": "208.31",
       "currentPrice": "170.60",
-      "pl": "1043329.38"
+      "pl": "1043467.69"
     },
     {
       "symbol": "UBER",
       "qty": -72376.71,
       "avgPrice": "79.29",
-      "currentPrice": "64.98",
-      "pl": "1035274.30"
+      "currentPrice": "64.92",
+      "pl": "1039616.91"
     },
     {
       "symbol": "MARA",
       "qty": 219029.35,
       "avgPrice": "11.18",
       "currentPrice": "6.50",
-      "pl": "-1023348.52"
-    },
-    {
-      "symbol": "WAT",
-      "qty": -20791.61,
-      "avgPrice": "410.75",
-      "currentPrice": "459.76",
-      "pl": "-1020064.04"
+      "pl": "-1024443.66"
     },
     {
       "symbol": "OTIS",
       "qty": 286167.56,
       "avgPrice": "72.19",
-      "currentPrice": "75.77",
-      "pl": "1017511.32"
+      "currentPrice": "75.78",
+      "pl": "1021803.83"
     },
     {
       "symbol": "PYPL",
       "qty": -229692.35,
       "avgPrice": "61.53",
-      "currentPrice": "57.14",
-      "pl": "1012071.88"
+      "currentPrice": "57.15",
+      "pl": "1010923.42"
     },
     {
-      "symbol": "PR",
-      "qty": 420108.51,
-      "avgPrice": "23.54",
-      "currentPrice": "25.94",
-      "pl": "1010194.20"
+      "symbol": "WAT",
+      "qty": -20791.61,
+      "avgPrice": "410.75",
+      "currentPrice": "459.27",
+      "pl": "-1009876.15"
     },
     {
       "symbol": "TRGP",
@@ -607,25 +600,32 @@
       "pl": "-1008023.28"
     },
     {
-      "symbol": "AR",
-      "qty": 253591.6,
-      "avgPrice": "37.90",
-      "currentPrice": "41.78",
-      "pl": "986268.20"
+      "symbol": "PR",
+      "qty": 420108.51,
+      "avgPrice": "23.54",
+      "currentPrice": "25.92",
+      "pl": "1001792.03"
     },
     {
       "symbol": "C",
       "qty": -92607.53,
       "avgPrice": "131.72",
-      "currentPrice": "121.08",
-      "pl": "983404.15"
+      "currentPrice": "120.99",
+      "pl": "991738.83"
+    },
+    {
+      "symbol": "AR",
+      "qty": 253591.6,
+      "avgPrice": "37.90",
+      "currentPrice": "41.75",
+      "pl": "978660.45"
     },
     {
       "symbol": "CRM",
       "qty": -47431.51,
       "avgPrice": "208.69",
-      "currentPrice": "229.16",
-      "pl": "-973732.38"
+      "currentPrice": "229.19",
+      "pl": "-975155.32"
     },
     {
       "symbol": "DJT",
@@ -635,18 +635,25 @@
       "pl": "951336.62"
     },
     {
+      "symbol": "DELL",
+      "qty": 54541.23,
+      "avgPrice": "432.59",
+      "currentPrice": "415.03",
+      "pl": "-951293.63"
+    },
+    {
+      "symbol": "COF",
+      "qty": 66512.96,
+      "avgPrice": "216.27",
+      "currentPrice": "202.36",
+      "pl": "-924506.22"
+    },
+    {
       "symbol": "QXO",
       "qty": -350687.48,
       "avgPrice": "13.41",
       "currentPrice": "10.79",
       "pl": "922933.63"
-    },
-    {
-      "symbol": "AMGN",
-      "qty": -36232.58,
-      "avgPrice": "443.84",
-      "currentPrice": "469.18",
-      "pl": "-922496.72"
     },
     {
       "symbol": "PRG",
@@ -656,60 +663,60 @@
       "pl": "919760.17"
     },
     {
-      "symbol": "COF",
-      "qty": 66512.96,
-      "avgPrice": "216.27",
-      "currentPrice": "202.44",
-      "pl": "-919517.75"
+      "symbol": "AMGN",
+      "qty": -36232.58,
+      "avgPrice": "443.84",
+      "currentPrice": "468.69",
+      "pl": "-904561.59"
     },
     {
       "symbol": "A",
       "qty": 44061.98,
       "avgPrice": "153.20",
-      "currentPrice": "173.99",
-      "pl": "914930.59"
-    },
-    {
-      "symbol": "DELL",
-      "qty": 54541.23,
-      "avgPrice": "432.59",
-      "currentPrice": "416.08",
-      "pl": "-893752.64"
+      "currentPrice": "173.75",
+      "pl": "904355.72"
     },
     {
       "symbol": "HSY",
       "qty": -34585.69,
       "avgPrice": "189.94",
-      "currentPrice": "164.66",
-      "pl": "869990.61"
+      "currentPrice": "164.85",
+      "pl": "863246.41"
+    },
+    {
+      "symbol": "CSCO",
+      "qty": -133832.37,
+      "avgPrice": "109.80",
+      "currentPrice": "103.47",
+      "pl": "853241.00"
     },
     {
       "symbol": "PINS",
       "qty": 187677.19,
       "avgPrice": "23.47",
       "currentPrice": "18.91",
-      "pl": "-850447.12"
-    },
-    {
-      "symbol": "CSCO",
-      "qty": -133832.37,
-      "avgPrice": "109.80",
-      "currentPrice": "103.49",
-      "pl": "849895.19"
+      "pl": "-851385.51"
     },
     {
       "symbol": "ORCL",
       "qty": -69477.67,
       "avgPrice": "141.93",
       "currentPrice": "130.01",
-      "pl": "829233.74"
+      "pl": "828886.35"
     },
     {
       "symbol": "JPM",
       "qty": -44438.04,
       "avgPrice": "354.62",
-      "currentPrice": "336.26",
-      "pl": "816341.08"
+      "currentPrice": "336.00",
+      "pl": "827894.97"
+    },
+    {
+      "symbol": "BMNR",
+      "qty": -180290.51,
+      "avgPrice": "24.14",
+      "currentPrice": "19.80",
+      "pl": "780451.48"
     },
     {
       "symbol": "COR",
@@ -719,25 +726,18 @@
       "pl": "778552.94"
     },
     {
-      "symbol": "BMNR",
-      "qty": -180290.51,
-      "avgPrice": "24.14",
-      "currentPrice": "19.82",
-      "pl": "776845.67"
-    },
-    {
       "symbol": "AXP",
       "qty": -40482.57,
       "avgPrice": "336.29",
-      "currentPrice": "317.37",
-      "pl": "766561.14"
+      "currentPrice": "317.12",
+      "pl": "776681.78"
     },
     {
       "symbol": "INTU",
       "qty": -27733.22,
       "avgPrice": "368.20",
-      "currentPrice": "340.61",
-      "pl": "765914.79"
+      "currentPrice": "340.60",
+      "pl": "766053.45"
     },
     {
       "symbol": "ALB",
@@ -750,71 +750,71 @@
       "symbol": "MU",
       "qty": -17072.47,
       "avgPrice": "910.29",
-      "currentPrice": "866.42",
-      "pl": "752628.97"
+      "currentPrice": "866.49",
+      "pl": "751433.90"
     },
     {
       "symbol": "WDC",
       "qty": -10747.27,
       "avgPrice": "435.24",
-      "currentPrice": "365.64",
-      "pl": "748009.78"
+      "currentPrice": "365.87",
+      "pl": "745537.91"
     },
     {
       "symbol": "BKR",
       "qty": 101915.15,
       "avgPrice": "61.98",
-      "currentPrice": "54.69",
-      "pl": "-746298.41"
+      "currentPrice": "54.77",
+      "pl": "-737635.62"
     },
     {
       "symbol": "PFSI",
       "qty": -55282.82,
       "avgPrice": "75.18",
-      "currentPrice": "61.99",
-      "pl": "734987.79"
-    },
-    {
-      "symbol": "MTB",
-      "qty": -35109.76,
-      "avgPrice": "240.24",
-      "currentPrice": "219.50",
-      "pl": "730635.82"
+      "currentPrice": "61.97",
+      "pl": "736093.44"
     },
     {
       "symbol": "SHW",
       "qty": -43535.55,
       "avgPrice": "346.73",
-      "currentPrice": "330.07",
-      "pl": "725302.29"
+      "currentPrice": "329.88",
+      "pl": "733574.04"
     },
     {
-      "symbol": "PRMB",
-      "qty": -210486.78,
-      "avgPrice": "23.02",
-      "currentPrice": "19.68",
-      "pl": "700729.09"
+      "symbol": "MTB",
+      "qty": -35109.76,
+      "avgPrice": "240.24",
+      "currentPrice": "219.57",
+      "pl": "728178.14"
     },
     {
       "symbol": "CL",
       "qty": -167454.67,
       "avgPrice": "92.02",
-      "currentPrice": "96.17",
-      "pl": "-699899.05"
+      "currentPrice": "96.19",
+      "pl": "-703248.15"
+    },
+    {
+      "symbol": "PRMB",
+      "qty": -210486.78,
+      "avgPrice": "23.02",
+      "currentPrice": "19.70",
+      "pl": "697571.78"
     },
     {
       "symbol": "GS",
       "qty": -4640.19,
       "avgPrice": "1031.23",
-      "currentPrice": "881.71",
-      "pl": "692615.52"
+      "currentPrice": "881.63",
+      "pl": "692986.74"
     },
     {
       "symbol": "CI",
       "qty": -31728.55,
       "avgPrice": "278.90",
-      "currentPrice": "300.28",
-      "pl": "-678356.34"
+      "currentPrice": "300.16",
+      "pl": "-674548.91"
     },
     {
       "symbol": "BRO",
@@ -831,46 +831,53 @@
       "pl": "640171.37"
     },
     {
-      "symbol": "DOW",
-      "qty": 183538.96,
-      "avgPrice": "31.08",
-      "currentPrice": "34.55",
-      "pl": "636810.85"
-    },
-    {
       "symbol": "CEG",
       "qty": -49004.31,
       "avgPrice": "273.43",
-      "currentPrice": "260.55",
-      "pl": "634467.34"
+      "currentPrice": "260.45",
+      "pl": "639367.77"
+    },
+    {
+      "symbol": "DOW",
+      "qty": 183538.96,
+      "avgPrice": "31.08",
+      "currentPrice": "34.51",
+      "pl": "630386.99"
     },
     {
       "symbol": "KKR",
       "qty": -47302.51,
       "avgPrice": "107.32",
-      "currentPrice": "94.14",
-      "pl": "622150.92"
+      "currentPrice": "94.03",
+      "pl": "627590.71"
     },
     {
       "symbol": "EMR",
       "qty": -99558.51,
       "avgPrice": "157.57",
-      "currentPrice": "163.99",
-      "pl": "-621210.83"
+      "currentPrice": "163.73",
+      "pl": "-595823.41"
     },
     {
       "symbol": "BMY",
       "qty": -162997.05,
       "avgPrice": "66.59",
-      "currentPrice": "62.97",
-      "pl": "592632.36"
+      "currentPrice": "62.98",
+      "pl": "589372.41"
     },
     {
       "symbol": "BRK/B",
       "qty": -14585.78,
       "avgPrice": "504.32",
-      "currentPrice": "544.77",
-      "pl": "-589180.44"
+      "currentPrice": "544.55",
+      "pl": "-585971.57"
+    },
+    {
+      "symbol": "XYL",
+      "qty": 28024.65,
+      "avgPrice": "113.75",
+      "currentPrice": "93.24",
+      "pl": "-574258.75"
     },
     {
       "symbol": "WBD",
@@ -878,20 +885,6 @@
       "avgPrice": "28.70",
       "currentPrice": "30.99",
       "pl": "-572723.49"
-    },
-    {
-      "symbol": "XYL",
-      "qty": 28024.65,
-      "avgPrice": "113.75",
-      "currentPrice": "93.35",
-      "pl": "-571176.04"
-    },
-    {
-      "symbol": "DD",
-      "qty": 165984.47,
-      "avgPrice": "136.07",
-      "currentPrice": "139.54",
-      "pl": "567933.13"
     },
     {
       "symbol": "DXC",
@@ -904,8 +897,15 @@
       "symbol": "DE",
       "qty": -24631.03,
       "avgPrice": "647.10",
-      "currentPrice": "669.86",
-      "pl": "-555289.23"
+      "currentPrice": "669.67",
+      "pl": "-550609.34"
+    },
+    {
+      "symbol": "DD",
+      "qty": 165984.47,
+      "avgPrice": "136.07",
+      "currentPrice": "139.41",
+      "pl": "547185.07"
     },
     {
       "symbol": "TDOC",
@@ -918,36 +918,29 @@
       "symbol": "PNC",
       "qty": -38035.12,
       "avgPrice": "241.46",
-      "currentPrice": "227.41",
-      "pl": "534789.66"
+      "currentPrice": "227.21",
+      "pl": "542396.68"
     },
     {
       "symbol": "DAL",
       "qty": -156823.25,
       "avgPrice": "82.25",
-      "currentPrice": "78.87",
-      "pl": "528482.64"
+      "currentPrice": "78.89",
+      "pl": "525346.18"
     },
     {
       "symbol": "PFE",
       "qty": -204244.67,
       "avgPrice": "27.97",
-      "currentPrice": "30.55",
-      "pl": "-526951.25"
+      "currentPrice": "30.53",
+      "pl": "-522866.36"
     },
     {
       "symbol": "MGM",
       "qty": -37052.91,
       "avgPrice": "43.69",
-      "currentPrice": "29.64",
-      "pl": "521901.66"
-    },
-    {
-      "symbol": "JXN",
-      "qty": 198454.66,
-      "avgPrice": "131.46",
-      "currentPrice": "133.94",
-      "pl": "519029.66"
+      "currentPrice": "29.63",
+      "pl": "522086.92"
     },
     {
       "symbol": "VRSK",
@@ -960,22 +953,22 @@
       "symbol": "PENN",
       "qty": 200636.96,
       "avgPrice": "18.26",
-      "currentPrice": "15.74",
-      "pl": "-508186.71"
+      "currentPrice": "15.77",
+      "pl": "-503170.78"
+    },
+    {
+      "symbol": "KEYS",
+      "qty": 58892.9,
+      "avgPrice": "310.66",
+      "currentPrice": "302.25",
+      "pl": "-497230.71"
     },
     {
       "symbol": "PEP",
       "qty": -101531.04,
       "avgPrice": "143.14",
-      "currentPrice": "138.36",
-      "pl": "486947.79"
-    },
-    {
-      "symbol": "CIEN",
-      "qty": 8749.86,
-      "avgPrice": "371.95",
-      "currentPrice": "315.97",
-      "pl": "-486790.48"
+      "currentPrice": "138.28",
+      "pl": "495070.27"
     },
     {
       "symbol": "T",
@@ -985,6 +978,27 @@
       "pl": "-486547.26"
     },
     {
+      "symbol": "NVDA",
+      "qty": -73164.38,
+      "avgPrice": "208.25",
+      "currentPrice": "201.66",
+      "pl": "485005.71"
+    },
+    {
+      "symbol": "CIEN",
+      "qty": 8749.86,
+      "avgPrice": "371.95",
+      "currentPrice": "316.19",
+      "pl": "-484865.51"
+    },
+    {
+      "symbol": "UNH",
+      "qty": -38861.87,
+      "avgPrice": "396.32",
+      "currentPrice": "408.73",
+      "pl": "-482081.53"
+    },
+    {
       "symbol": "FB",
       "qty": 569689.95,
       "avgPrice": "44.93",
@@ -992,116 +1006,102 @@
       "pl": "477811.68"
     },
     {
-      "symbol": "UNH",
-      "qty": -38861.87,
-      "avgPrice": "396.32",
-      "currentPrice": "408.58",
-      "pl": "-476446.56"
-    },
-    {
-      "symbol": "ECL",
-      "qty": -30525.27,
-      "avgPrice": "286.22",
-      "currentPrice": "301.71",
-      "pl": "-471384.37"
+      "symbol": "SON",
+      "qty": 60906.54,
+      "avgPrice": "57.49",
+      "currentPrice": "49.70",
+      "pl": "-473760.07"
     },
     {
       "symbol": "RNG",
       "qty": -35252.72,
       "avgPrice": "67.08",
-      "currentPrice": "80.28",
-      "pl": "-467031.12"
-    },
-    {
-      "symbol": "SON",
-      "qty": 60906.54,
-      "avgPrice": "57.49",
-      "currentPrice": "49.83",
-      "pl": "-465842.22"
-    },
-    {
-      "symbol": "RTX",
-      "qty": -55585.16,
-      "avgPrice": "209.22",
-      "currentPrice": "201.06",
-      "pl": "464656.17"
-    },
-    {
-      "symbol": "NVDA",
-      "qty": -73164.38,
-      "avgPrice": "208.25",
-      "currentPrice": "201.98",
-      "pl": "461593.11"
-    },
-    {
-      "symbol": "KEYS",
-      "qty": 58892.9,
-      "avgPrice": "310.66",
-      "currentPrice": "302.90",
-      "pl": "-458950.32"
-    },
-    {
-      "symbol": "COIN",
-      "qty": -10972.15,
-      "avgPrice": "179.48",
-      "currentPrice": "137.93",
-      "pl": "458100.10"
-    },
-    {
-      "symbol": "ALLY",
-      "qty": 101722.2,
-      "avgPrice": "42.45",
-      "currentPrice": "37.96",
-      "pl": "-456732.69"
+      "currentPrice": "80.36",
+      "pl": "-470027.60"
     },
     {
       "symbol": "MSI",
       "qty": -34293.79,
       "avgPrice": "480.28",
-      "currentPrice": "493.65",
-      "pl": "-455495.57"
+      "currentPrice": "494.06",
+      "pl": "-469384.55"
     },
     {
-      "symbol": "MELI",
-      "qty": 1374.93,
-      "avgPrice": "1947.90",
-      "currentPrice": "1616.91",
-      "pl": "-454202.09"
+      "symbol": "ECL",
+      "qty": -30525.27,
+      "avgPrice": "286.22",
+      "currentPrice": "301.61",
+      "pl": "-468179.21"
     },
     {
-      "symbol": "VFC",
-      "qty": 113067.13,
-      "avgPrice": "14.21",
-      "currentPrice": "18.21",
-      "pl": "452706.79"
+      "symbol": "RTX",
+      "qty": -55585.16,
+      "avgPrice": "209.22",
+      "currentPrice": "201.07",
+      "pl": "463822.40"
+    },
+    {
+      "symbol": "ALLY",
+      "qty": 101722.2,
+      "avgPrice": "42.45",
+      "currentPrice": "37.93",
+      "pl": "-459784.35"
+    },
+    {
+      "symbol": "COIN",
+      "qty": -10972.15,
+      "avgPrice": "179.48",
+      "currentPrice": "138.04",
+      "pl": "456893.16"
     },
     {
       "symbol": "MMM",
       "qty": -88536.98,
       "avgPrice": "179.01",
-      "currentPrice": "173.97",
-      "pl": "447124.13"
+      "currentPrice": "173.89",
+      "pl": "454649.77"
     },
     {
-      "symbol": "TKR",
-      "qty": -35964.45,
-      "avgPrice": "122.72",
-      "currentPrice": "110.44",
-      "pl": "445487.01"
+      "symbol": "MELI",
+      "qty": 1374.93,
+      "avgPrice": "1947.90",
+      "currentPrice": "1617.78",
+      "pl": "-453012.77"
+    },
+    {
+      "symbol": "VFC",
+      "qty": 113067.13,
+      "avgPrice": "14.21",
+      "currentPrice": "18.20",
+      "pl": "452141.45"
     },
     {
       "symbol": "CFG",
       "qty": 65224.5,
       "avgPrice": "69.67",
-      "currentPrice": "63.41",
-      "pl": "-443828.65"
+      "currentPrice": "63.34",
+      "pl": "-448394.37"
+    },
+    {
+      "symbol": "TKR",
+      "qty": -35964.45,
+      "avgPrice": "122.72",
+      "currentPrice": "110.45",
+      "pl": "445127.37"
     },
     {
       "symbol": "GE",
       "qty": -10879.17,
       "avgPrice": "341.32",
-      "currentPrice": "300.71",
-      "pl": "443528.13"
+      "currentPrice": "300.62",
+      "pl": "444507.26"
+    },
+    {
+      "symbol": "SBUX",
+      "qty": -144330.03,
+      "avgPrice": "107.49",
+      "currentPrice": "104.53",
+      "pl": "441920.75"
     },
     {
       "symbol": "AIG",
@@ -1111,18 +1111,11 @@
       "pl": "440976.82"
     },
     {
-      "symbol": "SBUX",
-      "qty": -144330.03,
-      "avgPrice": "107.49",
-      "currentPrice": "104.58",
-      "pl": "433982.60"
-    },
-    {
       "symbol": "CMCSA",
       "qty": 121224.03,
       "avgPrice": "26.61",
       "currentPrice": "23.05",
-      "pl": "-431675.68"
+      "pl": "-432281.80"
     },
     {
       "symbol": "MAN",
@@ -1132,32 +1125,39 @@
       "pl": "426723.89"
     },
     {
-      "symbol": "PANW",
-      "qty": -42955.83,
-      "avgPrice": "350.90",
-      "currentPrice": "360.55",
-      "pl": "-423022.53"
-    },
-    {
       "symbol": "MOS",
       "qty": -77601.0,
       "avgPrice": "23.80",
-      "currentPrice": "18.34",
-      "pl": "421675.21"
+      "currentPrice": "18.32",
+      "pl": "422839.23"
     },
     {
       "symbol": "SCHW",
       "qty": -16151.93,
       "avgPrice": "113.65",
-      "currentPrice": "87.60",
-      "pl": "420757.67"
+      "currentPrice": "87.54",
+      "pl": "421726.79"
+    },
+    {
+      "symbol": "PANW",
+      "qty": -42955.83,
+      "avgPrice": "350.90",
+      "currentPrice": "360.51",
+      "pl": "-421519.08"
+    },
+    {
+      "symbol": "BDX",
+      "qty": -51931.37,
+      "avgPrice": "189.62",
+      "currentPrice": "197.67",
+      "pl": "-418543.99"
     },
     {
       "symbol": "INSM",
       "qty": -37302.85,
       "avgPrice": "123.98",
-      "currentPrice": "112.71",
-      "pl": "418330.84"
+      "currentPrice": "112.75",
+      "pl": "416652.21"
     },
     {
       "symbol": "ROKU",
@@ -1170,43 +1170,36 @@
       "symbol": "PG",
       "qty": 24285.04,
       "avgPrice": "145.64",
-      "currentPrice": "162.68",
-      "pl": "414037.27"
+      "currentPrice": "162.72",
+      "pl": "414887.25"
     },
     {
-      "symbol": "BDX",
-      "qty": -51931.37,
-      "avgPrice": "189.62",
-      "currentPrice": "197.56",
-      "pl": "-412831.54"
-    },
-    {
-      "symbol": "FISV",
-      "qty": -132748.07,
-      "avgPrice": "52.96",
-      "currentPrice": "49.89",
-      "pl": "406086.41"
-    },
-    {
-      "symbol": "DVN",
-      "qty": -96787.64,
-      "avgPrice": "47.92",
-      "currentPrice": "52.10",
-      "pl": "-405025.54"
+      "symbol": "JXN",
+      "qty": 198454.66,
+      "avgPrice": "131.46",
+      "currentPrice": "133.41",
+      "pl": "413848.69"
     },
     {
       "symbol": "SCI",
       "qty": 55616.98,
       "avgPrice": "83.86",
-      "currentPrice": "76.60",
-      "pl": "-401917.87"
+      "currentPrice": "76.52",
+      "pl": "-406367.23"
     },
     {
-      "symbol": "PGR",
-      "qty": -44026.22,
-      "avgPrice": "223.81",
-      "currentPrice": "232.97",
-      "pl": "-399855.52"
+      "symbol": "FISV",
+      "qty": -132748.07,
+      "avgPrice": "52.96",
+      "currentPrice": "49.90",
+      "pl": "404758.93"
+    },
+    {
+      "symbol": "DVN",
+      "qty": -96787.64,
+      "avgPrice": "47.92",
+      "currentPrice": "52.03",
+      "pl": "-398734.35"
     },
     {
       "symbol": "BCO",
@@ -1223,123 +1216,130 @@
       "pl": "390685.58"
     },
     {
-      "symbol": "GLW",
-      "qty": -16219.08,
-      "avgPrice": "145.28",
-      "currentPrice": "121.48",
-      "pl": "386196.99"
+      "symbol": "PGR",
+      "qty": -44026.22,
+      "avgPrice": "223.81",
+      "currentPrice": "232.73",
+      "pl": "-389289.23"
     },
     {
       "symbol": "WYNN",
       "qty": -15857.13,
       "avgPrice": "99.41",
-      "currentPrice": "75.14",
-      "pl": "384958.78"
+      "currentPrice": "75.07",
+      "pl": "386068.78"
+    },
+    {
+      "symbol": "GLW",
+      "qty": -16219.08,
+      "avgPrice": "145.28",
+      "currentPrice": "121.67",
+      "pl": "383115.36"
     },
     {
       "symbol": "NFLX",
       "qty": 20993.17,
       "avgPrice": "80.01",
-      "currentPrice": "61.99",
-      "pl": "-379003.97"
-    },
-    {
-      "symbol": "SAIC",
-      "qty": 15181.66,
-      "avgPrice": "126.49",
-      "currentPrice": "150.64",
-      "pl": "368864.84"
-    },
-    {
-      "symbol": "CAT",
-      "qty": 1915.94,
-      "avgPrice": "809.10",
-      "currentPrice": "621.50",
-      "pl": "-358521.36"
-    },
-    {
-      "symbol": "FIS",
-      "qty": -145946.23,
-      "avgPrice": "40.93",
-      "currentPrice": "38.50",
-      "pl": "354649.33"
+      "currentPrice": "62.01",
+      "pl": "-378794.04"
     },
     {
       "symbol": "PHM",
       "qty": 69800.5,
       "avgPrice": "129.33",
-      "currentPrice": "124.33",
-      "pl": "-349379.39"
+      "currentPrice": "124.05",
+      "pl": "-369272.53"
     },
     {
-      "symbol": "LHX",
-      "qty": -22466.01,
-      "avgPrice": "261.58",
-      "currentPrice": "277.17",
-      "pl": "-345707.27"
+      "symbol": "SAIC",
+      "qty": 15181.66,
+      "avgPrice": "126.49",
+      "currentPrice": "150.32",
+      "pl": "364082.62"
     },
     {
-      "symbol": "SNX",
-      "qty": -23250.42,
-      "avgPrice": "243.19",
-      "currentPrice": "228.59",
-      "pl": "344005.95"
+      "symbol": "CAT",
+      "qty": 1915.94,
+      "avgPrice": "809.10",
+      "currentPrice": "620.68",
+      "pl": "-360092.43"
+    },
+    {
+      "symbol": "FIS",
+      "qty": -145946.23,
+      "avgPrice": "40.93",
+      "currentPrice": "38.49",
+      "pl": "356108.80"
     },
     {
       "symbol": "HUBB",
       "qty": 7755.52,
       "avgPrice": "465.32",
-      "currentPrice": "421.01",
-      "pl": "-343235.44"
+      "currentPrice": "420.56",
+      "pl": "-346686.65"
+    },
+    {
+      "symbol": "SNX",
+      "qty": -23250.42,
+      "avgPrice": "243.19",
+      "currentPrice": "228.55",
+      "pl": "344819.71"
+    },
+    {
+      "symbol": "LHX",
+      "qty": -22466.01,
+      "avgPrice": "261.58",
+      "currentPrice": "277.08",
+      "pl": "-343797.66"
     },
     {
       "symbol": "BAH",
       "qty": 24884.8,
       "avgPrice": "75.22",
-      "currentPrice": "88.70",
-      "pl": "335447.09"
-    },
-    {
-      "symbol": "PAYC",
-      "qty": 10890.07,
-      "avgPrice": "229.62",
-      "currentPrice": "259.94",
-      "pl": "329707.40"
-    },
-    {
-      "symbol": "RBLX",
-      "qty": -115927.33,
-      "avgPrice": "38.76",
-      "currentPrice": "41.63",
-      "pl": "-328428.81"
-    },
-    {
-      "symbol": "TEAM",
-      "qty": 17770.64,
-      "avgPrice": "171.33",
-      "currentPrice": "189.50",
-      "pl": "323489.23"
+      "currentPrice": "88.69",
+      "pl": "335198.24"
     },
     {
       "symbol": "LNC",
       "qty": -253585.38,
       "avgPrice": "41.91",
-      "currentPrice": "40.63",
-      "pl": "320752.40"
+      "currentPrice": "40.59",
+      "pl": "332163.74"
+    },
+    {
+      "symbol": "PAYC",
+      "qty": 10890.07,
+      "avgPrice": "229.62",
+      "currentPrice": "260.17",
+      "pl": "332157.67"
+    },
+    {
+      "symbol": "RBLX",
+      "qty": -115927.33,
+      "avgPrice": "38.76",
+      "currentPrice": "41.65",
+      "pl": "-330747.35"
+    },
+    {
+      "symbol": "TEAM",
+      "qty": 17770.64,
+      "avgPrice": "171.33",
+      "currentPrice": "189.54",
+      "pl": "324200.05"
     },
     {
       "symbol": "GILD",
       "qty": 12009.27,
       "avgPrice": "145.92",
-      "currentPrice": "172.57",
-      "pl": "320364.51"
+      "currentPrice": "172.41",
+      "pl": "318382.98"
     },
     {
       "symbol": "CPNG",
       "qty": -147758.57,
       "avgPrice": "16.44",
-      "currentPrice": "14.32",
-      "pl": "314081.78"
+      "currentPrice": "14.30",
+      "pl": "316298.16"
     },
     {
       "symbol": "WLK",
@@ -1352,22 +1352,29 @@
       "symbol": "R",
       "qty": -8236.45,
       "avgPrice": "244.93",
-      "currentPrice": "282.52",
-      "pl": "-309823.82"
+      "currentPrice": "282.45",
+      "pl": "-309247.27"
+    },
+    {
+      "symbol": "DG",
+      "qty": -43483.01,
+      "avgPrice": "124.71",
+      "currentPrice": "131.77",
+      "pl": "-306573.19"
     },
     {
       "symbol": "ODFL",
       "qty": -10712.08,
       "avgPrice": "201.17",
-      "currentPrice": "172.68",
-      "pl": "303874.38"
+      "currentPrice": "172.76",
+      "pl": "303017.41"
     },
     {
       "symbol": "DT",
       "qty": 35844.01,
       "avgPrice": "49.05",
-      "currentPrice": "57.27",
-      "pl": "294926.09"
+      "currentPrice": "57.28",
+      "pl": "295284.53"
     },
     {
       "symbol": "DPZ",
@@ -1377,18 +1384,11 @@
       "pl": "-294322.42"
     },
     {
-      "symbol": "DG",
-      "qty": -43483.01,
-      "avgPrice": "124.71",
-      "currentPrice": "131.46",
-      "pl": "-293093.45"
-    },
-    {
       "symbol": "CMG",
       "qty": -48164.2,
       "avgPrice": "38.02",
-      "currentPrice": "32.16",
-      "pl": "281897.63"
+      "currentPrice": "32.12",
+      "pl": "283342.55"
     },
     {
       "symbol": "FCNCA",
@@ -1422,36 +1422,29 @@
       "symbol": "CLX",
       "qty": -16319.53,
       "avgPrice": "105.64",
-      "currentPrice": "88.94",
-      "pl": "273313.84"
+      "currentPrice": "88.96",
+      "pl": "272987.44"
     },
     {
       "symbol": "TFC",
       "qty": -115625.58,
       "avgPrice": "50.81",
-      "currentPrice": "48.48",
-      "pl": "268216.42"
+      "currentPrice": "48.44",
+      "pl": "272841.45"
     },
     {
       "symbol": "NRG",
       "qty": -15406.71,
       "avgPrice": "111.78",
-      "currentPrice": "94.41",
-      "pl": "267084.85"
+      "currentPrice": "94.48",
+      "pl": "265929.34"
     },
     {
-      "symbol": "GDDY",
-      "qty": 17329.83,
-      "avgPrice": "100.52",
-      "currentPrice": "115.68",
-      "pl": "262391.17"
-    },
-    {
-      "symbol": "EXPO",
-      "qty": 24764.95,
-      "avgPrice": "70.47",
-      "currentPrice": "81.20",
-      "pl": "262385.12"
+      "symbol": "ILMN",
+      "qty": -26431.68,
+      "avgPrice": "223.22",
+      "currentPrice": "232.81",
+      "pl": "-262022.96"
     },
     {
       "symbol": "GGG",
@@ -1461,109 +1454,123 @@
       "pl": "-260431.21"
     },
     {
+      "symbol": "GDDY",
+      "qty": 17329.83,
+      "avgPrice": "100.52",
+      "currentPrice": "115.48",
+      "pl": "259011.86"
+    },
+    {
+      "symbol": "EXPO",
+      "qty": 24764.95,
+      "avgPrice": "70.47",
+      "currentPrice": "81.03",
+      "pl": "258175.08"
+    },
+    {
       "symbol": "PVH",
       "qty": -20402.19,
       "avgPrice": "76.99",
-      "currentPrice": "89.75",
-      "pl": "-259429.11"
+      "currentPrice": "89.67",
+      "pl": "-257898.94"
     },
     {
       "symbol": "ALK",
       "qty": -37868.79,
       "avgPrice": "41.56",
-      "currentPrice": "34.82",
-      "pl": "255453.29"
+      "currentPrice": "34.78",
+      "pl": "256968.05"
     },
     {
       "symbol": "BRBR",
       "qty": -154915.01,
       "avgPrice": "10.85",
-      "currentPrice": "9.21",
-      "pl": "252979.98"
+      "currentPrice": "9.20",
+      "pl": "253754.55"
     },
     {
       "symbol": "BSX",
       "qty": 35162.79,
       "avgPrice": "49.01",
-      "currentPrice": "41.84",
-      "pl": "-251889.30"
+      "currentPrice": "41.88",
+      "pl": "-250306.98"
     },
     {
       "symbol": "FTV",
       "qty": 53425.31,
       "avgPrice": "60.39",
-      "currentPrice": "64.98",
-      "pl": "245979.35"
-    },
-    {
-      "symbol": "ILMN",
-      "qty": -26431.68,
-      "avgPrice": "223.22",
-      "currentPrice": "232.11",
-      "pl": "-243520.78"
+      "currentPrice": "64.97",
+      "pl": "244910.84"
     },
     {
       "symbol": "MGNI",
       "qty": -92845.17,
       "avgPrice": "23.56",
-      "currentPrice": "20.96",
-      "pl": "242372.68"
-    },
-    {
-      "symbol": "EXE",
-      "qty": 37474.43,
-      "avgPrice": "96.33",
-      "currentPrice": "90.12",
-      "pl": "-231718.32"
+      "currentPrice": "20.95",
+      "pl": "243301.13"
     },
     {
       "symbol": "THC",
       "qty": -38443.58,
       "avgPrice": "278.59",
-      "currentPrice": "272.50",
-      "pl": "230960.43"
+      "currentPrice": "272.19",
+      "pl": "242877.94"
     },
     {
-      "symbol": "IFF",
-      "qty": -35288.85,
-      "avgPrice": "85.41",
-      "currentPrice": "91.97",
-      "pl": "-230499.14"
-    },
-    {
-      "symbol": "FFIV",
-      "qty": 5293.43,
-      "avgPrice": "379.04",
-      "currentPrice": "335.04",
-      "pl": "-230011.45"
+      "symbol": "EXE",
+      "qty": 37474.43,
+      "avgPrice": "96.33",
+      "currentPrice": "90.06",
+      "pl": "-233966.79"
     },
     {
       "symbol": "NOC",
       "qty": -18288.9,
       "avgPrice": "546.79",
-      "currentPrice": "559.36",
-      "pl": "-229002.40"
+      "currentPrice": "559.50",
+      "pl": "-231562.84"
+    },
+    {
+      "symbol": "IFF",
+      "qty": -35288.85,
+      "avgPrice": "85.41",
+      "currentPrice": "91.98",
+      "pl": "-230852.03"
+    },
+    {
+      "symbol": "FFIV",
+      "qty": 5293.43,
+      "avgPrice": "379.04",
+      "currentPrice": "335.55",
+      "pl": "-227285.33"
     },
     {
       "symbol": "WFC",
       "qty": -147507.48,
       "avgPrice": "84.72",
-      "currentPrice": "83.19",
-      "pl": "225687.23"
+      "currentPrice": "83.17",
+      "pl": "227162.30"
     },
     {
       "symbol": "QDEL",
       "qty": -145908.07,
       "avgPrice": "14.49",
-      "currentPrice": "12.98",
-      "pl": "219591.64"
+      "currentPrice": "12.97",
+      "pl": "221780.26"
     },
     {
       "symbol": "ROP",
       "qty": -4086.69,
       "avgPrice": "414.47",
-      "currentPrice": "467.79",
-      "pl": "-217864.72"
+      "currentPrice": "467.38",
+      "pl": "-216189.17"
+    },
+    {
+      "symbol": "BKH",
+      "qty": 21956.94,
+      "avgPrice": "72.03",
+      "currentPrice": "81.80",
+      "pl": "214215.41"
     },
     {
       "symbol": "IT",
@@ -1573,25 +1580,18 @@
       "pl": "-214125.38"
     },
     {
-      "symbol": "BKH",
-      "qty": 21956.94,
-      "avgPrice": "72.03",
-      "currentPrice": "81.79",
-      "pl": "214105.63"
-    },
-    {
       "symbol": "TMUS",
       "qty": 8837.22,
       "avgPrice": "181.57",
-      "currentPrice": "157.72",
-      "pl": "-211312.39"
+      "currentPrice": "157.65",
+      "pl": "-211930.99"
     },
     {
       "symbol": "CHRW",
       "qty": 11154.42,
       "avgPrice": "142.25",
-      "currentPrice": "123.55",
-      "pl": "-208027.28"
+      "currentPrice": "123.47",
+      "pl": "-208919.63"
     },
     {
       "symbol": "INSP",
@@ -1604,22 +1604,22 @@
       "symbol": "XYZ",
       "qty": -34522.68,
       "avgPrice": "81.38",
-      "currentPrice": "75.47",
-      "pl": "202933.73"
+      "currentPrice": "75.50",
+      "pl": "201898.05"
     },
     {
       "symbol": "HD",
       "qty": -35660.55,
       "avgPrice": "334.96",
-      "currentPrice": "329.25",
-      "pl": "201806.28"
+      "currentPrice": "329.26",
+      "pl": "201271.37"
     },
     {
       "symbol": "CNS",
       "qty": 19399.14,
       "avgPrice": "83.16",
-      "currentPrice": "72.91",
-      "pl": "-198938.23"
+      "currentPrice": "72.89",
+      "pl": "-199326.21"
     },
     {
       "symbol": "RJF",
@@ -1632,15 +1632,15 @@
       "symbol": "V",
       "qty": -5905.49,
       "avgPrice": "382.41",
-      "currentPrice": "415.52",
-      "pl": "-195420.88"
+      "currentPrice": "415.65",
+      "pl": "-196188.59"
     },
     {
       "symbol": "MTH",
       "qty": -22858.92,
       "avgPrice": "71.98",
-      "currentPrice": "64.07",
-      "pl": "183492.97"
+      "currentPrice": "64.06",
+      "pl": "183835.85"
     },
     {
       "symbol": "ZTS",
@@ -1650,53 +1650,46 @@
       "pl": "183202.91"
     },
     {
-      "symbol": "TTC",
-      "qty": 19689.84,
-      "avgPrice": "99.09",
-      "currentPrice": "108.09",
-      "pl": "177026.89"
-    },
-    {
       "symbol": "PAYX",
       "qty": 14545.23,
       "avgPrice": "124.74",
-      "currentPrice": "112.68",
-      "pl": "-176079.02"
+      "currentPrice": "112.63",
+      "pl": "-176806.29"
     },
     {
       "symbol": "TMO",
       "qty": 2727.89,
       "avgPrice": "628.26",
-      "currentPrice": "692.49",
-      "pl": "174390.64"
+      "currentPrice": "692.47",
+      "pl": "174336.08"
+    },
+    {
+      "symbol": "TTC",
+      "qty": 19689.84,
+      "avgPrice": "99.09",
+      "currentPrice": "107.68",
+      "pl": "168954.06"
     },
     {
       "symbol": "CME",
       "qty": 6039.02,
       "avgPrice": "277.86",
-      "currentPrice": "305.94",
-      "pl": "169490.68"
-    },
-    {
-      "symbol": "CNO",
-      "qty": -54019.34,
-      "avgPrice": "54.06",
-      "currentPrice": "57.19",
-      "pl": "-165904.58"
+      "currentPrice": "305.69",
+      "pl": "167980.93"
     },
     {
       "symbol": "CPRT",
       "qty": 56248.46,
       "avgPrice": "33.26",
       "currentPrice": "30.34",
-      "pl": "-165230.47"
+      "pl": "-165792.96"
     },
     {
       "symbol": "UAL",
       "qty": -13527.78,
       "avgPrice": "113.57",
-      "currentPrice": "101.83",
-      "pl": "159102.81"
+      "currentPrice": "101.73",
+      "pl": "160387.95"
     },
     {
       "symbol": "DCI",
@@ -1709,43 +1702,50 @@
       "symbol": "BYD",
       "qty": -19538.49,
       "avgPrice": "80.79",
-      "currentPrice": "72.80",
-      "pl": "155022.89"
+      "currentPrice": "72.83",
+      "pl": "154436.73"
     },
     {
       "symbol": "CART",
       "qty": -32816.42,
       "avgPrice": "51.78",
-      "currentPrice": "56.45",
-      "pl": "-152657.59"
-    },
-    {
-      "symbol": "ELF",
-      "qty": -27311.9,
-      "avgPrice": "105.95",
-      "currentPrice": "111.51",
-      "pl": "-152366.56"
+      "currentPrice": "56.44",
+      "pl": "-152329.43"
     },
     {
       "symbol": "DXCM",
       "qty": 17939.22,
       "avgPrice": "91.06",
-      "currentPrice": "82.71",
-      "pl": "-148668.44"
+      "currentPrice": "82.61",
+      "pl": "-150372.67"
+    },
+    {
+      "symbol": "CNO",
+      "qty": -54019.34,
+      "avgPrice": "54.06",
+      "currentPrice": "56.90",
+      "pl": "-150238.97"
+    },
+    {
+      "symbol": "ELF",
+      "qty": -27311.9,
+      "avgPrice": "105.95",
+      "currentPrice": "111.39",
+      "pl": "-149089.13"
     },
     {
       "symbol": "JLL",
       "qty": -4943.03,
       "avgPrice": "387.21",
-      "currentPrice": "357.66",
-      "pl": "146553.95"
+      "currentPrice": "357.65",
+      "pl": "146578.67"
     },
     {
       "symbol": "WAL",
       "qty": -58616.42,
       "avgPrice": "78.39",
-      "currentPrice": "75.93",
-      "pl": "144491.70"
+      "currentPrice": "75.90",
+      "pl": "146250.19"
     },
     {
       "symbol": "DUK",
@@ -1758,22 +1758,15 @@
       "symbol": "ED",
       "qty": -14714.73,
       "avgPrice": "107.71",
-      "currentPrice": "117.19",
-      "pl": "-139495.63"
+      "currentPrice": "117.14",
+      "pl": "-138833.46"
     },
     {
       "symbol": "LUV",
       "qty": -88702.87,
       "avgPrice": "40.52",
       "currentPrice": "42.09",
-      "pl": "-138061.30"
-    },
-    {
-      "symbol": "TXT",
-      "qty": -35083.26,
-      "avgPrice": "82.11",
-      "currentPrice": "86.06",
-      "pl": "-137261.39"
+      "pl": "-137174.28"
     },
     {
       "symbol": "SLAB",
@@ -1783,53 +1776,60 @@
       "pl": "-136398.15"
     },
     {
-      "symbol": "PFGC",
-      "qty": -18374.87,
-      "avgPrice": "105.78",
-      "currentPrice": "98.53",
-      "pl": "133018.53"
-    },
-    {
       "symbol": "ACM",
       "qty": 65580.81,
       "avgPrice": "64.65",
-      "currentPrice": "62.64",
-      "pl": "-132485.01"
+      "currentPrice": "62.63",
+      "pl": "-133140.81"
+    },
+    {
+      "symbol": "TXT",
+      "qty": -35083.26,
+      "avgPrice": "82.11",
+      "currentPrice": "85.84",
+      "pl": "-129718.49"
+    },
+    {
+      "symbol": "PFGC",
+      "qty": -18374.87,
+      "avgPrice": "105.78",
+      "currentPrice": "98.75",
+      "pl": "129067.94"
     },
     {
       "symbol": "GWW",
       "qty": -3573.63,
       "avgPrice": "1321.90",
-      "currentPrice": "1358.47",
-      "pl": "-130067.72"
+      "currentPrice": "1357.41",
+      "pl": "-126279.67"
     },
     {
       "symbol": "NDAQ",
       "qty": 16671.01,
       "avgPrice": "98.46",
-      "currentPrice": "106.06",
-      "pl": "127321.44"
-    },
-    {
-      "symbol": "FAST",
-      "qty": -116339.09,
-      "avgPrice": "51.02",
-      "currentPrice": "52.10",
-      "pl": "-125098.39"
+      "currentPrice": "105.96",
+      "pl": "125654.34"
     },
     {
       "symbol": "NKE",
       "qty": -81865.84,
       "avgPrice": "40.32",
-      "currentPrice": "38.80",
-      "pl": "124436.07"
+      "currentPrice": "38.79",
+      "pl": "125254.73"
+    },
+    {
+      "symbol": "FAST",
+      "qty": -116339.09,
+      "avgPrice": "51.02",
+      "currentPrice": "52.08",
+      "pl": "-121608.22"
     },
     {
       "symbol": "TREX",
       "qty": -33656.13,
       "avgPrice": "47.27",
-      "currentPrice": "50.95",
-      "pl": "-124010.97"
+      "currentPrice": "50.85",
+      "pl": "-120813.64"
     },
     {
       "symbol": "BC",
@@ -1839,13 +1839,6 @@
       "pl": "120261.73"
     },
     {
-      "symbol": "HLI",
-      "qty": 12714.13,
-      "avgPrice": "128.27",
-      "currentPrice": "137.37",
-      "pl": "115757.14"
-    },
-    {
       "symbol": "AES",
       "qty": 1063756.08,
       "avgPrice": "14.58",
@@ -1853,18 +1846,18 @@
       "pl": "115221.17"
     },
     {
+      "symbol": "HLI",
+      "qty": 12714.13,
+      "avgPrice": "128.27",
+      "currentPrice": "137.28",
+      "pl": "114676.44"
+    },
+    {
       "symbol": "D",
       "qty": -114424.69,
       "avgPrice": "65.94",
-      "currentPrice": "66.89",
-      "pl": "-112179.42"
-    },
-    {
-      "symbol": "EL",
-      "qty": 22045.21,
-      "avgPrice": "103.78",
-      "currentPrice": "108.83",
-      "pl": "110176.97"
+      "currentPrice": "66.91",
+      "pl": "-113895.79"
     },
     {
       "symbol": "WTRG",
@@ -1874,25 +1867,32 @@
       "pl": "107077.19"
     },
     {
+      "symbol": "EL",
+      "qty": 22045.21,
+      "avgPrice": "103.78",
+      "currentPrice": "108.52",
+      "pl": "103232.73"
+    },
+    {
       "symbol": "VRSN",
       "qty": 5803.31,
       "avgPrice": "290.79",
-      "currentPrice": "308.83",
-      "pl": "104472.48"
+      "currentPrice": "308.56",
+      "pl": "102905.59"
     },
     {
       "symbol": "TAP",
       "qty": 39513.12,
       "avgPrice": "42.49",
       "currentPrice": "39.91",
-      "pl": "-101746.29"
+      "pl": "-101943.86"
     },
     {
       "symbol": "ITT",
       "qty": 15045.08,
       "avgPrice": "204.57",
-      "currentPrice": "197.98",
-      "pl": "-101274.30"
+      "currentPrice": "198.00",
+      "pl": "-100898.18"
     },
     {
       "symbol": "LYV",
@@ -1905,8 +1905,15 @@
       "symbol": "MCD",
       "qty": 8024.46,
       "avgPrice": "270.62",
-      "currentPrice": "259.11",
-      "pl": "-92361.48"
+      "currentPrice": "259.23",
+      "pl": "-91398.55"
+    },
+    {
+      "symbol": "CR",
+      "qty": 10258.03,
+      "avgPrice": "206.08",
+      "currentPrice": "197.70",
+      "pl": "-86270.44"
     },
     {
       "symbol": "GOLF",
@@ -1916,25 +1923,25 @@
       "pl": "-83306.26"
     },
     {
-      "symbol": "GPN",
-      "qty": -51559.97,
-      "avgPrice": "94.03",
-      "currentPrice": "95.53",
-      "pl": "-76208.79"
-    },
-    {
       "symbol": "AJG",
       "qty": -16322.2,
       "avgPrice": "271.27",
-      "currentPrice": "275.81",
-      "pl": "-74021.19"
+      "currentPrice": "276.25",
+      "pl": "-81284.57"
     },
     {
-      "symbol": "CR",
-      "qty": 10258.03,
-      "avgPrice": "206.08",
-      "currentPrice": "199.08",
-      "pl": "-72114.36"
+      "symbol": "GPN",
+      "qty": -51559.97,
+      "avgPrice": "94.03",
+      "currentPrice": "95.54",
+      "pl": "-76724.39"
+    },
+    {
+      "symbol": "DTM",
+      "qty": 171183.92,
+      "avgPrice": "124.86",
+      "currentPrice": "124.41",
+      "pl": "-76191.14"
     },
     {
       "symbol": "SPB",
@@ -1947,8 +1954,8 @@
       "symbol": "VRTX",
       "qty": 5585.25,
       "avgPrice": "547.59",
-      "currentPrice": "559.69",
-      "pl": "66845.24"
+      "currentPrice": "559.85",
+      "pl": "67710.95"
     },
     {
       "symbol": "AWK",
@@ -1968,15 +1975,15 @@
       "symbol": "BALL",
       "qty": 27517.01,
       "avgPrice": "64.22",
-      "currentPrice": "66.23",
-      "pl": "56131.11"
+      "currentPrice": "66.12",
+      "pl": "53104.24"
     },
     {
-      "symbol": "APD",
-      "qty": -5605.32,
-      "avgPrice": "304.25",
-      "currentPrice": "313.44",
-      "pl": "-52908.55"
+      "symbol": "ADSK",
+      "qty": 6574.53,
+      "avgPrice": "254.42",
+      "currentPrice": "246.31",
+      "pl": "-52973.46"
     },
     {
       "symbol": "ATR",
@@ -1986,11 +1993,11 @@
       "pl": "52569.66"
     },
     {
-      "symbol": "ADSK",
-      "qty": 6574.53,
-      "avgPrice": "254.42",
-      "currentPrice": "246.53",
-      "pl": "-51559.94"
+      "symbol": "APD",
+      "qty": -5605.32,
+      "avgPrice": "304.25",
+      "currentPrice": "313.11",
+      "pl": "-51002.74"
     },
     {
       "symbol": "BR",
@@ -2003,29 +2010,29 @@
       "symbol": "ATO",
       "qty": 9420.0,
       "avgPrice": "167.82",
-      "currentPrice": "173.12",
-      "pl": "49879.82"
-    },
-    {
-      "symbol": "PWR",
-      "qty": -15564.24,
-      "avgPrice": "616.67",
-      "currentPrice": "613.62",
-      "pl": "47168.73"
-    },
-    {
-      "symbol": "KHC",
-      "qty": -65740.27,
-      "avgPrice": "25.27",
-      "currentPrice": "24.55",
-      "pl": "47004.30"
+      "currentPrice": "173.11",
+      "pl": "49785.62"
     },
     {
       "symbol": "DHI",
       "qty": 12704.88,
       "avgPrice": "148.97",
-      "currentPrice": "145.34",
-      "pl": "-45472.88"
+      "currentPrice": "145.22",
+      "pl": "-47060.99"
+    },
+    {
+      "symbol": "PWR",
+      "qty": -15564.24,
+      "avgPrice": "616.67",
+      "currentPrice": "613.67",
+      "pl": "46390.51"
+    },
+    {
+      "symbol": "KHC",
+      "qty": -65740.27,
+      "avgPrice": "25.27",
+      "currentPrice": "24.57",
+      "pl": "46346.89"
     },
     {
       "symbol": "RAMP",
@@ -2035,67 +2042,46 @@
       "pl": "-43314.84"
     },
     {
-      "symbol": "DTM",
-      "qty": 171183.92,
-      "avgPrice": "124.86",
-      "currentPrice": "124.61",
-      "pl": "-41954.35"
-    },
-    {
-      "symbol": "APH",
-      "qty": -132317.02,
-      "avgPrice": "77.65",
-      "currentPrice": "77.97",
-      "pl": "-41089.69"
-    },
-    {
-      "symbol": "MHK",
-      "qty": -12063.75,
-      "avgPrice": "134.07",
-      "currentPrice": "137.65",
-      "pl": "-39828.77"
-    },
-    {
-      "symbol": "STZ",
-      "qty": 13444.51,
-      "avgPrice": "136.51",
-      "currentPrice": "134.72",
-      "pl": "-38967.28"
-    },
-    {
       "symbol": "CDNS",
       "qty": 5079.06,
       "avgPrice": "315.92",
-      "currentPrice": "323.28",
-      "pl": "38762.91"
+      "currentPrice": "323.36",
+      "pl": "39143.84"
     },
     {
       "symbol": "BLK",
       "qty": 1398.71,
       "avgPrice": "1166.62",
-      "currentPrice": "1139.01",
-      "pl": "-38507.47"
+      "currentPrice": "1138.87",
+      "pl": "-38710.28"
+    },
+    {
+      "symbol": "STZ",
+      "qty": 13444.51,
+      "avgPrice": "136.51",
+      "currentPrice": "134.75",
+      "pl": "-38631.17"
     },
     {
       "symbol": "EW",
       "qty": 17714.51,
       "avgPrice": "90.50",
-      "currentPrice": "92.56",
-      "pl": "37255.78"
+      "currentPrice": "92.58",
+      "pl": "37698.64"
     },
     {
-      "symbol": "DIS",
-      "qty": -131306.93,
-      "avgPrice": "110.61",
-      "currentPrice": "110.89",
-      "pl": "-36765.94"
+      "symbol": "ORLY",
+      "qty": -23776.77,
+      "avgPrice": "90.68",
+      "currentPrice": "89.25",
+      "pl": "34609.29"
     },
     {
       "symbol": "DOV",
       "qty": 7931.25,
       "avgPrice": "203.08",
-      "currentPrice": "207.34",
-      "pl": "33787.13"
+      "currentPrice": "207.38",
+      "pl": "34104.38"
     },
     {
       "symbol": "VAC",
@@ -2105,32 +2091,39 @@
       "pl": "-33753.90"
     },
     {
-      "symbol": "GM",
-      "qty": -52525.87,
-      "avgPrice": "86.80",
-      "currentPrice": "87.42",
-      "pl": "-33629.79"
-    },
-    {
-      "symbol": "ORLY",
-      "qty": -23776.77,
-      "avgPrice": "90.68",
-      "currentPrice": "89.29",
-      "pl": "33539.33"
+      "symbol": "MHK",
+      "qty": -12063.75,
+      "avgPrice": "134.07",
+      "currentPrice": "137.12",
+      "pl": "-33434.98"
     },
     {
       "symbol": "OLN",
       "qty": -88435.0,
       "avgPrice": "17.37",
-      "currentPrice": "17.67",
-      "pl": "-33230.07"
+      "currentPrice": "17.64",
+      "pl": "-30577.02"
+    },
+    {
+      "symbol": "APH",
+      "qty": -132317.02,
+      "avgPrice": "77.65",
+      "currentPrice": "77.88",
+      "pl": "-29181.16"
     },
     {
       "symbol": "VST",
       "qty": -25435.2,
       "avgPrice": "135.44",
-      "currentPrice": "136.45",
-      "pl": "-25445.14"
+      "currentPrice": "136.51",
+      "pl": "-26971.25"
+    },
+    {
+      "symbol": "GM",
+      "qty": -52525.87,
+      "avgPrice": "86.80",
+      "currentPrice": "87.28",
+      "pl": "-26538.80"
     },
     {
       "symbol": "RLI",
@@ -2140,32 +2133,46 @@
       "pl": "-25095.03"
     },
     {
-      "symbol": "LW",
-      "qty": -40799.24,
-      "avgPrice": "54.80",
-      "currentPrice": "54.23",
-      "pl": "22830.24"
-    },
-    {
-      "symbol": "LEN",
-      "qty": 19278.97,
-      "avgPrice": "87.59",
-      "currentPrice": "86.43",
-      "pl": "-22758.80"
-    },
-    {
-      "symbol": "WDAY",
-      "qty": 10688.57,
-      "avgPrice": "199.15",
-      "currentPrice": "197.00",
-      "pl": "-22653.72"
+      "symbol": "DIS",
+      "qty": -131306.93,
+      "avgPrice": "110.61",
+      "currentPrice": "110.80",
+      "pl": "-24948.32"
     },
     {
       "symbol": "JNJ",
       "qty": 5954.84,
       "avgPrice": "271.70",
-      "currentPrice": "275.31",
-      "pl": "21732.15"
+      "currentPrice": "275.72",
+      "pl": "24173.63"
+    },
+    {
+      "symbol": "LEN",
+      "qty": 19278.97,
+      "avgPrice": "87.59",
+      "currentPrice": "86.39",
+      "pl": "-23626.35"
+    },
+    {
+      "symbol": "WDAY",
+      "qty": 10688.57,
+      "avgPrice": "199.15",
+      "currentPrice": "196.96",
+      "pl": "-23081.26"
+    },
+    {
+      "symbol": "LW",
+      "qty": -40799.24,
+      "avgPrice": "54.80",
+      "currentPrice": "54.23",
+      "pl": "22422.24"
+    },
+    {
+      "symbol": "WCC",
+      "qty": -10163.33,
+      "avgPrice": "336.52",
+      "currentPrice": "338.67",
+      "pl": "-20825.24"
     },
     {
       "symbol": "POST",
@@ -2182,39 +2189,25 @@
       "pl": "17904.20"
     },
     {
-      "symbol": "WCC",
-      "qty": -10163.33,
-      "avgPrice": "336.52",
-      "currentPrice": "338.15",
-      "pl": "-15591.12"
+      "symbol": "EVR",
+      "qty": -5392.19,
+      "avgPrice": "289.23",
+      "currentPrice": "286.38",
+      "pl": "16049.04"
     },
     {
       "symbol": "BF/B",
       "qty": 64559.46,
       "avgPrice": "28.51",
-      "currentPrice": "28.73",
-      "pl": "15182.29"
-    },
-    {
-      "symbol": "IEX",
-      "qty": 9403.97,
-      "avgPrice": "232.95",
-      "currentPrice": "234.57",
-      "pl": "14730.99"
+      "currentPrice": "28.74",
+      "pl": "15505.09"
     },
     {
       "symbol": "ALL",
       "qty": 6175.33,
       "avgPrice": "259.11",
-      "currentPrice": "261.36",
-      "pl": "13644.40"
-    },
-    {
-      "symbol": "EVR",
-      "qty": -5392.19,
-      "avgPrice": "289.23",
-      "currentPrice": "286.83",
-      "pl": "13622.56"
+      "currentPrice": "261.29",
+      "pl": "13212.13"
     },
     {
       "symbol": "CRNX",
@@ -2224,39 +2217,60 @@
       "pl": "-13068.20"
     },
     {
+      "symbol": "IEX",
+      "qty": 9403.97,
+      "avgPrice": "232.95",
+      "currentPrice": "234.32",
+      "pl": "12427.02"
+    },
+    {
       "symbol": "ITW",
       "qty": 5678.71,
       "avgPrice": "282.12",
-      "currentPrice": "280.00",
-      "pl": "-12181.27"
-    },
-    {
-      "symbol": "MLM",
-      "qty": 3076.78,
-      "avgPrice": "532.25",
-      "currentPrice": "535.52",
-      "pl": "9785.26"
-    },
-    {
-      "symbol": "MRK",
-      "qty": 18147.02,
-      "avgPrice": "149.78",
-      "currentPrice": "150.29",
-      "pl": "9533.60"
+      "currentPrice": "280.07",
+      "pl": "-11812.15"
     },
     {
       "symbol": "LPX",
       "qty": -31538.93,
       "avgPrice": "72.62",
-      "currentPrice": "72.45",
-      "pl": "6296.97"
+      "currentPrice": "72.33",
+      "pl": "9923.94"
+    },
+    {
+      "symbol": "MLM",
+      "qty": 3076.78,
+      "avgPrice": "532.25",
+      "currentPrice": "535.14",
+      "pl": "8631.47"
+    },
+    {
+      "symbol": "MRK",
+      "qty": 18147.02,
+      "avgPrice": "149.78",
+      "currentPrice": "150.22",
+      "pl": "8172.58"
     },
     {
       "symbol": "RMD",
       "qty": 7737.95,
       "avgPrice": "232.45",
-      "currentPrice": "231.45",
-      "pl": "-5319.12"
+      "currentPrice": "231.36",
+      "pl": "-6015.53"
+    },
+    {
+      "symbol": "AME",
+      "qty": 6491.39,
+      "avgPrice": "241.98",
+      "currentPrice": "241.21",
+      "pl": "-4935.98"
+    },
+    {
+      "symbol": "MTCH",
+      "qty": 41716.28,
+      "avgPrice": "41.52",
+      "currentPrice": "41.41",
+      "pl": "-4786.32"
     },
     {
       "symbol": "CBU",
@@ -2264,20 +2278,6 @@
       "avgPrice": "62.53",
       "currentPrice": "62.32",
       "pl": "-4462.09"
-    },
-    {
-      "symbol": "MTCH",
-      "qty": 41716.28,
-      "avgPrice": "41.52",
-      "currentPrice": "41.45",
-      "pl": "-3117.67"
-    },
-    {
-      "symbol": "AME",
-      "qty": 6491.39,
-      "avgPrice": "241.98",
-      "currentPrice": "241.50",
-      "pl": "-3053.48"
     },
     {
       "symbol": "UHS",
@@ -8145,7 +8145,7 @@
     },
     {
       "time": "2026-10-30",
-      "value": 1516786303.73
+      "value": 1516367350.99
     }
   ],
   "order": 0,

@@ -24,7 +24,7 @@ from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 ROOT = Path(__file__).resolve().parents[1]
-SNAPSHOT = ROOT / "public" / "portfolios"
+SNAPSHOT = ROOT / "Public" / "portfolios"
 REFRESH = ROOT / "live" / "refresh.py"
 ADMIN_TOKEN = os.environ.get("LIVE_ADMIN_TOKEN", "")
 REFRESH_SECONDS = int(os.environ.get("LIVE_REFRESH_SECONDS", "0"))

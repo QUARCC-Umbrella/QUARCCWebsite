@@ -30,7 +30,7 @@ LIVE = Path(__file__).resolve().parent
 BOOK = LIVE / "book.json"
 ANCHOR = LIVE / "nav_anchor.csv"
 ARCHIVE = LIVE / "books"
-SNAPSHOT = ROOT / "public" / "portfolios"
+SNAPSHOT = ROOT / "Public" / "portfolios"
 
 sys.path.insert(0, str(LIVE))
 from refresh import credentials, fetch_bars  # noqa: E402

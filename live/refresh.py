@@ -6,7 +6,7 @@ to market with Alpaca SIP daily bars plus an optional IEX intraday snapshot.
 The audited NAV through 2026-09-28 is the anchor; everything after it is live.
 
 Usage:
-    python live/refresh.py                 # update public/portfolios + content JSON
+    python live/refresh.py                 # update Public/portfolios + content JSON
     python live/refresh.py --no-intraday   # completed daily closes only
     python live/refresh.py --dry-run       # print the result, write nothing
 """
@@ -28,7 +28,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE = Path(__file__).resolve().parent
-PUBLIC_JSON = ROOT / "public" / "portfolios"
+PUBLIC_JSON = ROOT / "Public" / "portfolios"
 CONTENT_JSON = ROOT / "src" / "content" / "portfolios" / "quarcc-v4b.json"
 CACHE = LIVE / "cache" / "bars.parquet"
 LATEST_CSV = LIVE / "latest_holdings.csv"

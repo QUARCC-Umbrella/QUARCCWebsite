@@ -7,7 +7,7 @@ COPY live/requirements.txt live/requirements.txt
 RUN pip install --no-cache-dir -r live/requirements.txt
 
 COPY live live
-COPY public public
+COPY Public Public
 COPY src/content/portfolios src/content/portfolios
 
 EXPOSE 8787
