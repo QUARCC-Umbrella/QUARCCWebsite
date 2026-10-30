@@ -3,7 +3,7 @@ import "./PortfolioDashboard.css";
 import PortfolioChart from "./PortfolioChart";
 
 const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
-  const { name, strategy, status, stats, holdings, chartData, summary } = portfolio;
+  const { name, strategy, status, stats, holdings, chartData, summary, asOf } = portfolio;
   const isLive = status === "Active";
 
   // Generate sample chart data if none provided (for demo)
@@ -47,9 +47,13 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
   const formatPL = (pl) => {
     const num = parseFloat(pl);
     const isPositive = num >= 0;
+    const formatted = Math.abs(num).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
     return {
       color: isPositive ? "#32cd32" : "#ff4444",
-      display: `${isPositive ? "+" : ""}$${num.toFixed(2)}`,
+      display: `${isPositive ? "+" : "-"}$${formatted}`,
     };
   };
 
@@ -61,6 +65,20 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
             <h3 className="portfolio-title">{name}</h3>
             <p className="portfolio-strategy">{strategy}</p>
             <p className="portfolio-summary">{summary}</p>
+            {asOf ? (
+              <p className="portfolio-as-of">
+                Live marks:{" "}
+                {new Date(asOf).toLocaleString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "UTC",
+                  timeZoneName: "short",
+                })}
+              </p>
+            ) : null}
           </div>
           <span className={`portfolio-status ${isLive ? "" : "inactive"}`}>
             ● {status.toUpperCase()}
@@ -115,7 +133,11 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
                 return (
                   <tr key={index}>
                     <td>{pos.symbol}</td>
-                    <td>{pos.qty}</td>
+                    <td>
+                      {Number(pos.qty).toLocaleString("en-US", {
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
                     <td>${pos.avgPrice}</td>
                     <td>${pos.currentPrice}</td>
                     <td style={{ color: plInfo.color, fontWeight: "bold" }}>

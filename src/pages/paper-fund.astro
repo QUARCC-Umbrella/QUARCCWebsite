@@ -1,15 +1,115 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ComingSoonPanel from "../components/ComingSoonPanel.astro";
+import PaperFundClient from "../components/PaperFundClient.jsx";
+import { getPortfolios, toContentSlug } from "../lib/content";
+
+const entries = await getPortfolios();
+const portfolios = entries.map((entry) => ({
+  id: toContentSlug(entry.id),
+  slug: toContentSlug(entry.id),
+  ...entry.data,
+}));
+const live = portfolios.filter((portfolio) => portfolio.slug === "quarcc-v4b");
 ---
 
 <BaseLayout
   title="Paper Fund - QUARCC"
-  description="Explore QUARCC's paper portfolios and live trading strategies managed by our research teams."
+  description="QUARCC's live paper portfolios and systematic strategies, marked to market."
 >
-  <ComingSoonPanel
-    title="Paper Fund"
-    description="The public portfolio experience is being prepared and will be released soon."
-    note="The current implementation is being kept internal while we finish the presentation and rollout."
-  />
+  <div class="paper-fund-page">
+    <header class="paper-fund-head">
+      <p class="paper-fund-kicker">Research · Live marks</p>
+      <h1>Paper Fund</h1>
+      <p class="paper-fund-lede">
+        Systematic portfolios built by QUARCC analysts and marked against live US equity
+        prices. The v4b book is our market-neutral flagship: roughly 320 names, dollar- and
+        beta-neutral, with a 200% gross cap.
+      </p>
+    </header>
+
+    {live.length > 0 ? (
+      <section class="paper-fund-section">
+        <div class="paper-fund-section-head">
+          <h2>Live book</h2>
+          <span class="paper-fund-live-pill">● Live feed</span>
+        </div>
+        <PaperFundClient client:load portfolios={live} />
+      </section>
+    ) : null}
+
+    <p class="paper-fund-disclaimer">
+      Paper portfolio, marked with delayed market data. Research only; not investment advice.
+      More QUARCC books are in research.
+    </p>
+  </div>
 </BaseLayout>
+
+<style>
+  .paper-fund-page {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .paper-fund-head {
+    margin: 0 0 2rem;
+  }
+
+  .paper-fund-kicker {
+    margin: 0 0 0.6rem;
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .paper-fund-head h1 {
+    margin: 0 0 0.8rem;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .paper-fund-lede {
+    max-width: 46rem;
+    margin: 0;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .paper-fund-section {
+    margin: 2.2rem 0;
+  }
+
+  .paper-fund-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.9rem;
+  }
+
+  .paper-fund-section-head h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .paper-fund-live-pill {
+    color: var(--color-success);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .paper-fund-muted {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+  }
+
+  .paper-fund-disclaimer {
+    margin: 1.6rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    opacity: 0.7;
+  }
+</style>

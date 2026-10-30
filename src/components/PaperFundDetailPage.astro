@@ -13,6 +13,20 @@ const { portfolio } = Astro.props;
       <div>
         <p class="paper-fund-detail-strategy">{portfolio.strategy}</p>
         <p class="paper-fund-detail-summary">{portfolio.summary}</p>
+        {portfolio.asOf ? (
+          <p class="paper-fund-detail-asof">
+            Live marks:{" "}
+            {new Date(portfolio.asOf).toLocaleString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              timeZone: "UTC",
+              timeZoneName: "short",
+            })}
+          </p>
+        ) : null}
       </div>
       <span class:list={["paper-fund-detail-status", portfolio.status !== "Active" && "inactive"]}>
         {portfolio.status}
@@ -48,6 +62,14 @@ const { portfolio } = Astro.props;
     color: var(--color-primary);
     text-transform: uppercase;
     letter-spacing: 0.08em;
+  }
+
+  .paper-fund-detail-asof {
+    margin-top: 0.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    opacity: 0.8;
   }
 
   .paper-fund-detail-summary {

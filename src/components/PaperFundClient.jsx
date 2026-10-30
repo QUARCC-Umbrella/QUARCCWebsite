@@ -35,6 +35,7 @@ function mergePortfolios(staticPortfolios, livePortfolios) {
       strategy: live.strategy || portfolio.strategy,
       status: live.status || portfolio.status,
       summary: live.summary || portfolio.summary,
+      asOf: live.asOf || portfolio.asOf,
       stats: {
         ...portfolio.stats,
         ...(live.stats || {}),
@@ -90,8 +91,12 @@ export default function PaperFundClient({ portfolios = [], showDashboardHeader =
     }
 
     loadPortfolios();
+    const timer = window.setInterval(loadPortfolios, 60_000);
 
-    return () => controller.abort();
+    return () => {
+      window.clearInterval(timer);
+      controller.abort();
+    };
   }, []);
 
   const mergedPortfolios = useMemo(

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import ComingSoonPanel from "../../components/ComingSoonPanel.astro";
+import PaperFundDetailPage from "../../components/PaperFundDetailPage.astro";
 import { getPortfolios, toContentSlug } from "../../lib/content";
 
 export async function getStaticPaths() {
@@ -18,16 +18,11 @@ export async function getStaticPaths() {
   }));
 }
 
-const { portfolio } = Astro.props;
+const { portfolio } = Astro.props as unknown as {
+  portfolio: Record<string, unknown> & { name: string; summary: string };
+};
 ---
 
-<BaseLayout
-  title={`${portfolio.name} - Paper Fund - QUARCC`}
-  description={portfolio.summary}
->
-  <ComingSoonPanel
-    title={`${portfolio.name}`}
-    description="This portfolio page is being prepared for public release."
-    note="The underlying implementation is still in the codebase while the section remains in coming-soon mode."
-  />
+<BaseLayout title={`${portfolio.name} - Paper Fund - QUARCC`} description={portfolio.summary}>
+  <PaperFundDetailPage portfolio={portfolio} />
 </BaseLayout>
