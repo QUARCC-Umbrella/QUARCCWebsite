@@ -499,6 +499,10 @@ export default function FundFactsheet({ portfolio }) {
           sub={`vs S&P 500${top.alphaT ? ` · t-stat ${num(top.alphaT, 2)}` : ""}`}
         />
       </div>
+      <p className="fund-note fund-metrics-note">
+        Live calculation from daily NAV. The printed fact sheet samples monthly, so Sortino,
+        Ulcer and volatility can differ slightly.
+      </p>
 
       <div className="fund-grid">
         <main className="fund-main">

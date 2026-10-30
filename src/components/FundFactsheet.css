@@ -552,3 +552,7 @@
         grid-template-columns: 1fr;
     }
 }
+
+.fund-metrics-note {
+    margin: -1.1rem 0 1.3rem;
+}
