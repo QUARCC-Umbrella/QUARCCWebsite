@@ -88,7 +88,14 @@ def main() -> int:
     key, secret = credentials()
 
     start = (when - timedelta(days=10)).strftime("%Y-%m-%d")
-    bars = fetch_bars(frame.ticker.tolist(), start, when.strftime("%Y-%m-%d"), key, secret)
+    try:
+        bars = fetch_bars(frame.ticker.tolist(), start, when.strftime("%Y-%m-%d"), key, secret)
+    except RuntimeError as exc:
+        if "403" not in str(exc):
+            raise
+        # Recent SIP is blocked during the session; use the last completed close.
+        fallback = (when - timedelta(days=1)).strftime("%Y-%m-%d")
+        bars = fetch_bars(frame.ticker.tolist(), start, fallback, key, secret)
     bars["date"] = pd.to_datetime(bars.date)
     entry = bars.sort_values("date").groupby("ticker")["close"].last()
 
