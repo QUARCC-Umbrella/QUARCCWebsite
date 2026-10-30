@@ -13,6 +13,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import os
 import sys
@@ -26,12 +27,18 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import factsheet
+
 ROOT = Path(__file__).resolve().parents[1]
 LIVE = Path(__file__).resolve().parent
 PUBLIC_JSON = ROOT / "Public" / "portfolios"
 CONTENT_JSON = ROOT / "src" / "content" / "portfolios" / "quarcc-v4b.json"
 CACHE = LIVE / "cache" / "bars.parquet"
+SPY_CACHE = LIVE / "cache" / "spy.parquet"
+TB3MS = LIVE / "tb3ms.csv"
 LATEST_CSV = LIVE / "latest_holdings.csv"
+SPY_START = "2021-01-04"
+VIX_URL = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
 
 DATA_BASE = "https://data.alpaca.markets"
 TRADING_BASE = "https://paper-api.alpaca.markets"
@@ -104,6 +111,20 @@ def fetch_bars(symbols: list[str], start: str, end: str, key: str, secret: str, 
     frame = pd.DataFrame(rows, columns=["ticker", "date", "close"])
     frame["date"] = pd.to_datetime(frame["date"])
     return frame.drop_duplicates(["ticker", "date"])
+
+
+def fetch_vix() -> pd.DataFrame | None:
+    """Cboe's free VIX history, used for the fact-sheet VIX-range state."""
+    try:
+        req = urllib.request.Request(VIX_URL, headers={"User-Agent": "quarcc-v4b-live/1.0"})
+        with urllib.request.urlopen(req, timeout=30) as response:
+            frame = pd.read_csv(io.StringIO(response.read().decode("utf-8")))
+        frame["date"] = pd.to_datetime(frame["DATE"], format="%m/%d/%Y")
+        frame = frame[frame["date"] >= "2020-01-01"].set_index("date").sort_index()
+        return frame.rename(columns={"HIGH": "high", "LOW": "low", "CLOSE": "close"})[["high", "low", "close"]]
+    except Exception as exc:  # noqa: BLE001
+        print(f"[warn] VIX history unavailable: {exc}", file=sys.stderr)
+        return None
 
 
 def fetch_snapshots(symbols: list[str], key: str, secret: str) -> dict:
@@ -182,6 +203,21 @@ def main() -> int:
         CACHE.parent.mkdir(parents=True, exist_ok=True)
         bars.to_parquet(CACHE, index=False)
 
+    # Full SPY history is needed for the fact-sheet benchmark and risk stats.
+    if args.offline:
+        spy_bars = pd.read_parquet(SPY_CACHE) if SPY_CACHE.exists() else bars[bars.ticker == "SPY"]
+    else:
+        try:
+            spy_bars = fetch_bars(["SPY"], SPY_START, today.isoformat(), key, secret)
+        except RuntimeError as exc:
+            if "403" not in str(exc):
+                raise
+            spy_bars = fetch_bars(
+                ["SPY"], SPY_START, (today - timedelta(days=1)).isoformat(), key, secret
+            )
+        SPY_CACHE.parent.mkdir(parents=True, exist_ok=True)
+        spy_bars.to_parquet(SPY_CACHE, index=False)
+
     prices = price_matrix(bars, tickers)
     # A handful of old tickers (ASGN, MMC, WYND) have no live bars after the
     # corporate-action snapshot. Hold them flat at their entry price rather than
@@ -215,7 +251,11 @@ def main() -> int:
     intraday_nav = None
     intraday_ret = None
     as_of = pd.Timestamp(all_nav.index[-1]).to_pydatetime().replace(tzinfo=timezone.utc)
-    current_price = prices.ffill().iloc[-1]
+    if len(prices):
+        current_price = prices.ffill().iloc[-1].reindex(usable).fillna(entry_price)
+    else:
+        # A book published today may have no bars yet; mark it at entry.
+        current_price = entry_price.reindex(usable)
     if not args.no_intraday and not args.offline:
         snapshots = fetch_snapshots(usable + ["SPY"], key, secret)
         live_prices = {}
@@ -245,15 +285,26 @@ def main() -> int:
             as_of = datetime.fromisoformat(max(stamps).replace("Z", "+00:00"))
             all_nav.loc[pd.Timestamp(today)] = nav_now
 
-    day_ret = intraday_ret if intraday_ret is not None else float(all_nav.pct_change().iloc[-1])
+    day_ret = (
+        intraday_ret
+        if intraday_ret is not None
+        else float(all_nav.pct_change().iloc[-1])
+        if len(all_nav) > 1
+        else 0.0
+    )
     daily = all_nav.pct_change().dropna()
     excess = daily - RF / 252.0
-    ann_vol = float(daily.std() * np.sqrt(252))
+    ann_vol = float(daily.std() * np.sqrt(252)) if len(daily) > 1 else 0.0
     peak = all_nav.cummax()
-    max_dd = float((all_nav / peak - 1.0).min())
+    max_dd = float((all_nav / peak - 1.0).min()) if len(all_nav) else 0.0
 
-    spy = bars[bars.ticker == "SPY"].set_index("date")["close"].reindex(all_nav.index).ffill().pct_change().fillna(0.0)
-    beta = float(np.cov(daily, spy.loc[daily.index])[0, 1] / np.var(spy.loc[daily.index])) if len(daily) > 2 else 0.0
+    spy = spy_bars.set_index("date")["close"].reindex(all_nav.index).ffill().pct_change().fillna(0.0)
+    spy_window = spy.loc[daily.index]
+    beta = (
+        float(np.cov(daily, spy_window)[0, 1] / np.var(spy_window))
+        if len(daily) > 2 and float(spy_window.std()) > 0
+        else 0.0
+    )
 
     entry_pos = weight[usable] * nav_entry * scale
     holdings = []
@@ -272,6 +323,7 @@ def main() -> int:
             "pl": f"{pl:.2f}",
         })
         book_rows.append({
+            "ticker": ticker,
             "symbol": ticker.replace(".", "/"),
             "side": "long" if pos[ticker] > 0 else "short",
             "current_weight": float(pos[ticker] / nav),
@@ -300,24 +352,40 @@ def main() -> int:
         for k, v in sorted(exposure.items())
     }
 
+    positions = pd.DataFrame(book_rows).rename(columns={"market_value_usd": "market_value"})
+    meta = {p["ticker"]: p for p in book["positions"]}
+    positions["sector"] = positions.ticker.map(lambda t: meta.get(t, {}).get("sector", "Other"))
+    positions["name"] = positions.ticker.map(lambda t: meta.get(t, {}).get("name"))
+    positions["market_equity_musd"] = positions.ticker.map(
+        lambda t: float(meta.get(t, {}).get("market_equity_musd") or 0.0)
+    )
+    spy_close = spy_bars.set_index("date")["close"].sort_index()
+    tb3ms = pd.read_csv(TB3MS, parse_dates=["observation_date"]).set_index("observation_date")["TB3MS"]
+    vix = None if args.offline else fetch_vix()
+    fact = factsheet.build(all_nav, spy_close, tb3ms, positions, vix=vix)
+
+    sharpe = fact["top"]["sharpe"]
+    beta_m = fact["top"]["betaMonthly"]
     payload = {
         "slug": "quarcc-v4b",
-        "name": "QUARCC v4b",
-        "strategy": "Market-Neutral Equity",
+        "name": "QUARCC Market Neutral US Quant Fund",
+        "strategy": "US equity market-neutral long/short",
         "status": "Active",
         "summary": (
-            "Systematic US equity market-neutral book from the v4b E-LASSO pipeline. "
-            f"Live marks on the {entry:%d %b %Y} formation: {len(usable)} names, "
-            f"dollar- and beta-neutral, {float(pos.abs().sum()) / nav:.0%} gross."
+            "US equity market-neutral long/short fund built from machine-learning return "
+            "forecasts. Out-of-sample results, January 2021 – present. Benchmark: 3-month "
+            f"US T-bills + 4% a year. Live marks on the {entry:%d %b %Y} formation: "
+            f"{len(usable)} names, {float(pos.abs().sum()) / nav:.0%} gross."
         ),
         "asOf": as_of.isoformat(),
         "formation": entry.strftime("%Y-%m-%d"),
         "stats": {
             "equity": f"${nav:,.0f}",
             "dayChange": f"{day_ret * 100:+.2f}%",
-            "sharpe": "0.91",
-            "beta": "0.00",
+            "sharpe": f"{sharpe:.2f}" if sharpe is not None else "—",
+            "beta": f"{beta_m:+.2f}" if beta_m is not None else "—",
         },
+        "factsheet": fact,
         "exposures": {
             "gross": round(float(pos.abs().sum() / nav), 4),
             "net": round(float(pos.sum() / nav), 4),
@@ -365,6 +433,7 @@ def main() -> int:
             "stats",
             "exposures",
             "performance",
+            "factsheet",
             "holdings",
             "chartData",
         )

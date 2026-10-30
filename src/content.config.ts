@@ -65,6 +65,7 @@ const portfolios = defineCollection({
     asOf: z.string().optional(),
     exposures: z.any().optional(),
     performance: z.any().optional(),
+    factsheet: z.any().optional(),
     stats: z.object({
       equity: z.string(),
       dayChange: z.string(),

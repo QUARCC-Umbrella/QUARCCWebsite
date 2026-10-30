@@ -45,12 +45,16 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
     return data;
   }, [chartData, stats.equity]);
 
-  // Sort holdings by P/L (absolute value) and take top 5
+  // Show the five largest positions by market value.
   const topHoldings = useMemo(() => {
     if (!holdings || holdings.length === 0) return [];
 
     return [...holdings]
-      .sort((a, b) => Math.abs(parseFloat(b.pl)) - Math.abs(parseFloat(a.pl)))
+      .sort(
+        (a, b) =>
+          Math.abs(Number(b.qty) * parseFloat(b.currentPrice)) -
+          Math.abs(Number(a.qty) * parseFloat(a.currentPrice)),
+      )
       .slice(0, 5);
   }, [holdings]);
 

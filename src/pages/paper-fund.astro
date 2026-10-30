@@ -18,22 +18,25 @@ const live = portfolios.filter((portfolio) => portfolio.slug === "quarcc-v4b");
 >
   <div class="paper-fund-page">
     <header class="paper-fund-head">
-      <p class="paper-fund-kicker">Research · Live marks</p>
-      <h1>Paper Fund</h1>
+      <p class="paper-fund-kicker">QUARCC · Live paper fund</p>
+      <h1>Market Neutral US Quant Fund</h1>
       <p class="paper-fund-lede">
-        Systematic portfolios built by QUARCC analysts and marked against live US equity
-        prices. The v4b book is our market-neutral flagship: roughly 320 names, dollar- and
-        beta-neutral, with a 200% gross cap.
+        A systematic US equity market-neutral long/short fund built from machine-learning
+        return forecasts. Roughly 320 names, dollar- and beta-neutral, with a 200% gross cap.
+        Marks are live against US equity prices.
       </p>
     </header>
 
     {live.length > 0 ? (
       <section class="paper-fund-section">
         <div class="paper-fund-section-head">
-          <h2>Live book</h2>
+          <h2>Live fund</h2>
           <span class="paper-fund-live-pill">● Live feed</span>
         </div>
         <PaperFundClient client:load portfolios={live} />
+        <a class="paper-fund-open" href="/paper-fund/quarcc-v4b">
+          Open the full fund fact sheet →
+        </a>
       </section>
     ) : null}
 
@@ -103,6 +106,13 @@ const live = portfolios.filter((portfolio) => portfolio.slug === "quarcc-v4b");
   .paper-fund-muted {
     color: var(--color-text-muted);
     font-size: 0.85rem;
+  }
+
+  .paper-fund-open {
+    display: inline-block;
+    margin-top: 0.9rem;
+    color: var(--color-primary);
+    font-size: 0.82rem;
   }
 
   .paper-fund-disclaimer {

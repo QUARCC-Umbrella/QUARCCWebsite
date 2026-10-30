@@ -33,6 +33,16 @@ without a separate server. The FastAPI service is for intraday refreshes.
 Each run also writes `live/latest_holdings.csv` with current weights, prices,
 share counts and unrealised P&L — the file to hand to an execution system.
 
+## Fact sheet
+
+`/paper-fund/quarcc-v4b` renders the full fund fact sheet. `live/factsheet.py`
+computes the top strip, growth chart, capture, rolling Ulcer, performance and
+calendar tables, top holdings, key statistics, market-state buckets and sector
+exposure from the daily NAV, SPY total return, `live/tb3ms.csv` and Cboe's VIX
+history. `live/names.csv` supplies the company names. The hero chart uses the
+daily series, so it matches the old dashboard chart rather than the monthly
+PDF sampling.
+
 ## API
 
 ```bash
