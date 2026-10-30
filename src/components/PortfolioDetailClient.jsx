@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import FundFactsheet from "./FundFactsheet.jsx";
+import PortfolioDetail from "./PortfolioDetail.jsx";
 
-export default function FundFactsheetClient({ portfolio }) {
+export default function PortfolioDetailClient({ portfolio }) {
   const [live, setLive] = useState(portfolio);
 
   useEffect(() => {
@@ -40,5 +40,5 @@ export default function FundFactsheetClient({ portfolio }) {
     };
   }, [portfolio.id, portfolio.name, portfolio.slug]);
 
-  return <FundFactsheet portfolio={live} />;
+  return <PortfolioDetail portfolio={live} />;
 }

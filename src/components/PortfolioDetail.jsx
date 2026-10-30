@@ -1,4 +1,5 @@
-import "./FundFactsheet.css";
+import "./PortfolioDashboard.css";
+import "./PortfolioDetail.css";
 
 const pct = (value, digits = 2) =>
   value === null || value === undefined || Number.isNaN(value)
@@ -93,16 +94,6 @@ function LineChart({ series, height = 220, yFormat = (v) => v.toFixed(2), area =
           </span>
         ))}
       </div>
-    </div>
-  );
-}
-
-function Metric({ label, value, sub }) {
-  return (
-    <div className="fund-metric">
-      <span className="fund-metric-label">{label}</span>
-      <strong>{value}</strong>
-      <span className="fund-metric-sub">{sub}</span>
     </div>
   );
 }
@@ -421,7 +412,26 @@ function Capture({ capture }) {
   );
 }
 
-export default function FundFactsheet({ portfolio }) {
+function DetailMetric({ label, value, sub, tone }) {
+  return (
+    <div className="stat-item">
+      <span className="stat-label">{label}</span>
+      <span className="stat-value" style={tone ? { color: tone } : undefined}>{value}</span>
+      {sub ? <span className="stat-sub">{sub}</span> : null}
+    </div>
+  );
+}
+
+function plText(value) {
+  const number = Number.parseFloat(value);
+  if (!Number.isFinite(number)) return "—";
+  return `${number >= 0 ? "+" : "-"}$${Math.abs(number).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+export default function PortfolioDetail({ portfolio }) {
   const facts = portfolio.factsheet;
   if (!facts) {
     return <p className="fund-empty">Fact-sheet data is not available yet.</p>;
@@ -429,145 +439,194 @@ export default function FundFactsheet({ portfolio }) {
   const top = facts.top;
   const live = portfolio.stats;
   const growth = facts.series.daily || facts.series.growth;
+  const positions = [...(portfolio.holdings || [])]
+    .sort(
+      (a, b) =>
+        Math.abs(Number(b.qty) * Number.parseFloat(b.currentPrice)) -
+        Math.abs(Number(a.qty) * Number.parseFloat(a.currentPrice)),
+    )
+    .slice(0, 5);
 
   return (
-    <div className="fund-sheet">
-      <header className="fund-head">
-        <div>
-          <p className="fund-kicker">QUARCC · Fund fact sheet</p>
-          <h1>{portfolio.name}</h1>
-          <p className="fund-sub">
-            {portfolio.strategy} · Out-of-sample results, January 2021 – present · Benchmark:
-            3-month US T-bills + 4% a year
-          </p>
-        </div>
-        <div className="fund-asof">
-          <span>As at {facts.asOf}</span>
-          <strong>Live paper fund</strong>
-          <em>
-            Marks: {new Date(portfolio.asOf).toLocaleString("en-US", {
+    <div className="portfolio-dashboard portfolio-detail">
+      <header className="portfolio-header">
+        <div className="portfolio-heading">
+          <h1 className="portfolio-title">{portfolio.name}</h1>
+          <p className="portfolio-strategy">{portfolio.strategy}</p>
+          <p className="portfolio-summary">{portfolio.summary}</p>
+          <p className="portfolio-as-of">
+            Marks:{" "}
+            {new Date(portfolio.asOf).toLocaleString("en-US", {
               month: "short",
               day: "numeric",
+              year: "numeric",
               hour: "2-digit",
               minute: "2-digit",
               timeZone: "America/New_York",
               timeZoneName: "short",
             })}
-          </em>
+          </p>
         </div>
+        <span className="portfolio-status">● {portfolio.status.toUpperCase()}</span>
       </header>
 
-      <div className="fund-hero">
-        <div className="fund-hero-main">
-          <Section title="Growth of NAV since inception (US$bn)" className="fund-hero-section">
-            <LineChart
-              height={320}
-              area
-              series={[
-                { name: "QUARCC Fund", color: "#d1baff", data: growth.map((d) => ({ date: d.date, value: d.fund })) },
-                { name: "Benchmark: T-bills + 4%", color: "#f0b429", data: growth.map((d) => ({ date: d.date, value: d.benchmark })) },
-                { name: "S&P 500", color: "#71717a", data: growth.map((d) => ({ date: d.date, value: d.sp500 })) },
-              ]}
-              yFormat={(v) => `$${v.toFixed(1)}bn`}
-            />
-          </Section>
+      <div className="portfolio-stats">
+        <div className="stat-item">
+          <span className="stat-label">Total Equity</span>
+          <span className="stat-value">{live.equity}</span>
         </div>
-        <aside className="fund-hero-side">
-          <div className="fund-hero-stats">
-            <Metric label="Net assets" value={live.equity} sub="Paper NAV" />
-            <Metric label="Day change" value={live.dayChange} sub="Live marks" />
-            <Metric label="Sharpe ratio" value={live.sharpe} sub="Since inception" />
-            <Metric label="Beta, monthly" value={live.beta} sub="vs S&P 500" />
-          </div>
-          <Section title="Calendar year returns">
-            <Calendar calendar={facts.calendar} />
-          </Section>
-          <p className="fund-hero-note">
+        <div className="stat-item">
+          <span className="stat-label">Day Change</span>
+          <span
+            className="stat-value"
+            style={{ color: live.dayChange.startsWith("+") ? "#32cd32" : "#ff5d73" }}
+          >
+            {live.dayChange}
+          </span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Sharpe Ratio</span>
+          <span className="stat-value">{live.sharpe}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Beta</span>
+          <span className="stat-value">{live.beta}</span>
+        </div>
+      </div>
+
+      <div className="portfolio-detail-hero">
+        <div className="portfolio-detail-chart">
+          <h4 className="portfolio-section-title">Growth of NAV since inception (US$bn)</h4>
+          <LineChart
+            height={300}
+            area
+            series={[
+              { name: "QUARCC Fund", color: "#d1baff", data: growth.map((d) => ({ date: d.date, value: d.fund })) },
+              { name: "Benchmark: T-bills + 4%", color: "#f0b429", data: growth.map((d) => ({ date: d.date, value: d.benchmark })) },
+              { name: "S&P 500", color: "#71717a", data: growth.map((d) => ({ date: d.date, value: d.sp500 })) },
+            ]}
+            yFormat={(v) => `$${v.toFixed(1)}bn`}
+          />
+        </div>
+        <div className="portfolio-detail-calendar">
+          <h4 className="portfolio-section-title">Calendar year returns</h4>
+          <Calendar calendar={facts.calendar} />
+          <p className="fund-note">
             Since inception {pct(facts.keyStatistics.cumulative.fund, 1)} · CAGR {pct(top.cagr, 1)} ·
             Vol {pct(top.volatility, 1)} · Max DD {pct(top.maxDrawdown, 1)}
           </p>
-        </aside>
+        </div>
       </div>
 
-      <div className="fund-metrics">
-        <Metric label="Sortino ratio" value={num(top.sortino, 2)} sub={`S&P 500: ${num(top.sp500?.sortino, 2)}`} />
-        <Metric label="Downside capture" value={pct(top.downsideCapture, 0)} sub="S&P 500: 100%" />
-        <Metric label="Upside capture" value={pct(top.upsideCapture, 0)} sub="S&P 500: 100%" />
-        <Metric label="Ulcer index" value={pct(top.ulcer, 2)} sub={`S&P 500: ${pct(top.sp500?.ulcer, 2)}`} />
-        <Metric label="CAGR" value={pct(top.cagr, 1)} sub={`Benchmark: ${pct(top.benchmark?.cagr, 1)}`} />
-        <Metric label="Sharpe ratio" value={num(top.sharpe, 2)} sub={`S&P 500: ${num(top.sp500?.sharpe, 2)}`} />
-        <Metric label="Volatility" value={pct(top.volatility, 1)} sub={`S&P 500: ${pct(top.sp500?.volatility, 1)}`} />
-        <Metric label="Max drawdown" value={pct(top.maxDrawdown, 1)} sub={`S&P 500: ${pct(top.sp500?.maxDrawdown, 1)}`} />
-        <Metric label="Beta, monthly" value={num(top.betaMonthly, 2)} sub={`Daily: ${num(facts.keyStatistics.betaDaily, 2)}`} />
-        <Metric
-          label="Alpha, a year"
+      <div className="portfolio-detail-metrics">
+        <DetailMetric label="Sortino Ratio" value={num(top.sortino, 2)} sub={`S&P 500: ${num(top.sp500?.sortino, 2)}`} />
+        <DetailMetric label="Downside Capture" value={pct(top.downsideCapture, 0)} sub="S&P 500: 100%" />
+        <DetailMetric label="Upside Capture" value={pct(top.upsideCapture, 0)} sub="S&P 500: 100%" />
+        <DetailMetric label="Ulcer Index" value={pct(top.ulcer, 2)} sub={`S&P 500: ${pct(top.sp500?.ulcer, 2)}`} />
+        <DetailMetric label="CAGR" value={pct(top.cagr, 1)} sub={`Benchmark: ${pct(top.benchmark?.cagr, 1)}`} />
+        <DetailMetric label="Volatility" value={pct(top.volatility, 1)} sub={`S&P 500: ${pct(top.sp500?.volatility, 1)}`} />
+        <DetailMetric label="Max Drawdown" value={pct(top.maxDrawdown, 1)} sub={`S&P 500: ${pct(top.sp500?.maxDrawdown, 1)}`} />
+        <DetailMetric label="Beta, Monthly" value={num(top.betaMonthly, 2)} sub={`Daily: ${num(facts.keyStatistics.betaDaily, 2)}`} />
+        <DetailMetric
+          label="Alpha, a Year"
           value={pct(top.alpha, 2)}
           sub={`vs S&P 500${top.alphaT ? ` · t-stat ${num(top.alphaT, 2)}` : ""}`}
         />
+        <DetailMetric label="Sharpe Ratio" value={num(top.sharpe, 2)} sub={`S&P 500: ${num(top.sp500?.sharpe, 2)}`} />
       </div>
-      <p className="fund-note fund-metrics-note">
-        Live calculation from daily NAV. The printed fact sheet samples monthly, so Sortino,
-        Ulcer and volatility can differ slightly.
-      </p>
 
-      <div className="fund-grid">
-        <main className="fund-main">
-          <Section title="Mandate & statement of investment policy">
-            <p className="fund-objective">
-              Track and outperform the benchmark, 3-month US T-bills + 4% a year, with a
-              market-neutral long/short portfolio of US equities built from machine-learning
-              return forecasts.
-            </p>
-            <Constraints rows={facts.constraints} />
-          </Section>
-
-          <div className="fund-pair">
-            <Section title="Capture of the S&P 500, 2021–26">
-              <Capture capture={facts.series.capture} />
-            </Section>
-            <Section title="Rolling 12-month Ulcer index (%)">
-              <LineChart
-                height={190}
-                series={[
-                  { name: "QUARCC Fund", color: "#d1baff", data: facts.series.ulcer.fund.map((d) => ({ date: d.date, value: d.value * 100 })) },
-                  { name: "S&P 500", color: "#71717a", data: facts.series.ulcer.sp500.map((d) => ({ date: d.date, value: d.value * 100 })) },
-                ]}
-                yFormat={(v) => `${v.toFixed(1)}`}
-              />
-            </Section>
-          </div>
-
-          <Section title="Performance (%)">
-            <Performance rows={facts.performance} />
-            <p className="fund-note">
-              Returns in %. 1m–1y cumulative; 3y, 5y and since inception annualised.
-            </p>
-          </Section>
-
-          <Section title="Top 10 holdings (% of net assets)">
-            <TopHoldings topHoldings={facts.topHoldings} />
-          </Section>
-        </main>
-
-        <aside className="fund-side">
-          <Section title="Key facts">
-            <KeyFacts facts={facts.keyFacts} />
-          </Section>
-          <Section title="Costs">
-            <Costs costs={facts.costs} />
-            <p className="fund-note">Model estimate; actual costs vary with turnover and borrow.</p>
-          </Section>
-          <Section title="Key statistics">
-            <KeyStatistics stats={facts.keyStatistics} />
-          </Section>
-          <Section title="Return vs benchmark by market state">
-            <MarketState state={facts.marketState} />
-          </Section>
-          <Section title="Sector exposure (%)">
-            <SectorBars rows={facts.sectorExposure} />
-          </Section>
-        </aside>
+      <div className="portfolio-holdings">
+        <h4 className="portfolio-section-title">Current Positions</h4>
+        {positions.length ? (
+          <table>
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Qty</th>
+                <th>Avg Price</th>
+                <th>Current</th>
+                <th>P/L</th>
+              </tr>
+            </thead>
+            <tbody>
+              {positions.map((position) => {
+                const value = Number.parseFloat(position.pl);
+                return (
+                  <tr key={position.symbol}>
+                    <td>{position.symbol}</td>
+                    <td>
+                      {Number(position.qty).toLocaleString("en-US", { maximumFractionDigits: 2 })}
+                    </td>
+                    <td>${position.avgPrice}</td>
+                    <td>${position.currentPrice}</td>
+                    <td style={{ color: value >= 0 ? "#32cd32" : "#ff4444", fontWeight: "bold" }}>
+                      {plText(position.pl)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <p className="portfolio-empty">No open positions</p>
+        )}
       </div>
+
+      <Section title="Performance (%)">
+        <Performance rows={facts.performance} />
+        <p className="fund-note">Returns in %. 1m–1y cumulative; 3y, 5y and since inception annualised.</p>
+      </Section>
+
+      <div className="portfolio-detail-split">
+        <Section title="Key facts">
+          <KeyFacts facts={facts.keyFacts} />
+        </Section>
+        <Section title="Costs">
+          <Costs costs={facts.costs} />
+          <p className="fund-note">Model estimate; actual costs vary with turnover and borrow.</p>
+        </Section>
+      </div>
+
+      <Section title="Key statistics">
+        <KeyStatistics stats={facts.keyStatistics} />
+      </Section>
+
+      <div className="portfolio-detail-split">
+        <Section title="Capture of the S&P 500">
+          <Capture capture={facts.series.capture} />
+        </Section>
+        <Section title="Rolling 12-month Ulcer index (%)">
+          <LineChart
+            height={190}
+            series={[
+              { name: "QUARCC Fund", color: "#d1baff", data: facts.series.ulcer.fund.map((d) => ({ date: d.date, value: d.value * 100 })) },
+              { name: "S&P 500", color: "#71717a", data: facts.series.ulcer.sp500.map((d) => ({ date: d.date, value: d.value * 100 })) },
+            ]}
+            yFormat={(v) => `${v.toFixed(1)}`}
+          />
+        </Section>
+      </div>
+
+      <div className="portfolio-detail-split">
+        <Section title="Return vs benchmark by market state">
+          <MarketState state={facts.marketState} />
+        </Section>
+        <Section title="Sector exposure (%)">
+          <SectorBars rows={facts.sectorExposure} />
+        </Section>
+      </div>
+
+      <Section title="Top 10 holdings (% of net assets)">
+        <TopHoldings topHoldings={facts.topHoldings} />
+      </Section>
+
+      <Section title="Mandate & statement of investment policy">
+        <p className="fund-objective">
+          Track and outperform the benchmark, 3-month US T-bills + 4% a year, with a market-neutral
+          long/short portfolio of US equities built from machine-learning return forecasts.
+        </p>
+        <Constraints rows={facts.constraints} />
+      </Section>
 
       <footer className="fund-footer">
         <span>

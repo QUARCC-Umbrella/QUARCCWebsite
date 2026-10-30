@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import FundFactsheetClient from "../../components/FundFactsheetClient.jsx";
+import PortfolioDetailClient from "../../components/PortfolioDetailClient.jsx";
 import { getPortfolios, toContentSlug } from "../../lib/content";
 
 export async function getStaticPaths() {
@@ -28,7 +28,7 @@ const { portfolio } = Astro.props as unknown as {
 <BaseLayout title={`${portfolio.name} - QUARCC`} description={portfolio.summary}>
   <div class="fund-page">
     <a href="/paper-fund" class="fund-back">← All portfolios</a>
-    <FundFactsheetClient client:load portfolio={portfolio} />
+    <PortfolioDetailClient client:load portfolio={portfolio} />
   </div>
 </BaseLayout>
 
