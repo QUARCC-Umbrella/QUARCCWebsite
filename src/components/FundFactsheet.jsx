@@ -241,6 +241,12 @@ function KeyFacts({ facts }) {
         <dt>Gross / net exposure</dt>
         <dd>{facts.grossNet}</dd>
       </div>
+      {facts.rebalancing ? (
+        <div>
+          <dt>Rebalancing</dt>
+          <dd>{facts.rebalancing}</dd>
+        </div>
+      ) : null}
     </dl>
   );
 }
