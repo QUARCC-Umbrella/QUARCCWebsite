@@ -22,7 +22,7 @@ function Section({ title, children, className = "" }) {
   );
 }
 
-function LineChart({ series, height = 220, yFormat = (v) => v.toFixed(2) }) {
+function LineChart({ series, height = 220, yFormat = (v) => v.toFixed(2), area = false }) {
   const values = series.flatMap((s) => s.data.map((d) => d.value)).filter((v) => Number.isFinite(v));
   if (!values.length) return null;
   const lo = Math.min(...values);
@@ -41,6 +41,12 @@ function LineChart({ series, height = 220, yFormat = (v) => v.toFixed(2) }) {
   const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => yMin + f * (yMax - yMin));
   const first = series[0]?.data ?? [];
   const labelAt = (i) => (first[i]?.date ?? "").slice(0, 7);
+  const fundPath = first
+    .map((point, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(point.value).toFixed(1)}`)
+    .join(" ");
+  const areaPath = fundPath
+    ? `${fundPath} L${x(first.length - 1).toFixed(1)},${bottom} L${left},${bottom} Z`
+    : "";
 
   return (
     <div className="fund-chart">
@@ -60,6 +66,7 @@ function LineChart({ series, height = 220, yFormat = (v) => v.toFixed(2) }) {
             </text>
           </g>
         ))}
+        {area && areaPath ? <path d={areaPath} fill="rgba(209, 186, 255, 0.10)" /> : null}
         {series.map((line) => (
           <path
             key={line.name}
@@ -449,6 +456,7 @@ export default function FundFactsheet({ portfolio }) {
           <Section title="Growth of NAV since inception (US$bn)" className="fund-hero-section">
             <LineChart
               height={320}
+              area
               series={[
                 { name: "QUARCC Fund", color: "#d1baff", data: growth.map((d) => ({ date: d.date, value: d.fund })) },
                 { name: "Benchmark: T-bills + 4%", color: "#f0b429", data: growth.map((d) => ({ date: d.date, value: d.benchmark })) },
