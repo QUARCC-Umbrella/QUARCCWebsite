@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 BENCH_PREMIUM = 0.04
+INCEPTION = "04-Jan-2021"
 GICS = [
     "Energy",
     "Materials",
@@ -248,7 +249,7 @@ def build(
         })
 
     return {
-        "inception": nav.index[0].strftime("%d-%b-%Y"),
+        "inception": INCEPTION,
         "asOf": nav.index[-1].strftime("%d %b %Y"),
         "top": {
             "sortino": float(excess.mean() / downside * np.sqrt(252)) if downside else None,
@@ -329,7 +330,7 @@ def build(
         },
         "keyFacts": {
             "assetClass": "US equity market neutral",
-            "inception": nav.index[0].strftime("%d-%b-%Y"),
+            "inception": INCEPTION,
             "nav": float(nav.iloc[-1] / 1e9),
             "benchmark": "3-month US T-bills + 4%",
             "holdings": f"{len(positions)} ({int((positions.side == 'long').sum())} long, {int((positions.side == 'short').sum())} short)",
