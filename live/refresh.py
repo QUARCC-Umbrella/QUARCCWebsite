@@ -182,9 +182,15 @@ def main() -> int:
         bars.to_parquet(CACHE, index=False)
 
     prices = price_matrix(bars, tickers)
+    # A handful of old tickers (ASGN, MMC, WYND) have no live bars after the
+    # corporate-action snapshot. Hold them flat at their entry price rather than
+    # silently dropping the exposure; a real book would record an exit event.
+    held_flat = sorted(t for t in tickers if t not in prices.columns or not prices[t].notna().any())
+    for ticker in held_flat:
+        prices[ticker] = float(entry_price[ticker])
+    prices = prices.sort_index()
     ret = prices.pct_change()
-    # Keep only tickers with at least one usable price after entry.
-    usable = [t for t in weight.index if t in prices.columns and prices[t].notna().any()]
+    usable = [t for t in weight.index if t in prices.columns]
     dropped = sorted(set(weight.index) - set(usable))
     ret = ret[usable]
     pos = weight[usable] * nav_entry
@@ -317,7 +323,9 @@ def main() -> int:
     }
 
     if dropped:
-        print(f"[warn] no live prices: {', '.join(dropped)}", file=sys.stderr)
+        print(f"[warn] dropped (no entry price): {', '.join(dropped)}", file=sys.stderr)
+    if held_flat:
+        print(f"[warn] held flat at entry (no live bars): {', '.join(held_flat)}", file=sys.stderr)
     print(json.dumps({k: v for k, v in payload.items() if k not in ("holdings", "chartData")}, indent=2))
     print(f"holdings={len(holdings)} chart={len(payload['chartData'])}", file=sys.stderr)
 
