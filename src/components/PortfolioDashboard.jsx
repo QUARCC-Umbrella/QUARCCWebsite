@@ -74,7 +74,7 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
                   year: "numeric",
                   hour: "2-digit",
                   minute: "2-digit",
-                  timeZone: "UTC",
+                  timeZone: "America/New_York",
                   timeZoneName: "short",
                 })}
               </p>
