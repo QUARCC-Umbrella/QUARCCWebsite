@@ -3,7 +3,18 @@ import "./PortfolioDashboard.css";
 import PortfolioChart from "./PortfolioChart";
 
 const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
-  const { name, strategy, status, stats, holdings, chartData, summary, asOf } = portfolio;
+  const {
+    name,
+    strategy,
+    status,
+    stats,
+    holdings,
+    chartData,
+    summary,
+    asOf,
+    exposures,
+    performance,
+  } = portfolio;
   const isLive = status === "Active";
 
   // Generate sample chart data if none provided (for demo)
@@ -111,6 +122,23 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
           <span className="stat-value">{stats.beta}</span>
         </div>
       </div>
+
+      {exposures ? (
+        <div className="portfolio-exposures">
+          <span>Gross {(exposures.gross * 100).toFixed(0)}%</span>
+          <span>
+            Net {exposures.net >= 0 ? "+" : ""}
+            {(exposures.net * 100).toFixed(1)}%
+          </span>
+          <span>{exposures.names} names</span>
+          {performance?.annVol ? (
+            <span>Vol {(performance.annVol * 100).toFixed(1)}%</span>
+          ) : null}
+          {performance?.maxDrawdown ? (
+            <span>Max DD {(performance.maxDrawdown * 100).toFixed(1)}%</span>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="portfolio-holdings">
         <h4 className="portfolio-section-title">Current Positions</h4>

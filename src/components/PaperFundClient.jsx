@@ -36,6 +36,8 @@ function mergePortfolios(staticPortfolios, livePortfolios) {
       status: live.status || portfolio.status,
       summary: live.summary || portfolio.summary,
       asOf: live.asOf || portfolio.asOf,
+      exposures: live.exposures || portfolio.exposures,
+      performance: live.performance || portfolio.performance,
       stats: {
         ...portfolio.stats,
         ...(live.stats || {}),

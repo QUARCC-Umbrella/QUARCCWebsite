@@ -356,7 +356,18 @@ def main() -> int:
     PUBLIC_JSON.write_text(json.dumps(public_payload, indent=2) + "\n")
     content = {
         k: payload[k]
-        for k in ("name", "strategy", "status", "summary", "asOf", "stats", "holdings", "chartData")
+        for k in (
+            "name",
+            "strategy",
+            "status",
+            "summary",
+            "asOf",
+            "stats",
+            "exposures",
+            "performance",
+            "holdings",
+            "chartData",
+        )
     }
     content["order"] = 0
     content["featured"] = True
