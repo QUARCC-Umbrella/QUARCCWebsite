@@ -14,10 +14,8 @@ export const parsePct = (text) => {
   return Number.isFinite(value) ? value / 100 : null;
 };
 
-export const level = (nav) =>
-  missing(nav)
-    ? "—"
-    : (nav * 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+// NAV is stored in US$bn; both funds start at US$1bn.
+export const navBn = (nav, digits = 3) => (missing(nav) ? "—" : `US$${nav.toFixed(digits)}bn`);
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 

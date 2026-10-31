@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import FundChart from "./FundChart.jsx";
 import {
   displayName,
-  level,
+  navBn,
   liveSince as liveSinceOf,
   longDate,
   marksStamp,
@@ -108,9 +108,9 @@ function Quote({ portfolio, facts, liveSince }) {
   return (
     <div className="fx-quote">
       <div className="fx-quote-main">
-        <span className="fx-label">Index level · base 100 at inception</span>
+        <span className="fx-label">Net asset value · US$1bn at inception</span>
         <div className="fx-quote-row">
-          <span className="fx-level">{level(facts.keyFacts?.nav)}</span>
+          <span className="fx-level">{navBn(facts.keyFacts?.nav)}</span>
           <span className={`fx-change ${tone(day)}`}>
             {day === null ? "—" : `${day >= 0 ? "▲" : "▼"} ${signed(day, 2)}`}
             <small>1 day</small>
@@ -479,7 +479,7 @@ export default function FundFactsheet({ portfolio }) {
         <div className="fx-overview">
           <div>
             <FundChart
-              label="Growth of 100 since the start of the range"
+              label="Growth of US$1bn since the start of the range"
               height={340}
               rebase
               ranges
@@ -488,8 +488,8 @@ export default function FundFactsheet({ portfolio }) {
                 { key: "benchmark", on: true },
                 { key: "sp500", on: false },
               ]}
-              yFormat={(v) => v.toFixed(0)}
-              tipFormat={(v) => v.toFixed(1)}
+              yFormat={(v) => `$${(v / 100).toFixed(1)}bn`}
+              tipFormat={(v) => `$${(v / 100).toFixed(3)}bn`}
               series={[
                 { key: "fund", name: "Fund", color: COLORS.fund, width: 2, data: daily.map((d) => ({ date: d.date, value: d.fund })) },
                 { key: "benchmark", name: benchmarkName, color: COLORS.benchmark, dash: true, data: daily.map((d) => ({ date: d.date, value: d.benchmark })) },
@@ -497,7 +497,7 @@ export default function FundFactsheet({ portfolio }) {
               ]}
             />
             <p className="fx-note">
-              Growth of 100, rebased to the start of the selected range.
+              Growth of US$1bn, rebased to the start of the selected range.
               {liveSince ? ` Shaded: live marks since ${longDate(liveSince)}; earlier values are simulated.` : ""}
             </p>
           </div>

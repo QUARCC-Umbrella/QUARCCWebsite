@@ -1,5 +1,5 @@
 import useLivePortfolios from "./useLivePortfolios.js";
-import { displayName, level, marksStamp, num, parsePct, pct, period, signed, tone } from "./format.js";
+import { displayName, navBn, marksStamp, num, parsePct, pct, period, signed, tone } from "./format.js";
 import "./fund.css";
 
 function Spark({ daily }) {
@@ -29,7 +29,7 @@ function Spark({ daily }) {
 }
 
 const COLUMNS = [
-  ["Level", "level"],
+  ["NAV", "nav"],
   ["1D", "day"],
   ["YTD", "ytd"],
   ["1Y", "y1"],
@@ -44,7 +44,7 @@ function rowFor(portfolio) {
   const rows = facts.performance ?? [];
   const day = parsePct(portfolio.stats?.dayChange);
   return {
-    level: { text: level(facts.keyFacts?.nav) },
+    nav: { text: navBn(facts.keyFacts?.nav, 2) },
     day: { text: signed(day, 2), tone: tone(day) },
     ytd: { text: signed(period(rows, "YTD").fund, 2), tone: tone(period(rows, "YTD").fund) },
     y1: { text: signed(period(rows, "1y").fund, 2), tone: tone(period(rows, "1y").fund) },
@@ -93,8 +93,7 @@ export default function FundIndex({ portfolios: initial }) {
         );
       })}
       <p className="fxi-stamp">
-        Marks {marksStamp(latest)} · Returns after modelled costs · Level is growth of 100 since
-        inception
+        Marks {marksStamp(latest)} · Returns after modelled costs · NAV from US$1bn at inception
       </p>
     </div>
   );
