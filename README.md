@@ -42,7 +42,9 @@ Each blog post supports:
 
 The strategy pipeline, holdings and market-data service live in the separate
 [`QUARCC-Umbrella/quant-fund/live-strategies`](https://github.com/QUARCC-Umbrella/quant-fund/tree/main/live-strategies)
-directory. This repo only renders the result.
+directory. This repo only renders the result. It currently serves two live
+books: **QUARCC Market Neutral US Quant Fund** and **QUARCC US Long-Short
+Equities** (the submitted Quarcc-black A-030 book).
 
 The site fetches:
 

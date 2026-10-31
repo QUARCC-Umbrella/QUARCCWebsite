@@ -9,34 +9,39 @@ const portfolios = entries.map((entry) => ({
   slug: toContentSlug(entry.id),
   ...entry.data,
 }));
-const live = portfolios.filter((portfolio) => portfolio.slug === "quarcc-v4b");
+const live = portfolios.filter((portfolio) => ["quarcc-v4b", "us-long-short-equities"].includes(portfolio.slug));
 ---
 
 <BaseLayout
-  title="Paper Fund - QUARCC"
+  title="Live Funds - QUARCC"
   description="QUARCC's live paper portfolios and systematic strategies, marked to market."
 >
   <div class="paper-fund-page">
     <header class="paper-fund-head">
-      <p class="paper-fund-kicker">QUARCC · Live paper fund</p>
-      <h1>Market Neutral US Quant Fund</h1>
+      <p class="paper-fund-kicker">QUARCC · Live paper funds</p>
+      <h1>Live Systematic Funds</h1>
       <p class="paper-fund-lede">
-        A systematic US equity market-neutral long/short fund built from machine-learning
-        return forecasts. Roughly 320 names, dollar- and beta-neutral, with a 200% gross cap.
-        Marks are live against US equity prices.
+        Two live systematic US equity books: the market-neutral fund and the US long-short
+        equities book. Both are marked against live US equity prices, with the full holdings,
+        risk and performance history on each fact sheet.
       </p>
     </header>
 
     {live.length > 0 ? (
       <section class="paper-fund-section">
         <div class="paper-fund-section-head">
-          <h2>Live fund</h2>
+          <h2>Live funds</h2>
           <span class="paper-fund-live-pill">● Live feed</span>
         </div>
         <PaperFundClient client:load portfolios={live} />
-        <a class="paper-fund-open" href="/paper-fund/quarcc-v4b">
-          Open the full fund fact sheet →
-        </a>
+        <div class="paper-fund-links">
+          <a class="paper-fund-open" href="/paper-fund/quarcc-v4b">
+            Market Neutral fact sheet →
+          </a>
+          <a class="paper-fund-open" href="/paper-fund/us-long-short-equities">
+            US Long-Short fact sheet →
+          </a>
+        </div>
       </section>
     ) : null}
 
@@ -106,6 +111,12 @@ const live = portfolios.filter((portfolio) => portfolio.slug === "quarcc-v4b");
   .paper-fund-muted {
     color: var(--color-text-muted);
     font-size: 0.85rem;
+  }
+
+  .paper-fund-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
   }
 
   .paper-fund-open {

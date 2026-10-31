@@ -6,9 +6,11 @@ import { getPortfolios, toContentSlug } from "../../lib/content";
 export async function getStaticPaths() {
   const portfolios = await getPortfolios();
 
-  // Only the live v4b book is public for now; the other content entries are
-  // demo data used by the internal preview.
-  return portfolios.filter((entry) => toContentSlug(entry.id) === "quarcc-v4b").map((entry) => ({
+  // The two live books are public; the other content entries are demo data
+  // used by the internal preview.
+  return portfolios
+    .filter((entry) => ["quarcc-v4b", "us-long-short-equities"].includes(toContentSlug(entry.id)))
+    .map((entry) => ({
     params: { slug: toContentSlug(entry.id) },
     props: {
       portfolio: {

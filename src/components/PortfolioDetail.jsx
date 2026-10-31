@@ -29,7 +29,7 @@ function LineChart({ series, height = 220, yFormat = (v) => v.toFixed(2), area =
   const lo = Math.min(...values);
   const hi = Math.max(...values);
   const pad = (hi - lo) * 0.08 || Math.abs(hi || 1) * 0.05;
-  const yMin = lo - pad;
+  const yMin = lo >= 0 ? Math.max(0, lo - pad) : lo - pad;
   const yMax = hi + pad;
   const width = 620;
   const top = 12;
