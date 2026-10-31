@@ -455,6 +455,7 @@ export default function PortfolioDetail({ portfolio }) {
           <p className="portfolio-strategy">{portfolio.strategy}</p>
           <p className="portfolio-summary">{portfolio.summary}</p>
           <p className="portfolio-as-of">
+            {facts.asOf ? <>As at {facts.asOf} · </> : null}
             Marks:{" "}
             {new Date(portfolio.asOf).toLocaleString("en-US", {
               month: "short",
