@@ -4,6 +4,7 @@
   "status": "Active",
   "summary": "US equity market-neutral long/short fund built from machine-learning return forecasts. Out-of-sample results, January 2021 \u2013 present. Benchmark: 3-month US T-bills + 4% a year. Live marks on the 24 Aug 2026 formation: 326 names, 184% gross.",
   "asOf": "2026-10-30T20:55:35.503535+00:00",
+  "liveSince": "2026-08-24",
   "stats": {
     "equity": "$1,515,131,299",
     "dayChange": "+0.53%",

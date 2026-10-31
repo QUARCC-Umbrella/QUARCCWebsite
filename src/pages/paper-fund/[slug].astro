@@ -2,24 +2,18 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PortfolioDetailClient from "../../components/PortfolioDetailClient.jsx";
 import { getPortfolios, toContentSlug } from "../../lib/content";
+import { LIVE_FUNDS } from "../../lib/funds";
 
 export async function getStaticPaths() {
   const portfolios = await getPortfolios();
-
-  // The two live books are public; the other content entries are demo data
-  // used by the internal preview.
   return portfolios
-    .filter((entry) => ["quarcc-v4b", "us-long-short-equities"].includes(toContentSlug(entry.id)))
+    .filter((entry) => LIVE_FUNDS.includes(toContentSlug(entry.id)))
     .map((entry) => ({
-    params: { slug: toContentSlug(entry.id) },
-    props: {
-      portfolio: {
-        id: toContentSlug(entry.id),
-        slug: toContentSlug(entry.id),
-        ...entry.data,
+      params: { slug: toContentSlug(entry.id) },
+      props: {
+        portfolio: { id: toContentSlug(entry.id), slug: toContentSlug(entry.id), ...entry.data },
       },
-    },
-  }));
+    }));
 }
 
 const { portfolio } = Astro.props as unknown as {
@@ -29,22 +23,23 @@ const { portfolio } = Astro.props as unknown as {
 
 <BaseLayout title={`${portfolio.name} - QUARCC`} description={portfolio.summary}>
   <div class="fund-page">
-    <a href="/paper-fund" class="fund-back">← All portfolios</a>
+    <a href="/paper-fund" class="fund-back">← All paper funds</a>
     <PortfolioDetailClient client:load portfolio={portfolio} />
   </div>
 </BaseLayout>
 
 <style>
   .fund-page {
+    width: 100%;
     max-width: 1180px;
     margin: 0 auto;
   }
 
   .fund-back {
     display: inline-block;
-    margin-bottom: 1rem;
-    color: var(--color-text-muted);
+    margin: 0.5rem 0 1.6rem;
     font-size: 0.8rem;
+    color: var(--color-text-muted);
   }
 
   .fund-back:hover {

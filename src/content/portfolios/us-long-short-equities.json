@@ -4,6 +4,7 @@
   "status": "Active",
   "summary": "Submitted Quarcc-black A-030 market-neutral book. 475 names, 100% target gross, monthly rebalance. Live marks from the 2026-08 formation; names without a live ticker are held at their last mark.",
   "asOf": "2026-10-30T20:00:00+00:00",
+  "liveSince": "2026-08-31",
   "stats": {
     "equity": "$19,679,875,545",
     "dayChange": "-1.05%",
