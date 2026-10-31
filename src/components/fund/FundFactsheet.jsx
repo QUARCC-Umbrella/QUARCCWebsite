@@ -158,13 +158,16 @@ function Facts({ portfolio, facts, liveSince }) {
   );
 }
 
-const SERIES = [
-  ["fund", "Fund"],
-  ["benchmark", "Benchmark"],
-  ["sp500", "S&P 500"],
-];
+const isSp500 = (name) => /s&p\s*500/i.test(name ?? "");
 
-function ReturnsTable({ rows }) {
+// Fund, benchmark and the S&P 500, without repeating the S&P when it is the benchmark.
+function seriesFor(benchmarkName) {
+  return isSp500(benchmarkName)
+    ? [["fund", "Fund"], ["benchmark", "S&P 500 (benchmark)"]]
+    : [["fund", "Fund"], ["benchmark", "Benchmark"], ["sp500", "S&P 500"]];
+}
+
+function ReturnsTable({ rows, series: SERIES }) {
   const cumulative = ["1m", "3m", "6m", "YTD", "1y"];
   const annual = ["3y", "5y", "Since inception"];
   const head = { "1m": "1M", "3m": "3M", "6m": "6M", YTD: "YTD", "1y": "1Y", "3y": "3Y", "5y": "5Y", "Since inception": "Since inc." };
@@ -216,7 +219,7 @@ function ReturnsTable({ rows }) {
   );
 }
 
-function CalendarTable({ calendar }) {
+function CalendarTable({ calendar, series: SERIES }) {
   const years = Object.keys(calendar.fund);
   return (
     <div className="fx-scroll">
@@ -249,17 +252,18 @@ function CalendarTable({ calendar }) {
   );
 }
 
-function RiskTable({ facts }) {
+function RiskTable({ facts, series: SERIES }) {
+  const spBench = !SERIES.some(([key]) => key === "sp500");
   const s = facts.keyStatistics;
   const t = facts.top;
   const rows = [
     ["Volatility, annualised", s.volatility, pct],
     ["Sharpe ratio", s.sharpe, (v) => num(v, 2)],
-    ["Sortino ratio", { fund: t.sortino, sp500: t.sp500?.sortino }, (v) => num(v, 2)],
+    ["Sortino ratio", { fund: t.sortino, sp500: t.sp500?.sortino, benchmark: spBench ? t.sp500?.sortino : null }, (v) => num(v, 2)],
     ["Max drawdown", s.maxDrawdown, pct],
     ["Worst month", s.maxMonthLoss, pct],
     ["Worst day", s.maxDayLoss, pct],
-    ["Ulcer index", { fund: t.ulcer, sp500: t.sp500?.ulcer }, pct],
+    ["Ulcer index", { fund: t.ulcer, sp500: t.sp500?.ulcer, benchmark: spBench ? t.sp500?.ulcer : null }, pct],
   ];
   return (
     <div className="fx-scroll">
@@ -458,6 +462,8 @@ export default function FundFactsheet({ portfolio }) {
   const daily = facts.series.daily || facts.series.growth || [];
   const exposures = portfolio.exposures ?? {};
   const benchmarkName = facts.keyFacts?.benchmark ?? "Benchmark";
+  const series = seriesFor(benchmarkName);
+  const spIsBenchmark = isSp500(benchmarkName);
 
   return (
     <article className="fx">
@@ -486,14 +492,16 @@ export default function FundFactsheet({ portfolio }) {
               liveSince={liveSince}
               toggles={[
                 { key: "benchmark", on: true },
-                { key: "sp500", on: false },
+                ...(spIsBenchmark ? [] : [{ key: "sp500", on: false }]),
               ]}
               yFormat={(v) => `$${(v / 100).toFixed(1)}bn`}
               tipFormat={(v) => `$${(v / 100).toFixed(3)}bn`}
               series={[
                 { key: "fund", name: "Fund", color: COLORS.fund, width: 2, data: daily.map((d) => ({ date: d.date, value: d.fund })) },
                 { key: "benchmark", name: benchmarkName, color: COLORS.benchmark, dash: true, data: daily.map((d) => ({ date: d.date, value: d.benchmark })) },
-                { key: "sp500", name: "S&P 500", color: COLORS.sp500, data: daily.map((d) => ({ date: d.date, value: d.sp500 })) },
+                ...(spIsBenchmark
+                  ? []
+                  : [{ key: "sp500", name: "S&P 500", color: COLORS.sp500, data: daily.map((d) => ({ date: d.date, value: d.sp500 })) }]),
               ]}
             />
             <p className="fx-note">
@@ -512,9 +520,9 @@ export default function FundFactsheet({ portfolio }) {
       </Section>
 
       <Section id="performance" title="Performance" aside={`As of ${facts.asOf}`}>
-        <ReturnsTable rows={facts.performance} />
+        <ReturnsTable rows={facts.performance} series={series} />
         <h3 className="fx-sub">Calendar-year returns</h3>
-        <CalendarTable calendar={facts.calendar} />
+        <CalendarTable calendar={facts.calendar} series={series} />
         <div className="fx-disclosure" role="note">
           <strong>Simulated performance.</strong> Returns from {facts.inception}
           {liveSince ? ` to ${longDate(liveSince)}` : ""} are an out-of-sample simulation, after
@@ -528,7 +536,7 @@ export default function FundFactsheet({ portfolio }) {
       <Section id="risk" title="Risk">
         <div className="fx-split-2">
           <div>
-            <RiskTable facts={facts} />
+            <RiskTable facts={facts} series={series} />
           </div>
           <div>
             <h3 className="fx-sub fx-sub-flush">Relative to the S&amp;P 500</h3>
@@ -584,7 +592,7 @@ export default function FundFactsheet({ portfolio }) {
 
       <Section id="mandate" title="Mandate">
         <p className="fx-objective">
-          Outperform the benchmark ({benchmarkName} a year) with a long/short portfolio of US equities built from machine-learning return forecasts, inside the limits
+          Outperform the benchmark, {benchmarkName}, with a long/short portfolio of US equities built from machine-learning return forecasts, inside the limits
           below.
         </p>
         <Constraints rows={facts.constraints} />
