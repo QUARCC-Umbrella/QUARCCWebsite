@@ -21,12 +21,12 @@ The strategy is tracked live on the [**QUARCC Market Neutral US Quant Fund**](/p
 
 ## 1. Mandate and Design Goal
 
-The strategy manages a $\$1.0\text{bn}$ institutional US equity portfolio benchmarked against the 3-month US Treasury bill rate plus $4.0\%$ per annum under strict market-neutral constraints:
+The strategy manages a USD 1.0bn institutional US equity portfolio benchmarked against the 3-month US Treasury bill rate plus $4.0\%$ per annum under strict market-neutral constraints:
 
 - **Active names**: $200 \le N_{\text{active}} \le 500$
 - **Market neutrality**: $|\beta_{\text{S\&P 500}}| \le 0.10$ and sector net exposure within $\pm 20\%$ (tightened inside our optimiser to $|\beta| \le 0.02$ and $\pm 1\%$ GICS sector net)
 - **Leverage & volatility**: Gross leverage $\le 200\%$, ex-ante annualised volatility $\le 14\%$ (tightened to $\le 12\%$ in the optimiser)
-- **Investability**: No shorting below $\$500\text{m}$ market cap (enforced with a $\$550\text{m}$ execution buffer) and a minimum $\$3\text{bn}$ market-cap gate on new positions
+- **Investability**: No shorting below USD 500m market cap (enforced with a USD 550m execution buffer) and a minimum USD 3bn market-cap gate on new positions
 
 Rather than treating return prediction, covariance estimation, and transaction-cost control as isolated black boxes, each stage of `Forkfiam` adapts a specific family of published econometric and microstructure models to a 21-day rebalance horizon.
 
@@ -77,14 +77,14 @@ Across the 68-month out-of-sample evaluation window (January 2021 to August 2026
 | Step | Configuration | Daily Sharpe | IR vs. T-bill + 4% | Volatility p.a. | Max Drawdown |
 | :--- | :--- | :---: | :---: | :---: | :---: |
 | 1. `vfinal` | Pre-registered 3-model ensemble (100% gross) | 0.56 | -0.77 | 3.54% | -5.29% |
-| 2. `E5R` | $\text{ME} \ge \$3\text{bn}$ entry gate + relax-and-round QP | 0.68 | -0.52 | 3.86% | -6.03% |
+| 2. `E5R` | $\text{ME} \ge 3\text{bn}$ entry gate + relax-and-round QP | 0.68 | -0.52 | 3.86% | -6.03% |
 | 3. `elasso` | Monthly walk-forward E-LASSO (`S-LASSO` + `C-LASSO`) | 0.76 | -0.49 | 3.26% | -3.98% |
 | 4. `el_plus` | Add SYY-10 (`syy`), XBRL SUE (`sue_forecast`), FINRA `short_ratio` | 0.88 | -0.31 | 3.32% | -2.92% |
 | 5. `el_plus_bw` | Add 15th-of-month fast refresh + regime dial $\rho_t$ | 0.89 | -0.22 | 3.62% | -2.94% |
 | 6. `bw_fresh` | $1.08\times$ core gross scale (up to 188% gross), $T$ close | 0.92 | -0.09 | 3.96% | -2.94% |
 | 7. **`bw_fresh_lag`** | **1-session execution lag (`lag_days=1`, 5-day ladder; submitted)** | **0.89** | **-0.11** | **3.96%** | **-2.99%** |
 
-Over the 2021–2026 window, the submitted `bw_fresh_lag` book compounds $\$1.000\text{bn}$ to $\$1.4671\text{bn}$ net of all costs ($7.00\%$ CAGR, $0.89$ daily Sharpe, $1.28$ Sortino, $-2.99\%$ max drawdown, and $+0.012$ S&P 500 beta, generating $+1.43\%$ in 2022 when the S&P 500 fell $-18.2\%$).
+Over the 2021–2026 window, the submitted `bw_fresh_lag` book compounds USD 1.000bn to USD 1.4671bn net of all costs ($7.00\%$ CAGR, $0.89$ daily Sharpe, $1.28$ Sortino, $-2.99\%$ max drawdown, and $+0.012$ S&P 500 beta, generating $+1.43\%$ in 2022 when the S&P 500 fell $-18.2\%$).
 
 ### Key Limitations
 
