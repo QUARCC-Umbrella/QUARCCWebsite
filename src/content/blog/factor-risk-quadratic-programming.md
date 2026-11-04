@@ -15,7 +15,7 @@ featured: true
 
 Portfolio research solves the same convex problem thousands of times, across gross targets, risk measures, and formation dates. These problems have structure that general-purpose modelling tools discard. In factor-risk QPs, the covariance is a low-rank term plus a diagonal. In scenario models such as CVaR and drawdown, a small dense block of weights couples to a large sparse block of per-scenario variables.
 
-This note describes two interior-point kernels QUARCC built to keep that structure through the solve. A synthetic 1,000-security factor-risk problem takes 23.6 ms in one thread, against 87.9 ms for a hand-built sparse Clarabel model and 1,165.3 ms for CVXPY with Clarabel. At 360,000 scenarios, CVaR models solve 12–17× faster than Riskfolio-Lib. The gain is much smaller on drawdown measures, and some risk-capped problems at that scale fail to converge. The full derivations and every benchmark are in the [paper (PDF)](/papers/factor-risk-qp-2026.pdf).
+This note describes two interior-point kernels QUARCC built to keep that structure through the solve. A synthetic 1,000-security factor-risk problem takes 23.6 ms in one thread, against 87.9 ms for a hand-built sparse Clarabel model and 1,165.3 ms for CVXPY with Clarabel. At 360,000 scenarios, CVaR models solve 11–17× faster than Riskfolio-Lib, and a 20-point risk-capped CVaR frontier completes in 15.6 s. The gain is much smaller on drawdown measures, and risk-capped CDaR doesn't always converge at large scale. The full derivations and every benchmark are in the [paper (PDF)](/papers/factor-risk-qp-2026.pdf).
 
 ## Factor-risk QPs
 
@@ -58,6 +58,8 @@ $$
 
 Nothing of size $T \times T$ is formed. When $\mathbf{S}_{vv}$ is diagonal, an iteration costs $O(Tm^2 + m^3)$. Drawdown auxiliaries form a chain, so $\mathbf{S}_{vv}$ becomes banded and needs a triangular solve. Risk caps touch many auxiliaries at once, so they enter through a bordered system instead.
 
+With many rows, rounding can push the dual residual back up late in the solve. Once the primal residual and gap have converged, up to three Newton steps hold complementarity fixed and remove it.
+
 ## Solving CVaR on a subset of scenarios
 
 CVaR depends only on the tail, so most scenarios play no part in the optimum. Write the Rockafellar-Uryasev objective on a subset $S$ of scenarios as $F_S(\mathbf{x}, t) = t + c \sum_{i \in S} \max(0, \ell_i(\mathbf{x}) - t)$. If $(\mathbf{x}, t)$ minimises $F_S$ and no dropped scenario has a loss above $t$, then $(\mathbf{x}, t)$ also minimises the objective on all scenarios: the dropped terms are nonnegative everywhere and zero at this point.
@@ -98,31 +100,33 @@ The 49× headline mostly measures modelling overhead. Against the sparse model, 
 
 | Measure | Ours, A (s) | Riskfolio-Lib, A (s) | Speedup, A | Speedup, B |
 | --- | ---: | ---: | ---: | ---: |
-| CVaR | 0.19–0.20 | 2.43–2.70 | 12.6–13.4× | 3.5–5.0× |
-| Worst realisation | 0.04 | 1.47–1.84 | 35.5–47.8× | 5.5–9.5× |
-| Mean absolute deviation | 0.22–0.23 | 2.29–2.74 | 10.6–11.8× | 9.7–13.6× |
-| Semi-deviation | 0.22–0.23 | 3.50–3.93 | 15.5–18.1× | 17.7–18.3× |
-| Variance | 0.01 | 0.05 | 4.8–5.0× | 5.7–5.8× |
-| CDaR | 2.24–2.60 | 3.79–4.53 | 1.5–2.0× | 1.2–2.3× |
-| Maximum drawdown | 0.72–0.85 | 3.11–3.31 | 3.7–4.6× | 2.3–5.0× |
-| Average drawdown | 0.52–0.61 | 2.61–2.62 | 4.3–5.0× | 2.8–5.2× |
+| CVaR | 0.19–0.20 | 2.44–2.76 | 12.7–13.7× | 3.2–5.4× |
+| Worst realisation | 0.04–0.05 | 1.47–1.85 | 32.7–49.5× | 5.4–7.7× |
+| Mean absolute deviation | 0.23–0.24 | 2.30–2.68 | 10.2–11.1× | 8.2–11.3× |
+| Semi-deviation | 0.22–0.23 | 3.51–3.83 | 15.6–17.5× | 16.8–17.5× |
+| Variance | 0.01 | 0.06 | 5.4–5.7× | 5.2–5.7× |
+| CDaR | 2.28–2.64 | 3.85–4.49 | 1.5–2.0× | 1.3–2.2× |
+| Maximum drawdown | 0.75–0.85 | 3.06–3.34 | 3.6–4.5× | 2.2–4.5× |
+| Average drawdown | 0.53–0.61 | 2.56–2.61 | 4.3–4.8× | 2.6–5.0× |
 
-The two columns of speedups show how much the gain depends on the data. Worst realisation falls from up to 48× to under 10× with no change in the method. On process A, relative objective differences are at most $2.2 \times 10^{-8}$.
+The two columns of speedups show how much the gain depends on the data. Worst realisation falls from up to 50× to under 8× with no change in the method. On process A, relative objective differences are at most $2.2 \times 10^{-8}$.
 
 **Screening at scale**: 8 assets, 2,000 block-bootstrapped 15-year monthly paths, 360,000 scenarios, and a 40% position cap.
 
 | Model | Ours (s) | Riskfolio-Lib (s) | Speedup | Scenarios kept | Weight gap |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| CVaR, minimum risk | 2.15 | 25.0 | 11.7× | 83,910 | 1.1e-8 |
-| CVaR, maximum Sharpe | 1.11 | 19.2 | 17.4× | 47,466 | 5.7e-9 |
-| Worst realisation, minimum risk | 0.035 | 7.13 | 203× | 128 | 2.8e-8 |
-| Worst realisation, maximum Sharpe | 0.034 | 7.59 | 225× | 128 | 3.5e-10 |
-| Mean absolute deviation, maximum Sharpe | 4.31 | 14.6 | 3.4× | no screening | 6.5e-6 |
+| CVaR, minimum risk | 2.21 | 25.1 | 11.4× | 83,910 | 1.1e-8 |
+| CVaR, maximum Sharpe | 1.08 | 18.2 | 16.8× | 47,466 | 5.7e-9 |
+| Worst realisation, minimum risk | 0.033 | 6.17 | 189× | 128 | 2.8e-8 |
+| Worst realisation, maximum Sharpe | 0.034 | 7.06 | 210× | 128 | 3.5e-10 |
+| Mean absolute deviation, maximum Sharpe | 4.26 | 14.3 | 3.4× | no screening | 6.5e-6 |
+
+On the same problem, all 19 risk-capped points of a 20-point CVaR frontier reach optimal status in 15.6 s in total. Without the correction step, the same run gives 4 optimal, 13 optimal but inaccurate, and 2 stalled points. On three of these points, Riskfolio-Lib takes more than 400 s per point, and expected returns agree to a relative $2 \times 10^{-6}$.
 
 ## Limitations
 
-- **Risk caps at large scale can fail.** On a 20-point CVaR frontier at 360,000 scenarios, 4 of the 19 capped problems reach optimal status, 13 end optimal but inaccurate, and 2 stall and return no weights. The same construction completes on the first 200,000 scenarios. The failures are detected and reported, but they mean a full frontier does not complete at this scale.
-- **Drawdown measures gain least.** CDaR is only 1.2–2.3× faster, with up to 63 iterations.
+- **Capped CDaR can fail at large scale.** At 90,000 scenarios, 4 of 7 risk-capped CDaR problems stop at the 100-iteration limit and return no weights. Other capped measures on the same grid reach optimal status.
+- **Drawdown measures gain least.** CDaR is only 1.3–2.2× faster, with up to 63 iterations.
 - **Synthetic data, one machine.** Absolute times and ratios will differ elsewhere, and they vary with the data, as the table above shows.
 - **Computation, not investment results.** The [QUARCC Purple](/blog/quarcc-purple-market-neutral-us-equities) and [US Long-Short](/blog/us-long-short-portfolio) results were both solved with Clarabel, not with this method.
 - **Factor-risk weights differ slightly.** Gaps near $5 \times 10^{-4}$ come mainly from the default quadratic soft-band penalty. Stopping at six iterations is 2.7–4.9× faster but leaves gaps up to $1.9 \times 10^{-2}$, which suits screening and warm starts only.
