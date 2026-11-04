@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import FundChart from "./FundChart.jsx";
+import { SNAPSHOT_URL } from "../../lib/portfolioFeed.js";
 import {
   displayName,
   navBn,
@@ -512,7 +513,7 @@ export default function FundFactsheet({ portfolio }) {
           <aside className="fx-overview-side">
             <DropCap text={portfolio.summary} />
             <Facts portfolio={portfolio} facts={facts} liveSince={liveSince} />
-            <a className="fx-download" href="/portfolios" download="quarcc-paper-funds.json">
+            <a className="fx-download" href={SNAPSHOT_URL} download="quarcc-paper-funds.json">
               Download data (JSON)
             </a>
           </aside>

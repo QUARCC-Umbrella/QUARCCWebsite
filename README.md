@@ -53,8 +53,8 @@ ${PUBLIC_PAPER_FUND_API_BASE}/portfolios
 ```
 
 Set `PUBLIC_PAPER_FUND_API_BASE` to the deployed `live-strategies` API. If it
-is unset, the page defaults to the same-origin `/portfolios` snapshot in
-`Public/portfolios`, and `src/content/portfolios/quarcc-v4b.json` is the
+is unset, the page defaults to the same-origin `/portfolios.json` snapshot in
+`Public/portfolios.json`, and `src/content/portfolios/quarcc-v4b.json` is the
 build-time fallback.
 
 The live service writes both files; the weekday Action in `quant-fund`

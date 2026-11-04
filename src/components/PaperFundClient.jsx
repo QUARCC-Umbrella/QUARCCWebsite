@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import PortfolioDashboard from "./PortfolioDashboard.jsx";
+import { portfolioFeedUrl } from "../lib/portfolioFeed.js";
 import "./PaperFundClient.css";
 
 function normalizePortfolios(payload) {
@@ -54,16 +55,6 @@ export default function PaperFundClient({ portfolios = [], showDashboardHeader =
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const configured = import.meta.env.PUBLIC_PAPER_FUND_API_BASE;
-    // The checked-in /portfolios snapshot is served from the site root, so the
-    // page works without a separate API. A configured base overrides it.
-    const apiBase = configured || window.location.origin;
-
-    if (!apiBase) {
-      setStatus("disabled");
-      return;
-    }
-
     const controller = new AbortController();
 
     async function loadPortfolios() {
@@ -71,7 +62,7 @@ export default function PaperFundClient({ portfolios = [], showDashboardHeader =
       setError("");
 
       try {
-        const response = await fetch(`${apiBase.replace(/\/$/, "")}/portfolios`, {
+        const response = await fetch(portfolioFeedUrl(), {
           signal: controller.signal,
           headers: {
             Accept: "application/json",
@@ -114,9 +105,6 @@ export default function PaperFundClient({ portfolios = [], showDashboardHeader =
       <div className={`paper-fund-status paper-fund-status-${status}`}>
         {status === "loading" ? "Loading live portfolio data." : null}
         {status === "ready" ? "Live portfolio feed connected." : null}
-        {status === "disabled"
-          ? "Static portfolio snapshots shown below."
-          : null}
         {status === "error"
           ? `${error} Static portfolio snapshots shown below.`
           : null}
