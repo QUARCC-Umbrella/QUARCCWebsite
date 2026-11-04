@@ -18363,7 +18363,7 @@
       "name": "QUARCC US Long-Short Equities",
       "strategy": "US equity long/short",
       "status": "Active",
-      "summary": "Submitted Quarcc-black A-030 long/short book. 475 names, 100% target gross, monthly rebalance, benchmarked to the S&P 500. Live marks from the 31 Aug 2026 formation.",
+      "summary": "Monthly US long-short equity book. 475 names, 100% target gross, monthly rebalance, benchmarked to the S&P 500. Live marks from the 31 Aug 2026 formation.",
       "asOf": "2026-11-03T20:00:00+00:00",
       "liveSince": "2026-08-31",
       "formation": "2026-07-31",

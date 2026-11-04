@@ -1,11 +1,13 @@
 .blog-shell {
+  width: 100%;
+  min-width: 0;
   max-width: 60rem;
   margin: 0 auto;
   font-family: var(--font-sans);
 }
 
 .blog-page-title {
-  color: var(--color-accent-2);
+  color: var(--color-heading);
   font-size: 2rem;
   font-weight: 700;
   font-family: var(--font-sans);
@@ -60,14 +62,16 @@
 }
 
 .blog-preview-title {
-  color: var(--color-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-  font-family: var(--font-mono);
+  color: var(--color-heading);
+  font-weight: 600;
+  text-decoration: none;
+  font-family: var(--font-sans);
 }
 
 .blog-preview-title:hover {
-  color: var(--color-heading);
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .blog-preview-description {
@@ -129,7 +133,7 @@
 .blog-hero-image img {
   display: block;
   width: auto;
-  max-width: min(100%, 32rem);
+  max-width: 100%;
   height: auto;
   max-height: min(70vh, 36rem);
   object-fit: contain;
@@ -153,7 +157,7 @@
 }
 
 .blog-post-updated {
-  color: var(--color-accent-2);
+  color: var(--color-text-muted);
 }
 
 .blog-post-tags {
@@ -165,7 +169,7 @@
 }
 
 .blog-post-tag {
-  color: var(--color-accent);
+  color: var(--color-text-muted);
 }
 
 .blog-post-tag::before {
@@ -192,6 +196,7 @@
 }
 
 .blog-prose .katex-display {
+  position: relative;
   margin: 1.6rem 0;
   overflow-x: auto;
   overflow-y: hidden;
@@ -207,10 +212,76 @@
 
 .blog-prose h2,
 .blog-prose h3 {
+  color: var(--color-heading);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.blog-prose h2 {
+  margin-top: 2.6rem;
+  font-size: 1.45rem;
+}
+
+.blog-prose h3 {
   margin-top: 2rem;
-  color: var(--color-accent-2);
   font-size: 1.15rem;
-  font-family: var(--font-mono);
+}
+
+.blog-prose ul,
+.blog-prose ol {
+  padding-left: 1.4rem;
+}
+
+.blog-prose ul {
+  list-style: disc;
+}
+
+.blog-prose ol {
+  list-style: decimal;
+}
+
+.blog-prose li + li {
+  margin-top: 0.4rem;
+}
+
+/* Wide tables scroll inside their own box so the page never overflows on phones. */
+.blog-prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  margin-top: 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  /* KaTeX positions its hidden MathML absolutely; keep it inside the scroll box. */
+  position: relative;
+}
+
+.blog-prose th,
+.blog-prose td {
+  padding: 0.45rem 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.blog-prose th {
+  white-space: nowrap;
+}
+
+.blog-prose th:not([align]):not([style*="text-align"]) {
+  text-align: left;
+}
+
+.blog-prose th {
+  color: var(--color-heading);
+  font-weight: 600;
+  border-bottom-color: var(--color-text-soft);
+}
+
+.blog-prose th:first-child,
+.blog-prose td:first-child {
+  padding-left: 0;
 }
 
 .blog-prose a {

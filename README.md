@@ -38,13 +38,17 @@ Each blog post supports:
 - `draft` optional
 - `featured` optional
 
+## Research Papers
+
+The PDFs linked from the blog are served from `Public/papers`. Their sources are in
+`papers/*.tex`. After editing a source, run `python3 papers/build_papers.py` with a
+local Chromium (`--chrome PATH`) to rebuild them with KaTeX. Nothing leaves the machine.
+
 ## Live Paper Fund API
 
-The strategy pipeline, holdings and market-data service live in the separate
-[`QUARCC-Umbrella/quant-fund/live-strategies`](https://github.com/QUARCC-Umbrella/quant-fund/tree/main/live-strategies)
-directory. This repo only renders the result. It currently serves two live
-books: **QUARCC Market Neutral US Quant Fund** and **QUARCC US Long-Short
-Equities** (the submitted Quarcc-black A-030 book).
+The strategy pipeline, holdings and market-data service live in a separate
+service. This repo only renders the result. It currently serves two paper books:
+**QUARCC Market Neutral US Quant Fund** and **QUARCC US Long-Short Equities**.
 
 The site fetches:
 
@@ -52,10 +56,10 @@ The site fetches:
 ${PUBLIC_PAPER_FUND_API_BASE}/portfolios
 ```
 
-Set `PUBLIC_PAPER_FUND_API_BASE` to the deployed `live-strategies` API. If it
+Set `PUBLIC_PAPER_FUND_API_BASE` to the deployed paper-fund API. If it
 is unset, the page defaults to the same-origin `/portfolios.json` snapshot in
 `Public/portfolios.json`, and `src/content/portfolios/quarcc-v4b.json` is the
 build-time fallback.
 
-The live service writes both files; the weekday Action in `quant-fund`
+The live service writes both files; the weekday Action in the pipeline repository
 commits them here when `WEBSITE_REPO_TOKEN` is configured.

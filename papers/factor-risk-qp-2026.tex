@@ -1,0 +1,207 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[margin=0.72in,top=0.72in,bottom=0.75in,columnsep=0.25in]{geometry}
+\usepackage{amsmath,amssymb,bm,booktabs,array,tabularx}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\renewcommand{\arraystretch}{1.06}
+
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{\z@}%
+  {7pt \@plus 2pt \@minus 1pt}%
+  {2.5pt}%
+  {\normalfont\normalsize\bfseries}}
+\makeatother
+
+\begin{document}
+
+\twocolumn[{%
+\begin{center}
+{\large\bfseries Structure-Exploiting Factor-Risk Quadratic Programming for One-Shot and Ladder Portfolio Construction}\\[6pt]
+{\normalsize QUARCC}\\
+{\small Quantitative Research Note}\\[3pt]
+{\small November 2026}
+\end{center}
+\vspace{2pt}
+\begin{center}
+\begin{minipage}{0.90\textwidth}
+\small
+\textbf{Abstract.} Equity long--short portfolio construction repeatedly solves convex quadratic programs whose covariance decomposes into a low-rank factor component and a diagonal specific component, $\bm{\Sigma} = \mathbf{B}\mathbf{F}\mathbf{B}^\top + \mathrm{diag}(\mathbf{d})$. Modelled through general-purpose expression graphs and solved as generic conic programs, the problem spends much of its runtime assembling and canonicalising. We describe a primal--dual Mehrotra predictor--corrector interior-point method that keeps factor risk factored through the Newton step and reuses static constraint data across rebalance ladders. Slack elimination condenses the Karush--Kuhn--Tucker system into a diagonal-plus-low-rank matrix of rank $r = k + m$, with $k$ risk factors and $m$ two-sided exposure bands. The Woodbury identity and a small Schur complement reduce per-iteration linear algebra from $O(n^3)$ to $O(nr^2 + r^3)$. On a synthetic 1,000-security book with $r = 43$, single-thread solve time falls from 1,275.5\,ms under CVXPY with Clarabel and 97.7\,ms under a hand-built sparse Clarabel model to 25.3\,ms, with an objective gap of $5.3 \times 10^{-6}$. Across a 36-rung ladder at $n = 500$ the method is $18.9\times$ faster than rebuilding through CVXPY and $3.1\times$ faster than the sparse model. In a synthetic 12-month run of a four-stage market-neutral construction sequence, end-to-end runtime falls from 8.73\,s to 2.93\,s. The speedup comes with small but nonzero differences in weights, which we report.
+\end{minipage}
+\end{center}
+\vspace{8pt}
+}]
+
+\section{Problem Formulation}
+
+Cross-sectional equity strategies trade off expected return against factor and specific variance, subject to limits on positions, exposures, leverage, and turnover. A research process then solves the same problem many times: across gross targets, support sizes, and formation dates. The numerical kernel is a convex QP in weights $\mathbf{x} \in \mathbb{R}^n$:
+\begin{align}
+\min_{\mathbf{x}} \quad & \frac{1}{2}\mathbf{x}^\top \mathbf{P}\mathbf{x} + \mathbf{q}^\top \mathbf{x} + c_0 \nonumber\\
+\text{s.t.} \quad & \bm{\ell} \le \mathbf{x} \le \mathbf{u}, \label{eq:qp}\\
+& \mathbf{g}_\ell \le \mathbf{G}\mathbf{x} \le \mathbf{g}_u, \quad \mathbf{A}\mathbf{x} = \mathbf{b}. \nonumber
+\end{align}
+Box bounds encode position caps, liquidity limits, and fixed signs. $\mathbf{G}$ holds exposure bands, and $\mathbf{A}$ holds equalities such as gross leverage for a fixed sign vector. For exposures $\mathbf{B} \in \mathbb{R}^{n \times k}$, factor covariance $\mathbf{F}$, and specific variances $\mathbf{d}$, the covariance is
+\begin{equation}
+\bm{\Sigma} = \mathbf{B}\mathbf{F}\mathbf{B}^\top + \mathrm{diag}(\mathbf{d}). \label{eq:factor_cov}
+\end{equation}
+With risk aversion $\gamma$ and quadratic trading-cost weights $\bm{\tau}_2$, the operator keeps a factored form,
+\begin{equation}
+\mathbf{P} = \mathbf{U}\,\mathrm{diag}(\mathbf{c})\,\mathbf{U}^\top + \mathrm{diag}(\mathbf{p}_d), \label{eq:p_factored}
+\end{equation}
+where $\mathbf{F} = \mathbf{V}\bm{\Lambda}\mathbf{V}^\top$, $\mathbf{U} = \mathbf{B}\mathbf{V}\bm{\Lambda}^{1/2}$, $\mathbf{c} = \gamma \mathbf{1}_k$, and $\mathbf{p}_d = \gamma \mathbf{d} + \bm{\tau}_2$.
+
+Through CVXPY (Diamond and Boyd, 2016) with Clarabel (Goulart and Chen, 2024), two overheads recur on every solve: forming dense $\bm{\Sigma}$ costs $O(n^2 k)$, and canonicalising the dense quadratic form leads to an $O(n)$-dimensional factorisation per iteration. A hand-built sparse model with auxiliary factor variables $\mathbf{f} = \mathbf{U}^\top \mathbf{x}$ avoids most of this, and it is the fairer baseline, but it repeats cone setup and general-purpose factorisation on each call.
+
+\begin{table*}[t]
+\centering
+\caption{Single-thread benchmarks on a 2-vCPU Linux VM ($\mathrm{tol}=10^{-8}$, medians of repeated runs, BLAS pinned to one thread, one core). Problems are synthetic. The baseline is CVXPY with Clarabel or, for the 100-name book, SLSQP, and accuracy is measured against it; ``sparse'' is the hand-built sparse Clarabel model; dashes mean not recorded.}
+\label{tab:benchmarks}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{llrrrrr}
+\toprule
+Workload & Solver path & Median (ms) & vs.\ baseline & vs.\ sparse & Objective gap & Max $|\Delta x_i|$ \\
+\midrule
+One-shot ($n=300$, $r=43$) & CVXPY + Clarabel & 88.3 & $1.0\times$ & --- & $0$ & $0$ \\
+& Sparse Clarabel & 26.4 & $3.3\times$ & $1.0\times$ & $2.1\text{e-}9$ & $1.2\text{e-}5$ \\
+& This method (12 iterations) & \textbf{10.0} & $\mathbf{8.8\times}$ & $\mathbf{2.6\times}$ & $2.1\text{e-}6$ & $4.4\text{e-}4$ \\
+\addlinespace[2pt]
+One-shot ($n=1000$, $r=43$) & CVXPY + Clarabel & 1,275.5 & $1.0\times$ & --- & $0$ & $0$ \\
+& Sparse Clarabel & 97.7 & $13.1\times$ & $1.0\times$ & $2.1\text{e-}10$ & $2.3\text{e-}7$ \\
+& This method (18 iterations) & \textbf{25.3} & $\mathbf{50.4\times}$ & $\mathbf{3.9\times}$ & $5.3\text{e-}6$ & $5.3\text{e-}4$ \\
+\addlinespace[2pt]
+Ladder ($n=500$, 36 solves, per solve) & CVXPY rebuild & 285.5 & $1.0\times$ & --- & $0$ & $0$ \\
+& Sparse Clarabel & 47.2 & $6.0\times$ & $1.0\times$ & --- & --- \\
+& This method, compiled & \textbf{15.1} & $\mathbf{18.9\times}$ & $\mathbf{3.1\times}$ & $3.2\text{e-}6$ & $5.5\text{e-}4$ \\
+\addlinespace[2pt]
+Market-neutral book ($n=200$) & CVXPY + Clarabel & 46.3 & $1.0\times$ & --- & $0$ & $0$ \\
+& This method & \textbf{9.8} & $\mathbf{4.7\times}$ & --- & $5.3\text{e-}7$ & $4.5\text{e-}4$ \\
+\addlinespace[2pt]
+Signed book ($n=100$, dense risk) & SciPy SLSQP & 150.6 & $1.0\times$ & --- & $0$ & $0$ \\
+& This method & \textbf{38.6} & $\mathbf{3.9\times}$ & --- & --- & $7.4\text{e-}5$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{Factored Interior-Point Kernel}
+
+\textbf{Rank-one augmentations.} Penalties on linear aggregates preserve~\eqref{eq:p_factored}. A dollar-neutrality penalty $\frac{1}{2}\rho_{\text{net}}(\mathbf{1}^\top \mathbf{x})^2$ appends the column $\mathbf{1}$ to $\mathbf{U}$ and the weight $\rho_{\text{net}}$ to $\mathbf{c}$. A target penalty $\frac{1}{2}\lambda_j (\mathbf{v}_j^\top \mathbf{x} - \beta_{0,j})^2$ appends $\mathbf{v}_j$ and $\lambda_j$, shifts $\mathbf{q}$ by $-\lambda_j \beta_{0,j}\mathbf{v}_j$, and adds $\frac{1}{2}\lambda_j \beta_{0,j}^2$ to $c_0$.
+
+\textbf{Primal--dual system.} We introduce positive slacks $\mathbf{s}_{\text{hi}}, \mathbf{s}_{\text{lo}}, \mathbf{s}_{gu}, \mathbf{s}_{gl}$, multipliers $\mathbf{z}_{\text{hi}}, \mathbf{z}_{\text{lo}}, \mathbf{z}_{gu}, \mathbf{z}_{gl}$, and equality multipliers $\mathbf{y}$. Infinite bounds are masked out. The residuals are
+\begin{align}
+\mathbf{r}_d &= \mathbf{P}\mathbf{x} + \mathbf{q} + (\mathbf{z}_{\text{hi}} - \mathbf{z}_{\text{lo}}) + \mathbf{G}^\top(\mathbf{z}_{gu} - \mathbf{z}_{gl}) + \mathbf{A}^\top \mathbf{y}, \nonumber\\
+\mathbf{r}_{p,\text{hi}} &= \mathbf{x} + \mathbf{s}_{\text{hi}} - \mathbf{u}, \qquad\;\; \mathbf{r}_{p,\text{lo}} = -\mathbf{x} + \mathbf{s}_{\text{lo}} + \bm{\ell}, \label{eq:residuals}\\
+\mathbf{r}_{p,gu} &= \mathbf{G}\mathbf{x} + \mathbf{s}_{gu} - \mathbf{g}_u, \quad \mathbf{r}_{p,gl} = -\mathbf{G}\mathbf{x} + \mathbf{s}_{gl} + \mathbf{g}_\ell, \nonumber\\
+\mathbf{r}_e &= \mathbf{A}\mathbf{x} - \mathbf{b}, \nonumber
+\end{align}
+where $\mathbf{P}\mathbf{x} = \mathbf{U}(\mathbf{c} \odot (\mathbf{U}^\top \mathbf{x})) + \mathbf{p}_d \odot \mathbf{x}$ costs $O(nk)$.
+
+\textbf{Woodbury normal equations.} With barrier weights $\mathbf{w}_{\bullet} = \mathbf{z}_{\bullet} \oslash \mathbf{s}_{\bullet}$, pivoting out $(\Delta\mathbf{s}, \Delta\mathbf{z})$ reduces each Newton step to
+\begin{equation}
+\mathbf{M}\,\Delta\mathbf{x} + \mathbf{A}^\top \Delta\mathbf{y} = \mathbf{r}_{\text{rhs}}, \qquad \mathbf{A}\,\Delta\mathbf{x} = -\mathbf{r}_e, \label{eq:reduced_kkt}
+\end{equation}
+where
+\begin{align}
+\mathbf{M} &= \mathbf{P} + \mathrm{diag}(\mathbf{w}_{\text{hi}} + \mathbf{w}_{\text{lo}}) + \mathbf{G}^\top \mathrm{diag}(\mathbf{w}_{gu} + \mathbf{w}_{gl})\mathbf{G} \nonumber\\
+&= \mathbf{H} + \mathbf{U}_{\text{aug}}\,\mathrm{diag}(\mathbf{c}_{\text{aug}})\,\mathbf{U}_{\text{aug}}^\top. \label{eq:m_decomp}
+\end{align}
+Here $\mathbf{H} = \mathrm{diag}(\mathbf{p}_d + \mathbf{w}_{\text{hi}} + \mathbf{w}_{\text{lo}} + \varepsilon\mathbf{1})$ with $\varepsilon = 10^{-12}$, the matrix $\mathbf{U}_{\text{aug}} = [\mathbf{U}, \mathbf{G}^\top]$ is fixed before the iteration loop, and $\mathbf{c}_{\text{aug}} = \max([\mathbf{c};\, \mathbf{w}_{gu} + \mathbf{w}_{gl}], \varepsilon)$. By the Sherman--Morrison--Woodbury identity (Woodbury, 1950), applying $\mathbf{M}^{-1}$ needs only an $r \times r$ capacitance system:
+\begin{equation}
+\mathbf{K} = \mathrm{diag}(\mathbf{c}_{\text{aug}})^{-1} + \mathbf{U}_{\text{aug}}^\top \mathbf{H}^{-1}\mathbf{U}_{\text{aug}}, \label{eq:capacitance}
+\end{equation}
+\begin{equation}
+\mathbf{M}^{-1}\mathbf{V} = \mathbf{H}^{-1}\mathbf{V} - \mathbf{H}^{-1}\mathbf{U}_{\text{aug}}\mathbf{K}^{-1}\mathbf{U}_{\text{aug}}^\top \mathbf{H}^{-1}\mathbf{V}. \label{eq:woodbury}
+\end{equation}
+Assembling $\mathbf{K}$ costs $O(nr^2)$ and factorising it costs $O(r^3)$. With $p$ equalities, the $p \times p$ Schur complement $\mathbf{S} = \mathbf{A}\mathbf{M}^{-1}\mathbf{A}^\top$ gives
+\begin{align}
+\Delta\mathbf{y} &= \mathbf{S}^{-1}\!\left(\mathbf{A}\mathbf{M}^{-1}\mathbf{r}_{\text{rhs}} + \mathbf{r}_e\right), \nonumber\\
+\Delta\mathbf{x} &= \mathbf{M}^{-1}\mathbf{r}_{\text{rhs}} - (\mathbf{M}^{-1}\mathbf{A}^\top)\Delta\mathbf{y}. \label{eq:schur_step}
+\end{align}
+
+\textbf{Predictor--corrector step.} Following Mehrotra (1992), each iteration computes an affine-scaling direction, the maximum step that keeps slacks and multipliers at no less than 1\% of their current values, and the centering parameter $\sigma = \min(\max(\mu_{\text{aff}}/\mu, 0), 1)^3$. The combined step replaces the complementarity term with $\mathbf{s}\odot\mathbf{z} + \Delta\mathbf{s}_{\text{aff}}\odot\Delta\mathbf{z}_{\text{aff}} - \sigma\mu\mathbf{1}$ and reuses $\mathbf{K}$, $\mathbf{M}^{-1}\mathbf{A}^\top$, and $\mathbf{S}$. Convergence is declared when all residual norms and $\mu$ are below $\mathrm{tol}$, by default $10^{-8}$.
+
+\section{Outer Loops and Ladder Compilation}
+
+\textbf{Ladder compilation.} Across a ladder, $\mathbf{U}$, $\mathbf{G}$, $\mathbf{A}$, $\mathbf{U}_{\text{aug}}$, and the active-bound masks are invariant, while $\mathbf{q}$ and $\mathbf{b}$ vary. We cache the static data once, and each later rung enters the interior-point loop directly.
+
+\textbf{Ex-ante risk cap.} For a hard budget $\mathbf{x}^\top \bm{\Sigma}\mathbf{x} \le \sigma_{\max}^2$, we solve at the baseline $\gamma$. If the budget is exceeded, we bracket the multiplier shift $\lambda$ by doubling and bisect on $\gamma + \lambda$. Each inner solve warm-starts the primal vector and the equality dual, and resets barrier slacks and inequality duals to avoid numerical blow-up on constraints that were nearly active.
+
+\textbf{L1 turnover.} A penalty $\sum_i \tau_{1,i}|x_i - x_{i,\text{prev}}|$ is handled without $2n$ splitting variables by iteratively reweighted least squares. With previous trades $\mathbf{q}^{(t-1)}$ the smoothed majoriser weights are
+\begin{equation}
+a_i^{(t)} = \frac{\tau_{1,i}}{\sqrt{\big(q_i^{(t-1)}\big)^2 + \epsilon^2}}, \qquad \epsilon = 10^{-8}, \label{eq:irls}
+\end{equation}
+which are added to the diagonal. Each pass remains a diagonal-plus-low-rank QP of unchanged dimension and rank.
+
+\textbf{Soft bands.} One-sided soft bands default to a quadratic slack penalty with $\rho_{\text{soft}} = 10^4$; exact linear slacks are available at the cost of more iterations on degenerate books.
+
+\section{Fast Screening Estimators}
+
+\textbf{Loose-tolerance preview.} Stopping at $\mathrm{tol} = 10^{-3}$ and six iterations gives an approximate solution for screening and warm starts (Table~\ref{tab:preview}, from a separate timing run). The objective gap is $2.8$--$3.3 \times 10^{-3}$ and the maximum weight difference is at most $1.9 \times 10^{-2}$, so a preview ranks candidates but is not a book. Allowing up to 16 iterations tightens these to $7.5 \times 10^{-5}$ and $4 \times 10^{-3}$.
+
+\begin{table}[h]
+\centering
+\caption{Exact solve ($\mathrm{tol}=10^{-8}$) vs.\ six-iteration preview ($\mathrm{tol}=10^{-3}$), in milliseconds.}
+\label{tab:preview}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{rrrrrr}
+\toprule
+$n$ & Exact & Preview & Speedup & Obj.\ gap & Max $|\Delta x|$ \\
+\midrule
+300 & 10.0 & 3.7 & $2.7\times$ & $3.3 \times 10^{-3}$ & $1.6 \times 10^{-2}$ \\
+1000 & 24.7 & 4.9 & $5.0\times$ & $2.8 \times 10^{-3}$ & $1.9 \times 10^{-2}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Constraint-contact screen.} Motivated by jamming in constrained perceptrons (Franz and Parisi, 2016), we define the contact ratio of a sign-fixed candidate book:
+\begin{equation}
+\rho_{\text{contact}} = \frac{\#\{i : x_i \text{ at a bound}\} + \#\{\text{active bands}\}}{n_{\text{selected}}}. \label{eq:contact}
+\end{equation}
+On 16 labelled formations from our market-neutral research, all successful first rungs of a gross ladder had $\rho_{\text{contact}} < 0.47$, while the two failures had $0.59$ and $0.65$. A two-parameter logistic with threshold $0.53$ and slope $100$ turns this into a ranking score. The two failures come from a single calendar month, so this is a screening heuristic and not a probability.
+
+\section{Empirical Scaling}
+
+Table~\ref{tab:benchmarks} separates two effects at $n = 1{,}000$. Removing the expression graph and dense canonicalisation gives $13.1\times$ (1,275.5\,ms to 97.7\,ms). Replacing general conic factorisation with the $43 \times 43$ Woodbury system gives a further $3.9\times$ (to 25.3\,ms), for $50.4\times$ in total. With rank fixed, larger signed stage-0 books with no minimum position solve in about 80\,ms at $n = 2{,}000$ and about 200\,ms at $n = 5{,}000$.
+
+In a synthetic 12-month run of a four-stage market-neutral construction sequence ($n = 400$, 10 sectors, 5 styles; Table~\ref{tab:stages}), a single base QP falls from 86.8\,ms to 20.1\,ms ($4.3\times$, maximum weight difference $3.5 \times 10^{-7}$). Supported problems use the solver, and unsupported features fall back to Clarabel. The last two rows of Table~\ref{tab:stages} also substitute approximations: a fixed-sign preview in the first pass and symmetric L1 trade costs in the last stage. They trade exactness for speed, with maximum weight differences near $3 \times 10^{-3}$ and $2 \times 10^{-3}$.
+
+\begin{table}[h]
+\centering
+\caption{Four-stage construction runtime in seconds, 12 synthetic formations ($n=400$).}
+\label{tab:stages}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrr}
+\toprule
+Solver path & Stage 1 & Stage 2 & Stage 3 & Stage 4 & Total \\
+\midrule
+Clarabel baseline & 0.690 & 2.572 & 2.652 & 2.812 & 8.726 \\
+This method, final QPs & 0.160 & 1.714 & 1.779 & 2.849 & 6.502 \\
++ fixed-sign preview & 0.157 & 0.706 & 0.694 & 2.883 & 4.439 \\
++ symmetric L1 costs & \textbf{0.160} & \textbf{0.673} & \textbf{0.698} & \textbf{1.399} & \textbf{2.930} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Limitations}
+
+First, all benchmarks use synthetic problems on one machine, so absolute times will differ on real data and other hardware. Second, this solver is not a basis for any published performance figure: QUARCC Purple's submitted book was solved with Clarabel, and the four-stage result above measures runtime rather than investment outcomes. Third, the method assumes sign-fixed weights, so free-sign support selection with minimum positions still needs an outer ladder or a first-stage sign assignment. Fourth, L1 turnover reaches the exact objective to roughly $10^{-5}$, and the default quadratic soft-band penalty explains weight differences near $5 \times 10^{-4}$. Fifth, the contact screen rests on two failures from one month.
+
+\section*{Availability}
+
+The solver is an internal QUARCC research tool and is not publicly released at this time.
+
+\vspace{4pt}
+\section*{References}
+\footnotesize
+\begin{list}{}{\setlength{\leftmargin}{1.4em}\setlength{\itemindent}{-1.4em}\setlength{\itemsep}{1.5pt}\setlength{\parsep}{0pt}}
+\item Diamond, Steven, and Stephen Boyd, 2016, CVXPY: A Python-embedded modeling language for convex optimization, \textit{Journal of Machine Learning Research} 17, 1--5.
+\item Franz, Silvio, and Giorgio Parisi, 2016, The simplest model of jamming, \textit{Journal of Physics A: Mathematical and Theoretical} 49, 145001.
+\item Goulart, Paul J., and Yuwen Chen, 2024, Clarabel: An interior-point solver for conic programs with quadratic objectives, arXiv preprint arXiv:2405.12762.
+\item Mehrotra, Sanjay, 1992, On the implementation of a primal-dual interior point method, \textit{SIAM Journal on Optimization} 2, 575--601.
+\item Woodbury, Max A., 1950, Inverting modified matrices, Statistical Research Group Memorandum Report 42, Princeton University.
+\end{list}
+
+\end{document}
