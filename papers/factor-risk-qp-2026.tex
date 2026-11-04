@@ -20,7 +20,7 @@
 \begin{center}
 \begin{minipage}{0.90\textwidth}
 \small
-\textbf{Abstract.} Portfolio optimisation problems have structure that general-purpose conic modelling discards. We study two interior-point kernels that exploit it. For factor-risk quadratic programs, slack elimination and the Woodbury identity reduce per-iteration linear algebra from $O(n^3)$ to $O(nr^2 + r^3)$. For scenario-based linear and quadratic programs, including CVaR, worst-realisation, mean-absolute-deviation, and drawdown models, per-scenario auxiliaries are eliminated exactly, leaving a small dense Schur system. Constraint generation solves CVaR and worst-realisation models on a subset of scenarios and returns the optimal value of the full problem. Screening exactness and a suboptimality bound valid at any iterate are machine-checked in Lean 4. In single-thread benchmarks on synthetic data, a 1,000-security factor-risk program solves in 23.6\,ms, against 1,165.3\,ms with CVXPY and Clarabel and 87.9\,ms with a hand-built sparse Clarabel model. At 360,000 scenarios, CVaR models solve 11--17$\times$ faster than Riskfolio-Lib with weights agreeing to $1.1 \times 10^{-8}$. Speedups depend on data and model: they fall to 1.3--5$\times$ on drawdown measures. A final dual correction step brings all 19 risk-capped problems on a 20-point CVaR frontier at 360,000 scenarios to optimal status, but risk-capped CDaR at 90,000 scenarios still hits the iteration limit on 4 of 7 problems.
+\textbf{Abstract.} Portfolio optimisation problems have structure that general-purpose conic modelling discards. We study two interior-point kernels that exploit it. For factor-risk quadratic programs, slack elimination and the Woodbury identity reduce per-iteration linear algebra from $O(n^3)$ to $O(nr^2 + r^3)$. For scenario-based linear and quadratic programs, including CVaR, worst-realisation, mean-absolute-deviation, and drawdown models, per-scenario auxiliaries are eliminated exactly, leaving a small dense Schur system. Constraint generation solves CVaR and worst-realisation models on a subset of scenarios and returns the optimal value of the full problem. Screening exactness and a suboptimality bound valid at any iterate are machine-checked in Lean 4. In single-thread benchmarks on synthetic data, a 1,000-security factor-risk program solves in 23.6\,ms, against 1,165.3\,ms with CVXPY and Clarabel and 87.9\,ms with a hand-built sparse Clarabel model. At 360,000 scenarios, CVaR models solve 17--24$\times$ faster than Riskfolio-Lib with weights agreeing to $1.1 \times 10^{-8}$. Speedups depend on data and model: they fall to 1.2--5.3$\times$ on drawdown measures. A final dual correction step brings all 19 risk-capped problems on a 20-point CVaR frontier at 360,000 scenarios to optimal status, but risk-capped CDaR at 90,000 scenarios still hits the iteration limit on 3 of 7 problems. A batched solver handles many problems of one structure in a single interior-point loop. It is 4--5$\times$ faster on a CPU for small problems, gives no gain on a CPU at 20,000 scenarios, and on one discrete GPU at that size is 1.7--5.3$\times$ faster than the CPU batch.
 \end{minipage}
 \end{center}
 \vspace{8pt}
@@ -85,7 +85,7 @@ Drawdown auxiliaries form a chain, so $\mathbf{S}_{vv}$ is banded after reverse 
 \begin{bmatrix} \mathbf{H}_0 & \mathbf{C} \\ \mathbf{C}^\top & -\mathbf{W}_c^{-1} \end{bmatrix}. \label{eq:bordered}
 \end{equation}
 
-\textbf{Iteration.} A Mehrotra (1992) starting point takes the affine step from a trivial point and shifts slacks and multipliers into the interior. Two multiple centrality correctors (Gondzio, 1996) reuse each factorisation, pushing complementarity products into $[0.1, 10]$ times the target, and are kept only while they lengthen the step. Primal and dual variables share one step length, scaled by 0.99.
+\textbf{Iteration.} A Mehrotra (1992) starting point takes the affine step from a trivial point and shifts slacks and multipliers into the interior. Two multiple centrality correctors (Gondzio, 1996) reuse each factorisation, pushing complementarity products into $[0.1, 10]$ times the target, and are kept only while they lengthen the step. Primal and dual variables share one step length, scaled by 0.99. Each Newton solve combines its pending products with the scenario matrix and the Schur correction into one pass, and $\mathbf{G}_x\mathbf{x}$ is updated incrementally until the barrier parameter falls below $10^{-6}$, after which it is recomputed exactly.
 
 \textbf{Dual correction.} With many rows, the gap test needs a very small barrier parameter, and rounding in $\Delta\mathbf{z}$ grows with $|\Delta\mathbf{x}|\,\mathbf{z} \oslash \mathbf{s}$. The dual residual can therefore rise late in the solve. Once the primal residual and gap have converged, up to three Newton steps hold complementarity fixed. Their $\Delta\mathbf{x}$ is tiny, so the rounding error shrinks with it.
 
@@ -100,7 +100,13 @@ F_S(\mathbf{x}, t) = t + c \sum_{i \in S} \max\big(0, \ell_i(\mathbf{x}) - t\big
 
 \textit{Proof.} The dropped terms are nonnegative, so $F_S \le F_U$ on $K$. They vanish at $(\mathbf{x}, t)$ by hypothesis, so $F_U(\mathbf{x}, t) = F_S(\mathbf{x}, t) \le F_S(\mathbf{y}, q) \le F_U(\mathbf{y}, q)$ for every $(\mathbf{y}, q) \in K$. $\square$
 
-The same argument applies to worst realisation, where the restricted problem is a relaxation. The algorithm starts from the highest-loss scenarios of an equal-weight and an inverse-volatility portfolio, keeping $\max(\lceil 1.5\alpha T \rceil, 4n, 64)$ scenarios of each for CVaR and $\max(4n, 64)$ for worst realisation, solves the restricted problem, adds any violated scenarios with a margin of near-violations, and repeats. Violation is tested with a relative slack of $10^{-10}$. Screening is applied for $T > 1500$. The optimal value is exact up to the solver tolerance and this slack, and weights are unique only on non-degenerate problems.
+The same argument applies to worst realisation, where the restricted problem is a relaxation. The algorithm starts from the highest-loss scenarios of an equal-weight and an inverse-volatility portfolio, keeping $\max(\lceil 1.5\alpha T \rceil, 4n, 64)$ scenarios of each for CVaR and $\max(4n, 64)$ for worst realisation, solves the restricted problem, adds the violated scenarios with a margin of near-violations, and repeats. Each round adds at most twice the per-portfolio starting count, taking the most violated first, which keeps restricted problems small when the starting portfolios are far from the optimum. Any such choice leaves Proposition 1 applicable, because the test runs on all scenarios. Violation is tested with a relative slack of $10^{-10}$. Screening is applied for $T > 1500$. The optimal value is exact up to the solver tolerance and this slack, and weights are unique only on non-degenerate problems.
+
+\section{Batched Solves}
+
+Frontiers, bootstrap draws, and rolling windows produce many problems with the same sparse structure. A batched solver runs $K$ such problems in one interior-point loop, with every iterate an array of $K$ columns. Sparse products act on all columns at once, the dense scenario products become matrix products, and the $K$ small Newton systems are factorised in one batched call. Each problem keeps its own step length, centring, correctors, and convergence test, and a problem that converges leaves the batch. The same loop can run on a GPU, with the scenario data and iterates resident on the device.
+
+Batching covers structures with a diagonal $\mathbf{S}_{vv}$: variance, mean absolute deviation, semi-deviation, lower partial moments, CVaR, and worst realisation, with risk caps and linear constraints. Drawdown chains are solved one at a time. Under screening, each round solves all restricted problems as one batch, padding each to a common size with its own next-highest-loss scenarios. A superset of rows is still a relaxation, so Proposition 1 applies unchanged.
 
 \section{Termination and Suboptimality Certificate}
 
@@ -117,7 +123,7 @@ Propositions 1 and 2, including the worst-realisation case, are machine-checked 
 
 \section{Empirical Results}
 
-All measurements use one thread pinned to one core of an Intel Core i5-7300U, with NumPy 2.5, SciPy 1.18, CVXPY 1.9, Clarabel 0.11, and Riskfolio-Lib 7.4 (Cajas, 2026). All data are synthetic. Times are medians of repeated runs, except single Riskfolio-Lib runs in Tables~\ref{tab:scen} and~\ref{tab:saa}. Solutions were also compared with Riskfolio-Lib on each natively supported risk measure under minimum-risk, maximum-Sharpe, and utility objectives, and in each case the objective is within a relative $10^{-6}$ of Riskfolio-Lib's or better.
+All measurements use one thread pinned to one core of an Intel Core i5-7300U, with NumPy 2.5, SciPy 1.18, CVXPY 1.9, Clarabel 0.11, and Riskfolio-Lib 7.4 (Cajas, 2026). All data are synthetic. Times are medians of repeated runs, except single Riskfolio-Lib runs in Tables~\ref{tab:scen} and~\ref{tab:saa}. GPU results use a second machine, described with them. Solutions were also compared with Riskfolio-Lib on each natively supported risk measure under minimum-risk, maximum-Sharpe, and utility objectives, and in each case the objective is within a relative $10^{-6}$ of Riskfolio-Lib's or better.
 
 \textbf{Factor-risk programs.} Table~\ref{tab:benchmarks} separates two effects at $n = 1{,}000$. Removing the expression graph and dense canonicalisation gives $13.3\times$, and replacing general conic factorisation with the Woodbury system gives a further $3.7\times$. Against the sparse model, the fairer comparison, the gain is about $3$--$4\times$. Weight differences near $5 \times 10^{-4}$ mainly reflect the default quadratic soft-band penalty, with $\rho = 10^4$. Stopping early at six iterations and tolerance $10^{-3}$ takes 3.3\,ms at $n = 300$ and 4.3\,ms at $n = 1{,}000$, with objective gaps near $3 \times 10^{-3}$ and weight differences up to $1.9 \times 10^{-2}$, which suits screening and warm starts only.
 
@@ -162,27 +168,27 @@ Signed book ($n=100$, dense risk) & SciPy SLSQP & 133.9 & $1.0\times$ & --- & --
 \toprule
 Measure & Objective & Ours & RL & Ratio & Iter. & Max $|\Delta w|$ \\
 \midrule
-CVaR & Min.\ risk & 0.19 & 2.44 & 12.7 & 18 & $5.3\text{e-8}$ \\
- & Sharpe & 0.20 & 2.76 & 13.7 & 19 & $3.0\text{e-7}$ \\
-WR & Min.\ risk & 0.05 & 1.47 & 32.7 & 15 & $4.0\text{e-8}$ \\
- & Sharpe & 0.04 & 1.85 & 49.5 & 14 & $2.4\text{e-7}$ \\
-MAD & Min.\ risk & 0.23 & 2.30 & 10.2 & 15 & $1.6\text{e-8}$ \\
- & Sharpe & 0.24 & 2.68 & 11.1 & 16 & $1.7\text{e-9}$ \\
-MSV & Min.\ risk & 0.22 & 3.83 & 17.5 & 16 & $3.5\text{e-8}$ \\
- & Sharpe & 0.23 & 3.51 & 15.6 & 16 & $8.8\text{e-8}$ \\
-MV & Min.\ risk & 0.01 & 0.06 & 5.7 & 10 & $5.0\text{e-6}$ \\
- & Sharpe & 0.01 & 0.06 & 5.4 & 11 & $6.5\text{e-7}$ \\
-CDaR & Min.\ risk & 2.64 & 3.85 & 1.5 & 47 & $1.1\text{e-9}$ \\
- & Sharpe & 2.28 & 4.49 & 2.0 & 43 & $6.0\text{e-8}$ \\
-MDD & Min.\ risk & 0.85 & 3.06 & 3.6 & 28 & $7.1\text{e-10}$ \\
- & Sharpe & 0.75 & 3.34 & 4.5 & 24 & $1.5\text{e-8}$ \\
-ADD & Min.\ risk & 0.61 & 2.61 & 4.3 & 21 & $1.8\text{e-9}$ \\
- & Sharpe & 0.53 & 2.56 & 4.8 & 18 & $7.1\text{e-8}$ \\
+CVaR & Min.\ risk & 0.13 & 2.42 & 18.9 & 18 & $5.3\text{e-8}$ \\
+ & Sharpe & 0.13 & 2.81 & 21.1 & 19 & $3.0\text{e-7}$ \\
+WR & Min.\ risk & 0.04 & 1.48 & 39.6 & 15 & $4.0\text{e-8}$ \\
+ & Sharpe & 0.04 & 1.80 & 49.6 & 14 & $2.4\text{e-7}$ \\
+MAD & Min.\ risk & 0.14 & 2.26 & 15.8 & 15 & $1.6\text{e-8}$ \\
+ & Sharpe & 0.15 & 2.65 & 17.3 & 16 & $1.7\text{e-9}$ \\
+MSV & Min.\ risk & 0.15 & 3.83 & 26.0 & 16 & $3.5\text{e-8}$ \\
+ & Sharpe & 0.15 & 3.52 & 23.4 & 16 & $8.8\text{e-8}$ \\
+MV & Min.\ risk & 0.01 & 0.06 & 5.9 & 10 & $5.0\text{e-6}$ \\
+ & Sharpe & 0.01 & 0.06 & 5.6 & 11 & $6.5\text{e-7}$ \\
+CDaR & Min.\ risk & 2.61 & 3.78 & 1.4 & 49 & $3.5\text{e-8}$ \\
+ & Sharpe & 2.16 & 4.50 & 2.1 & 43 & $5.7\text{e-8}$ \\
+MDD & Min.\ risk & 0.80 & 3.09 & 3.8 & 28 & $7.1\text{e-10}$ \\
+ & Sharpe & 0.69 & 3.35 & 4.8 & 24 & $1.5\text{e-8}$ \\
+ADD & Min.\ risk & 0.58 & 2.63 & 4.6 & 21 & $1.8\text{e-9}$ \\
+ & Sharpe & 0.49 & 2.60 & 5.3 & 18 & $7.1\text{e-8}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Scenario models.} Table~\ref{tab:scen} compares the arrowhead kernel with Riskfolio-Lib (RL), which uses Clarabel through CVXPY. Objectives evaluated with common risk functions differ by at most $2.2 \times 10^{-8}$ in relative terms, and maximum weight differences are near $5 \times 10^{-6}$ at worst. Speedups depend on the data. Under a second data-generating process with weaker common factors and a 25\% position cap, ratios range from 3.2 to 17.5 on CVaR, WR, MAD, and MSV, and from 1.3 to 5.0 on drawdown measures, with relative objective differences up to $7.9 \times 10^{-7}$ and weight differences up to $1.1 \times 10^{-4}$. Drawdown measures are the slowest family because of their banded solves and higher iteration counts, which reach 47 here and 63 under the second process.
+\textbf{Scenario models.} Table~\ref{tab:scen} compares the arrowhead kernel with Riskfolio-Lib (RL), which uses Clarabel through CVXPY. Objectives evaluated with common risk functions differ by at most $2.2 \times 10^{-8}$ in relative terms, and maximum weight differences are near $5 \times 10^{-6}$ at worst. Speedups depend on the data. Under a second data-generating process with weaker common factors and a 25\% position cap, ratios range from 14.0 to 25.0 on CVaR, WR, MAD, and MSV, and from 1.2 to 5.1 on drawdown measures, with relative objective differences up to $7.9 \times 10^{-7}$ and weight differences up to $1.1 \times 10^{-4}$. Drawdown measures are the slowest family because of their banded solves and higher iteration counts, which reach 49 here and 61 under the second process. Under a third process, with three factors, Student-$t$ shocks, and a crisis regime, ratios are 13.1 on both CVaR objectives, 17.2 on WR, 22.2 on MAD, 24.2 on MSV, and 1.6 on CDaR, and they fall to 6.7 on CVaR at 100,000 scenarios and 12 assets.
 
 \begin{table}[h]
 \centering
@@ -194,22 +200,44 @@ ADD & Min.\ risk & 0.61 & 2.61 & 4.3 & 21 & $1.8\text{e-9}$ \\
 \toprule
 Model & Ours & RL & Ratio & Rows & Max $|\Delta w|$ \\
 \midrule
-CVaR min.\ risk & 2.21 & 25.1 & 11.4 & 83,910 & $1.1\text{e-}8$ \\
-CVaR Sharpe & 1.08 & 18.2 & 16.8 & 47,466 & $5.7\text{e-}9$ \\
-WR min.\ risk & 0.033 & 6.17 & 189 & 128 & $2.8\text{e-}8$ \\
-WR Sharpe & 0.034 & 7.06 & 210 & 128 & $3.5\text{e-}10$ \\
-MAD Sharpe & 4.26 & 14.3 & 3.4 & --- & $6.5\text{e-}6$ \\
+CVaR min.\ risk & 1.42 & 24.5 & 17.3 & 83,910 & $1.1\text{e-}8$ \\
+CVaR Sharpe & 0.75 & 17.9 & 23.8 & 47,466 & $5.7\text{e-}9$ \\
+WR min.\ risk & 0.036 & 6.07 & 170 & 128 & $2.8\text{e-}8$ \\
+WR Sharpe & 0.039 & 6.94 & 179 & 128 & $3.5\text{e-}10$ \\
+MAD Sharpe & 3.03 & 14.2 & 4.7 & --- & $6.5\text{e-}6$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \textbf{Screening at scale.} Table~\ref{tab:saa} reports a larger problem. Screening retains 13--23\% of scenarios for CVaR within two rounds and 128 scenarios for worst realisation within one, with relative objective differences of at most $5 \times 10^{-9}$. Mean absolute deviation has no screening and gains far less.
 
-\textbf{Risk-capped problems.} We also trace a 20-point CVaR frontier on this problem, using evenly spaced risk caps between the minimum-risk and maximum-return portfolios. All 19 capped problems reach optimal status, in 15.6\,s in total. Without the dual correction step and the stable Schur weights, the same run gives 4 optimal, 13 optimal but inaccurate, and 2 stalled problems, in 16.1\,s. On three of these problems, including both that had stalled, Riskfolio-Lib takes more than 400\,s per problem, and expected returns agree to a relative $2 \times 10^{-6}$. On a wider grid of 147 capped problems across two 10,000-scenario datasets and a 90,000-scenario problem, the correction moves weights by at most $3.6 \times 10^{-6}$. Capped CDaR at 90,000 scenarios is the exception: 4 of 7 problems stop at the 100-iteration limit and return no weights, and the seven take about 300\,s. All other capped measures on that grid reach optimal status.
+\textbf{Risk-capped problems.} We also trace a 20-point CVaR frontier on this problem, using evenly spaced risk caps between the minimum-risk and maximum-return portfolios. All 19 capped problems reach optimal status, in 11.7\,s in total. Without the dual correction step and the stable Schur weights, the solver gave 4 optimal, 13 optimal but inaccurate, and 2 stalled problems on the same frontier. On three of these problems, including both that had stalled, Riskfolio-Lib takes more than 400\,s per problem, and expected returns agree to a relative $2 \times 10^{-6}$. On a smaller 20-point frontier with 10,000 scenarios and 20 assets, the solver takes 1.79\,s and Riskfolio-Lib 49.4\,s, a ratio of 27.6, with risk and return within a relative $6 \times 10^{-6}$. On a wider grid of 147 capped problems across two 10,000-scenario datasets and a 90,000-scenario problem, 144 reach optimal status. The exceptions are all capped CDaR at 90,000 scenarios, where 3 of 7 problems stop at the 100-iteration limit and return no weights, and the seven take about 240\,s.
+
+\begin{table}[h]
+\centering
+\caption{Batched against one-by-one solves on the CPU, for bootstrap draws of the third process. Times in seconds. ``Seq.'' solves one by one. All problems reach optimal status. $|\Delta w|$ is the largest weight difference between the two paths.}
+\label{tab:batch}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrr}
+\toprule
+Problems & Seq. & Batch & Ratio & $|\Delta w|$ \\
+\midrule
+100 MV Sharpe, $240 \times 8$ & 0.87 & 0.18 & 5.0 & $4\text{e-}16$ \\
+100 CVaR min., $240 \times 8$ & 1.90 & 0.43 & 4.4 & $2\text{e-}14$ \\
+20 MAD Sharpe, $20\text{k} \times 12$ & 3.45 & 4.73 & 0.7 & $1\text{e-}16$ \\
+20 CVaR Sharpe, $20\text{k} \times 12$ & 3.77 & 3.69 & 1.0 & $1\text{e-}6$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Batched solves.} Table~\ref{tab:batch} shows that on a CPU batching mainly removes per-call overhead. It gains 4--5$\times$ on small problems, nothing at 20,000 scenarios, and is slower on mean absolute deviation at that size. The larger weight difference on CVaR arises because screening selects different row subsets on a degenerate optimum.
+
+The GPU changes the large-problem result. On a second machine, with a Ryzen 5 3600 restricted to one BLAS thread and a Radeon RX 5500 XT, the 20 mean-absolute-deviation problems of Table~\ref{tab:batch} take 3.18\,s batched on the CPU, 0.60\,s on the GPU, and 13.25\,s with Riskfolio-Lib. The 20 CVaR problems take 2.22\,s, 1.29\,s, and 16.34\,s. Solved in full without screening at 100,000 scenarios, 20 CVaR problems take 37.50\,s on the CPU and 3.82\,s on the GPU, with weights within $3 \times 10^{-12}$, and 20 mean-absolute-deviation problems take 20.79\,s and 2.47\,s. Small problems run the other way because of launch latency: 100 variance problems at $240 \times 8$ take 40\,ms on the CPU and 206\,ms on the GPU.
 
 \section{Limitations}
 
-First, all benchmarks use synthetic data and one machine, so absolute times and ratios will differ elsewhere, and the two data-generating processes above show that ratios are sensitive to the data. Second, these results measure computational performance and say nothing about investment outcomes. Third, the factor-risk kernel assumes sign-fixed weights, so free-sign support selection with minimum positions needs an outer ladder or a first-stage sign assignment, and its L1 turnover and soft-band treatments are approximations. Fourth, measures requiring exponential, power, or second-order cones, such as entropic value at risk and tracking-error constraints, are not supported, nor are integer constraints. Fifth, risk-capped CDaR fails to converge within the iteration limit on some problems at 90,000 scenarios. Sixth, accelerator backends are not evaluated here.
+First, all benchmarks use synthetic data and, apart from the GPU results, one machine, so absolute times and ratios will differ elsewhere, and the data-generating processes above show that ratios are sensitive to the data. Second, these results measure computational performance and say nothing about investment outcomes. Third, the factor-risk kernel assumes sign-fixed weights, so free-sign support selection with minimum positions needs an outer ladder or a first-stage sign assignment, and its L1 turnover and soft-band treatments are approximations. Fourth, measures requiring exponential, power, or second-order cones, such as entropic value at risk and tracking-error constraints, are not supported, nor are integer constraints. Fifth, risk-capped CDaR fails to converge within the iteration limit on some problems at 90,000 scenarios. Sixth, GPU results come from one card on one machine and a few problem sizes, and drawdown measures are not batched.
 
 \section*{Code Availability}
 
