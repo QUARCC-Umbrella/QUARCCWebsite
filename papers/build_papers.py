@@ -35,7 +35,7 @@ h2 { font-size: 10pt; margin: 8pt 0 3pt; font-weight: 700; break-after: avoid; }
 ol, ul { margin: 2pt 0 4pt; padding-left: 15pt; } li { margin-bottom: 2.4pt; text-align: justify; hyphens: auto; }
 .eq { display: flex; align-items: center; margin: 5pt 0 6pt; break-inside: avoid; }
 .eq .m { flex: 1; min-width: 0; text-align: center; } .eq .n { flex: none; padding-left: 5pt; }
-.katex { font-size: 1.04em; } .katex-display { margin: 0; }
+.nb { white-space: nowrap; } .katex { font-size: 1.04em; } .katex-display { margin: 0; }
 .fig { break-inside: avoid; margin: 5pt 0 8pt; }
 .wide { break-inside: avoid; column-span: all; margin: 7pt 0 9pt; }
 .pair { display: flex; justify-content: center; gap: 22pt; align-items: flex-start; }
@@ -52,7 +52,7 @@ figcaption, .cap { font-size: 8.3pt; text-align: left; margin: 0 0 5pt; hyphens:
 
 TEXT_SUBS = [
     (r"\\&", "&amp;"), (r"\\%", "%"), (r"\\\$", "§DOLLAR§"), (r"\\_", "_"), (r"\\#", "#"),
-    (r"\\'a", "á"), (r"\\'e", "é"), (r"\\'o", "ó"), (r'\\"u', "ü"), (r'\\"a', "ä"), (r"\\`e", "è"), (r"\\\^a", "â"),
+    (r"\\'a", "á"), (r"\\'e", "é"), (r"\\'o", "ó"), (r'\\"u', "ü"), (r'\\"o', "ö"), (r'\\"a', "ä"), (r"\\`e", "è"), (r"\\\^a", "â"),
     (r"---", "—"), (r"--", "–"), (r"``", "“"), (r"''", "”"), (r"(?<!\\)~", "\u00a0"),
     (r"\\,", "\u2009"), (r"\\ ", " "), (r"\\qquad", " "), (r"\\quad", " "), (r"\\!", ""),
 ]
@@ -123,8 +123,15 @@ class Doc:
                    lambda m: self.stash(f'<a href="{m.group(1)}">{self.inline(m.group(2))}</a>'), s)
         for cmd, tag in (("textbf", "b"), ("textit", "i"), ("emph", "i"), ("texttt", "code")):
             s = unwrap(s, cmd, lambda b, t=tag: self.stash(f"<{t}>{self.inline(b)}</{t}>"))
-        s = re.sub(r"(?<!\\)\$((?:\\.|[^$\\])*)\$", lambda m: self.stash(self.math(m.group(1))), s)
+        s = re.sub(r"(?<!\\)\$((?:\\.|[^$\\])*)\$([.,;:)]?)", self.inline_math, s)
         return self.restore(self.text(s))
+
+    def inline_math(self, m):
+        """Keep short math with its trailing punctuation so a line cannot start with a full stop."""
+        math, punct = self.math(m.group(1)), m.group(2)
+        if punct and len(m.group(1)) <= 40:
+            return self.stash(f'<span class="nb">{math}{punct}</span>')
+        return self.stash(math) + punct
 
     def math(self, m, display=False):
         esc = m.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
