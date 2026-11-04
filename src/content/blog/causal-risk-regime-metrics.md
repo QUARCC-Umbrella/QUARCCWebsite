@@ -1,82 +1,122 @@
 ---
-title: "Causal Macro-Financial Stress Indices, Cross-Sectional Stress Betas, and Regime Conditioning in quarcc-risk-regime"
-description: "How QUARCC constructs 15 strictly causal monthly market-trend, volatility, credit, sentiment, and margin-debt indicators in Rust, estimates orthogonalised stock-level stress betas, and separates deterministic reproduction from in-sample overlay diagnostics."
+title: "Are Lagging Indicators Better Than Nothing?"
+description: "Credit spreads, volatility ranges, sentiment, and margin debt all report on conditions that have already arrived. Tested against a geometric Brownian market, they help forecast risk but not direction."
 pubDate: 2026-11-02
-heroImage: ../../assets/blog/research-notes.svg
-heroImageAlt: "Overview of the 15 causal monthly risk and regime indicators in quarcc-risk-regime."
+updatedDate: 2026-11-04
+heroImage: ../../assets/blog/risk-regime-stress-index.svg
+heroImageAlt: "Line chart of the monthly composite stress index from July 1999 to September 2026, peaking at 4.13 in October 2008 and ending at -0.24."
 tags:
   - Risk Management
   - Regime Switching
   - Quantitative Finance
-  - Rust
 draft: false
 featured: false
 ---
 
-This post accompanies our research paper, [***Causal Macro-Financial Stress Indices, Cross-Sectional Stress Betas, and Regime Conditioning in `quarcc-risk-regime`***](https://github.com/QUARCC-Umbrella/quant-fund/blob/main/papers/risk-regime/risk-regime-2026.pdf) (`quant-fund/papers/risk-regime/`), documenting the [`packages/risk-regime`](https://github.com/QUARCC-Umbrella/quant-fund/tree/main/packages/risk-regime) and [`packages/factor-primitives`](https://github.com/QUARCC-Umbrella/quant-fund/tree/main/packages/factor-primitives) Rust crates.
+A credit spread widens once lenders are already concerned. Bearish surveys follow falling prices, and margin debt is reported weeks late. If markets absorb news quickly, signals like these arrive too late to matter. So are they better than nothing?
 
-The resulting 327-month reference panel (`reference/risk_regime_monthly.csv`) powers the regime-attribution tables on our live strategy pages—[**QUARCC Market Neutral US Quant Fund**](/paper-fund/quarcc-v4b) and [**QUARCC US Long-Short Equities**](/paper-fund/us-long-short-equities)—and in our updates on [**QUARCC LinkedIn**](https://www.linkedin.com/company/quarcc/).
+We tested a stress index built from them on 326 months of the S&P 500. For risk, it's clearly better than nothing, although it's weaker than the VIX. For direction, it isn't. The full analysis is in the [paper (PDF)](/papers/lagging-indicators-2026.pdf).
 
----
+## Why a late signal could still help
 
-## 1. Fifteen Causal Monthly Risk & Regime Indicators
+A lagging indicator doesn't need to lead the market. It only needs the state of the market to last longer than the delay in observing it, and there are economic reasons to expect that:
 
-Conditioning equity portfolios on macro-financial stress requires strictly point-in-time indicators that never leak future sample moments or unannounced macro releases. The `quarcc-risk-regime` crate (`packages/risk-regime`) maps daily S&P 500 OHLC bars, daily CBOE VIX closes, monthly ICE BofA High Yield and Investment Grade Option-Adjusted Spreads, weekly Thursday AAII Bearish survey readings, and publication-lagged FINRA margin debt into a 15-column monthly panel:
+- **Funding spirals persist.** Intermediaries that lose capital cut lending, which depresses prices and tightens funding further (Brunnermeier and Pedersen, 2009).
+- **Credit prices risk appetite.** Spreads carry a premium that reflects the risk-bearing capacity of lenders (Gilchrist and Zakrajšek, 2012).
+- **Volatility clusters.** Turbulent months tend to follow turbulent months (Mandelbrot, 1963; Engle, 1982).
 
-1. **Multi-Horizon Returns & 12–1 Momentum (`src/price.rs`)**: `ret_1m`, `ret_3m`, `ret_6m`, and Fama–French skipped-month momentum `mom_12_1` $= P_{t-1}/P_{t-13} - 1$ (Cooper, Gutierrez, and Hameed, 2004).
-2. **Moving-Average Distances (`src/price.rs`)**: `dist_ma_6m` and `dist_ma_10m` $= P_t / \mathrm{MA}_{k,t} - 1$ for $k \in \{6, 10\}$ inclusive of month $t$.
-3. **Normalised 14-Day Wilder ATR (`src/atr.rs`)**: Daily Wilder (1978) Average True Range $\mathrm{ATR}_d = \mathrm{ATR}_{d-1} + (\mathrm{TR}_d - \mathrm{ATR}_{d-1})/14$ divided by month-end close (`atr`) and its 1-month change (`atr_chg_1m`).
-4. **Online Welford Expanding Z-Scores (`src/expanding.rs`)**: Using Welford's (1962) single-pass online recurrence from panel inception ($N_t \ge 2$, sample denominator $N_t - 1$), the engine standardises:
-   - **Credit spreads**: `hy_zscore` ($z_t^{\text{HY}}$) and `ig_zscore` ($z_t^{\text{IG}}$) on ICE BofA US High Yield and Corporate OAS (Gilchrist and Zakrajšek, 2012; Friewald, Wagner, and Zechner, 2014).
-   - **Intramonth volatility range**: `vix_range_zscore` ($z_t^{\text{VIX}}$) on the within-month VIX close range $\max_{d \in m(t)} \mathrm{VIX}_d - \min_{d \in m(t)} \mathrm{VIX}_d$ (Ang et al., 2006; Moreira and Muir, 2017).
-   - **Investor sentiment**: `aaii_bearish_zscore` ($z_t^{\text{AAII}}$) on the final Thursday AAII Bearish survey reading in month $t$ (Baker and Wurgler, 2006).
-   - **Publication-lagged margin debt**: Enforce a 1-month publication lag over a 6-month change window (`md_6m_chg_pct` $= 100(\mathrm{MD}_{t-1}/\mathrm{MD}_{t-7} - 1)$ and `md_6m_chg_zscore` $= z_t^{\text{MD}}$), capturing broker-dealer funding contractions (Brunnermeier and Pedersen, 2009; Adrian and Shin, 2010).
-5. **Composite Stress Index (`src/composite.rs`)**:
+That argument favours forecasting risk over forecasting returns, because a signal everyone can see should already be in prices.
+
+## What "nothing" means
+
+We define "nothing" as a geometric Brownian motion fitted to S&P 500 excess returns from August 1999 to September 2026:
+
+$$
+\frac{dP_t}{P_t} = \mu\,dt + \sigma\,dW_t,
+$$
+
+with an annualised log mean of 6.28% and volatility of 15.24%. In this market, the past says nothing about the future, so an indicator can only add noise. QUARCC's long-short equity research uses the same idea to validate portfolio pipelines, running them on Brownian markets where no real edge can exist.
+
+The fit gets the scale of the market about right, but not its time structure:
+
+| Statistic | S&P 500 | Brownian market, 5th to 95th percentile |
+| --- | ---: | ---: |
+| Worst month | −16.9% | −14.2% to −9.3% |
+| Maximum drawdown | 55.6% | 24.5% to 57.8% |
+| Autocorrelation of squared returns | 0.31 | 95th percentile 0.09 |
+
+## The index
+
+The index gives equal weight to five public series, each standardised against its own history up to that month:
 
 $$
 S_t = 0.2\left(z_t^{\text{HY}} + z_t^{\text{IG}} + z_t^{\text{VIX}} + z_t^{\text{AAII}} - z_t^{\text{MD}}\right).
 $$
 
----
+These are high-yield and investment-grade credit spreads, the within-month range of the VIX, the AAII bearish reading, and six-month growth in margin debt. The weights aren't fitted to returns. The index has a monthly autocorrelation of 0.87, a half-life of about five months, so a one-month delay costs little. All tests use $S_{t-1}$ to describe month $t$.
 
-## 2. Cross-Sectional Stress Betas and Companion Primitives
+## Risk: better than nothing
 
-To measure whether an individual equity or long–short portfolio is exposed to funding and volatility shocks independently of its market beta, `src/exposure.rs` estimates a bivariate OLS regression for each asset $i$ over $T \ge 4$ months ($df = T - 3$), extending Ang, Chen, and Xing (2006) and Agarwal, Ruenzi, and Weigert (2017):
+We forecast next-month log realised variance over 266 out-of-sample months, against a constant-variance Brownian benchmark.
+
+| Predictor | Out-of-sample $R^2$ | $t$-statistic |
+| --- | ---: | ---: |
+| Stress index | 0.463 | 4.02 |
+| Last month's realised variance | 0.420 | 3.36 |
+| Stress index + realised variance | 0.486 | 4.05 |
+| VIX | 0.560 | 4.45 |
+| Stress index + VIX | 0.578 | 4.72 |
+
+The index beats the benchmark and adds to last month's variance ($t = 2.70$). The VIX sets a higher bar because option prices look forward. Adding the index to the VIX isn't a significant improvement ($t = 0.94$).
+
+## Direction: no better than nothing
+
+| $S_{t-1}$ | Months | Annual excess return | Annual volatility | Worst month |
+| --- | ---: | ---: | ---: | ---: |
+| Below $-0.5$ | 45 | 10.1% | 11.7% | −4.5% |
+| $-0.5$ to $0$ | 133 | 13.1% | 12.4% | −8.0% |
+| $0$ to $0.5$ | 71 | 7.6% | 18.8% | −9.4% |
+| $0.5$ to $1$ | 33 | 3.9% | 20.8% | −8.4% |
+| $1$ and above | 44 | −9.8% | 35.1% | −16.9% |
+
+Volatility triples across these buckets. Returns fall too, but the full-sample regression isn't significant ($t = -1.57$), and the out-of-sample $R^2$ for returns is zero.
+
+## Scaling exposure
+
+A forecast of risk can still pay if you hold less when risk is high. This rule holds the S&P 500 with weight
 
 $$
-r_{i,t} = \alpha_i + \beta_i^m r_{m,t} + \beta_i^s \Delta S_t + \varepsilon_{i,t}, \qquad \Delta S_t = S_t - S_{t-1}.
+g_t = \mathrm{clip}\big(1 - \lambda\max(S_{t-1}, 0),\, 0.5,\, 1\big)
 $$
 
-The crate also provides conditional **stress-up betas** ($\Delta S_t > 0$), **upper-tail stress betas** ($\Delta S_t \ge Q_p(\Delta S)$), prior shrinkage $\tilde{\beta}_i^s = \omega \hat{\beta}_i^s + (1-\omega)\beta_{\text{prior}}^s$, sector stress aggregation (`src/portfolio.rs`), bivariate scenario PnL $\sum_i w_i(\beta_i^m \delta_m + \beta_i^s \delta_s)$, and book/alpha conditioning operators (`src/conditioning.rs`):
+and keeps the rest in Treasury bills.
 
-$$
-g(S_t) = \mathrm{clip}\!\big(1 - \lambda\max(S_t - \tau, 0),\, g_{\min},\, g_{\max}\big), \qquad \tilde{\alpha}_{i,t} = \alpha_{i,t} - \big(\pi_0 + \kappa\max(S_t, 0)\big)\beta_i^s.
-$$
+| Rule | Excess return | Volatility | Sharpe ratio | Maximum drawdown |
+| --- | ---: | ---: | ---: | ---: |
+| Unscaled | 7.45% | 15.15% | 0.49 | 50.9% |
+| $\lambda = 0.1$ | 7.68% | 13.93% | 0.55 | 40.9% |
+| $\lambda = 0.3$ | 7.72% | 12.47% | 0.62 | 32.7% |
+| $\lambda = 0.5$ | 7.75% | 11.71% | 0.66 | 29.1% |
 
-In `packages/factor-primitives`, these monthly operators are paired with daily and cross-sectional primitives: Markov transition powers and entropy (`markov.rs`), Baum–Welch/Viterbi Gaussian HMMs (`hmm.rs`), variance-targeted GARCH(1,1) / GJR-GARCH(1,1) (`garch.rs`), the multiplicative two-component `MF2-GARCH-rw-m` model of Conrad and Engle (2025) (`mf2_garch.rs`), and RiskMetrics/Newey–West/Vasicek/HAR-RV/QLIKE factor-risk estimators (`risk/`).
+None of 10,000 simulated Brownian markets matches any of these gains. For $\lambda = 0.3$, the Sharpe ratio rises by 0.127, against a placebo range of −0.055 to +0.043.
 
----
+The gain is uneven, though. It's +0.167 in 1999–2012 and only +0.018 since 2013, and dropping the seven months from September 2008 removes about half of it. It behaves more like insurance against a rare regime than a steady source of return.
 
-## 3. Computational Reproduction vs. In-Sample Diagnostics
+## A portfolio that is already neutral
 
-A core methodological discipline of our paper is separating **deterministic software verification** from **in-sample investment diagnostics**:
+We also tested the rule on the simulated [US Long-Short Portfolio](/blog/us-long-short-portfolio), over 68 months from January 2021. Its stress-change beta is $-0.0050$ ($t = -0.39$), and scaling with $\lambda = 0.3$ lowers its Sharpe ratio from 4.10 to 4.01. Cutting exposure removed profitable months without reducing a risk the portfolio carried. The sample has only 2 months with stress of 1 or more, so this says little about a true crisis.
 
-### A. Deterministic Verification (327 Months, July 1999 – September 2026)
+## Limitations
 
-- **Golden Fixture (`tests/first_year.rs`)**: All 15 metrics match the 12-month golden fixture (`1999-07` to `2000-06`) to within $< 10^{-9}$.
-- **Full 327-Month Public Reconstruction (`repro/reproduce.py`)**: Across all 327 months from July 1999 to September 2026, all price, momentum, moving-average, ATR, and FINRA margin-debt series match the reference CSV to $10^{-7}$–$10^{-5}$; minor deviations in credit and VIX z-scores reflect historical FRED ICE BofA OAS revisions and a single July 2002 VIX close vendor revision ($r = 0.999$).
+- **Few episodes.** The sample holds few independent stress episodes, and 2008 drives much of the result.
+- **Current data vintages.** The computation uses no future data, but revised series may differ from what was seen at the time.
+- **Several rules, no adjustment.** The values of $\lambda$ weren't chosen out of sample, and we don't adjust for testing several rules.
+- **Before costs.** Rule results exclude trading costs.
+- **Simulated portfolio.** The long-short returns are simulated.
 
-### B. Production Fact-Sheet Attribution & In-Sample Strategy Diagnostics
+The code is not publicly available.
 
-1. **Live Fact-Sheet Regime Attribution (`live-strategies/factsheet.py`)**: Partitioning monthly returns of our live [**QUARCC Market Neutral US Quant Fund**](/paper-fund/quarcc-v4b) and [**QUARCC US Long-Short Equities**](/paper-fund/us-long-short-equities) books across S&P 500 up/down months, `dist_ma_10m` trend terciles, and lagged `vix_range_zscore` terciles provides transparent, zero-tuning performance attribution.
-2. **In-Sample `A-030` Stress Attribution & Overlay Diagnostic (`T = 68` months, 2021–2026)**: Regressing `A-030` monthly returns on $r_{m,t}$ and $\Delta S_t$ confirms near-zero realised stress beta ($\hat{\beta}^s = -0.0049, t = -0.37$), while holdings-based sector attribution reveals a small $+0.002$ active sector stress tilt from net long Financials ($+9.7\%$) and IT ($+5.2\%$) against short Health Care ($-8.6\%$). Applying $g(S_{t-1})$ with $\lambda = 0.1$ raises in-sample Sharpe from $4.10$ to $4.45$, but only 9 of the 68 months have $S_{t-1} \ge 0.5$—making this strictly an **in-sample diagnostic**, not an out-of-sample alpha proof.
-3. **In-Sample `v4b-monthly` Factor-Risk Port (`T = 116` months, 2017–2026)**: Replacing the untuned monthly port ($0.55\%$ excess return, $-22.80\%$ max drawdown) with the `factor-primitives` WLS/EWMA/shrunk-specific risk stack raises 2017–2026 excess return to $6.96\%$ and cuts max drawdown to $-10.39\%$ (evaluated in-sample across the full 116-month window).
+## Read more
 
----
-
-## Read the Full Paper & View Live Regime Attribution
-
-- **Paper PDF**: [`papers/risk-regime/risk-regime-2026.pdf`](https://github.com/QUARCC-Umbrella/quant-fund/blob/main/papers/risk-regime/risk-regime-2026.pdf)
-- **LaTeX Source**: [`papers/risk-regime/risk-regime-2026.tex`](https://github.com/QUARCC-Umbrella/quant-fund/blob/main/papers/risk-regime/risk-regime-2026.tex)
-- **Crate Source**: [`packages/risk-regime`](https://github.com/QUARCC-Umbrella/quant-fund/tree/main/packages/risk-regime)
-- **Live Strategy Fact Sheets**: [**QUARCC Market Neutral US Quant Fund**](/paper-fund/quarcc-v4b) & [**QUARCC US Long-Short Equities**](/paper-fund/us-long-short-equities)
+- [Paper (PDF)](/papers/lagging-indicators-2026.pdf)
+- [US Long-Short Portfolio](/blog/us-long-short-portfolio)

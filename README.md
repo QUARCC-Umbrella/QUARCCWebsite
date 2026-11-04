@@ -49,7 +49,7 @@ local Chromium (`--chrome PATH`) to rebuild them with KaTeX. Nothing leaves the 
 
 The strategy pipeline, holdings and market-data service live in a separate
 service. This repo only renders the result. It currently serves two paper books:
-**QUARCC Market Neutral US Quant Fund** and **QUARCC US Long-Short Equities**.
+**QUARCC Market Neutral US Quant Fund** and **QUARCC US Long-Short Portfolio**.
 
 The site fetches:
 
@@ -59,7 +59,7 @@ ${PUBLIC_PAPER_FUND_API_BASE}/portfolios
 
 Set `PUBLIC_PAPER_FUND_API_BASE` to the deployed paper-fund API. If it
 is unset, the page defaults to the same-origin `/portfolios.json` snapshot in
-`Public/portfolios.json`, and `src/content/portfolios/quarcc-v4b.json` is the
+`Public/portfolios.json`, and `src/content/portfolios/market-neutral-us-equities.json` is the
 build-time fallback.
 
 The live service writes both files; the weekday Action in the pipeline repository
