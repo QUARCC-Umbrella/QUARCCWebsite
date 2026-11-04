@@ -1,15 +1,51 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ComingSoonPanel from "../components/ComingSoonPanel.astro";
+import FundIndex from "../components/fund/FundIndex.jsx";
+import { getPortfolios, toContentSlug } from "../lib/content";
+import { LIVE_FUNDS } from "../lib/funds";
+
+const entries = await getPortfolios();
+const live = entries
+  .map((entry) => ({ id: toContentSlug(entry.id), slug: toContentSlug(entry.id), ...entry.data }))
+  .filter((portfolio) => LIVE_FUNDS.includes(portfolio.slug));
 ---
 
 <BaseLayout
-  title="Paper Fund - QUARCC"
-  description="Explore QUARCC's paper portfolios and live trading strategies managed by our research teams."
+  title="Paper Funds - QUARCC"
+  description="QUARCC's systematic paper funds: US equity long/short books, marked daily against live prices."
 >
-  <ComingSoonPanel
-    title="Paper Fund"
-    description="The public portfolio experience is being prepared and will be released soon."
-    note="The current implementation is being kept internal while we finish the presentation and rollout."
-  />
+  <div class="fxi paper-funds">
+    <header class="fxi-hero">
+      <p class="fx-kicker"><span>QUARCC</span><span>Paper funds</span></p>
+      <h1>Paper funds</h1>
+      <p>
+        Systematic US equity long/short books built by QUARCC from machine-learning return
+        forecasts. Each fund is simulated out of sample up to its formation date and marked daily
+        against live prices since. Open a fund for its fact sheet.
+      </p>
+    </header>
+
+    {live.length > 0 ? <FundIndex client:load portfolios={live} /> : <p>No live funds yet.</p>}
+
+    <p class="paper-funds-disclaimer">
+      Paper portfolios for research and education. No capital is invested; this is not an offer
+      or investment advice. Simulated results have limits and do not guarantee future returns.
+    </p>
+  </div>
 </BaseLayout>
+
+<style>
+  .paper-funds {
+    width: 100%;
+    max-width: 1180px;
+    margin: 1rem auto 0;
+  }
+
+  .paper-funds-disclaimer {
+    max-width: 46rem;
+    margin: 2.2rem 0 0;
+    font-size: 0.74rem;
+    line-height: 1.5;
+    color: var(--fx-soft);
+  }
+</style>

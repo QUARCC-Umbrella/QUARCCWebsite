@@ -3,7 +3,18 @@ import "./PortfolioDashboard.css";
 import PortfolioChart from "./PortfolioChart";
 
 const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
-  const { name, strategy, status, stats, holdings, chartData, summary } = portfolio;
+  const {
+    name,
+    strategy,
+    status,
+    stats,
+    holdings,
+    chartData,
+    summary,
+    asOf,
+    exposures,
+    performance,
+  } = portfolio;
   const isLive = status === "Active";
 
   // Generate sample chart data if none provided (for demo)
@@ -34,12 +45,16 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
     return data;
   }, [chartData, stats.equity]);
 
-  // Sort holdings by P/L (absolute value) and take top 5
+  // Show the five largest positions by market value.
   const topHoldings = useMemo(() => {
     if (!holdings || holdings.length === 0) return [];
 
     return [...holdings]
-      .sort((a, b) => Math.abs(parseFloat(b.pl)) - Math.abs(parseFloat(a.pl)))
+      .sort(
+        (a, b) =>
+          Math.abs(Number(b.qty) * parseFloat(b.currentPrice)) -
+          Math.abs(Number(a.qty) * parseFloat(a.currentPrice)),
+      )
       .slice(0, 5);
   }, [holdings]);
 
@@ -47,9 +62,13 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
   const formatPL = (pl) => {
     const num = parseFloat(pl);
     const isPositive = num >= 0;
+    const formatted = Math.abs(num).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
     return {
       color: isPositive ? "#32cd32" : "#ff4444",
-      display: `${isPositive ? "+" : ""}$${num.toFixed(2)}`,
+      display: `${isPositive ? "+" : "-"}$${formatted}`,
     };
   };
 
@@ -61,6 +80,20 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
             <h3 className="portfolio-title">{name}</h3>
             <p className="portfolio-strategy">{strategy}</p>
             <p className="portfolio-summary">{summary}</p>
+            {asOf ? (
+              <p className="portfolio-as-of">
+                Live marks:{" "}
+                {new Date(asOf).toLocaleString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "America/New_York",
+                  timeZoneName: "short",
+                })}
+              </p>
+            ) : null}
           </div>
           <span className={`portfolio-status ${isLive ? "" : "inactive"}`}>
             ● {status.toUpperCase()}
@@ -94,6 +127,23 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
         </div>
       </div>
 
+      {exposures ? (
+        <div className="portfolio-exposures">
+          <span>Gross {(exposures.gross * 100).toFixed(0)}%</span>
+          <span>
+            Net {exposures.net >= 0 ? "+" : ""}
+            {(exposures.net * 100).toFixed(1)}%
+          </span>
+          <span>{exposures.names} names</span>
+          {performance?.annVol ? (
+            <span>Vol {(performance.annVol * 100).toFixed(1)}%</span>
+          ) : null}
+          {performance?.maxDrawdown ? (
+            <span>Max DD {(performance.maxDrawdown * 100).toFixed(1)}%</span>
+          ) : null}
+        </div>
+      ) : null}
+
       <div className="portfolio-holdings">
         <h4 className="portfolio-section-title">Current Positions</h4>
         {topHoldings.length === 0 ? (
@@ -115,7 +165,11 @@ const PortfolioDashboard = ({ portfolio, showHeader = true }) => {
                 return (
                   <tr key={index}>
                     <td>{pos.symbol}</td>
-                    <td>{pos.qty}</td>
+                    <td>
+                      {Number(pos.qty).toLocaleString("en-US", {
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
                     <td>${pos.avgPrice}</td>
                     <td>${pos.currentPrice}</td>
                     <td style={{ color: plInfo.color, fontWeight: "bold" }}>

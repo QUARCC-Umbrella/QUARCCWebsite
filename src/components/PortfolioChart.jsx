@@ -106,7 +106,11 @@ const PortfolioChart = ({
       lineWidth: 2,
       priceFormat: {
         type: 'custom',
-        formatter: (price) => `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        formatter: (price) => {
+          if (Math.abs(price) >= 1e9) return `$${(price / 1e9).toFixed(2)}B`;
+          if (Math.abs(price) >= 1e6) return `$${(price / 1e6).toFixed(1)}M`;
+          return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        },
       },
     });
 

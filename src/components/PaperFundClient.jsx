@@ -35,6 +35,9 @@ function mergePortfolios(staticPortfolios, livePortfolios) {
       strategy: live.strategy || portfolio.strategy,
       status: live.status || portfolio.status,
       summary: live.summary || portfolio.summary,
+      asOf: live.asOf || portfolio.asOf,
+      exposures: live.exposures || portfolio.exposures,
+      performance: live.performance || portfolio.performance,
       stats: {
         ...portfolio.stats,
         ...(live.stats || {}),
@@ -51,7 +54,10 @@ export default function PaperFundClient({ portfolios = [], showDashboardHeader =
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const apiBase = import.meta.env.PUBLIC_PAPER_FUND_API_BASE;
+    const configured = import.meta.env.PUBLIC_PAPER_FUND_API_BASE;
+    // The checked-in /portfolios snapshot is served from the site root, so the
+    // page works without a separate API. A configured base overrides it.
+    const apiBase = configured || window.location.origin;
 
     if (!apiBase) {
       setStatus("disabled");
@@ -90,8 +96,12 @@ export default function PaperFundClient({ portfolios = [], showDashboardHeader =
     }
 
     loadPortfolios();
+    const timer = window.setInterval(loadPortfolios, 60_000);
 
-    return () => controller.abort();
+    return () => {
+      window.clearInterval(timer);
+      controller.abort();
+    };
   }, []);
 
   const mergedPortfolios = useMemo(

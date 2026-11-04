@@ -21,7 +21,7 @@ npm run build
 - `src/content/blog/*.md`: blog posts with typed frontmatter
 - `src/content/events/*.json`: event entries
 - `src/content/teams/*.json`: team sections and members
-- `src/content/portfolios/*.json`: static paper-fund fallback data
+- `src/content/portfolios/*.json`: rendered paper-fund fallback snapshots
 - `src/data/site.ts`: shared page copy for home/about/join
 
 ## Blog Frontmatter
@@ -40,34 +40,22 @@ Each blog post supports:
 
 ## Live Paper Fund API
 
-Set `PUBLIC_PAPER_FUND_API_BASE` to point at the separate live portfolio API. The site fetches:
+The strategy pipeline, holdings and market-data service live in the separate
+[`QUARCC-Umbrella/quant-fund/live-strategies`](https://github.com/QUARCC-Umbrella/quant-fund/tree/main/live-strategies)
+directory. This repo only renders the result. It currently serves two live
+books: **QUARCC Market Neutral US Quant Fund** and **QUARCC US Long-Short
+Equities** (the submitted Quarcc-black A-030 book).
+
+The site fetches:
 
 ```text
 ${PUBLIC_PAPER_FUND_API_BASE}/portfolios
 ```
 
-Expected response shape:
+Set `PUBLIC_PAPER_FUND_API_BASE` to the deployed `live-strategies` API. If it
+is unset, the page defaults to the same-origin `/portfolios` snapshot in
+`Public/portfolios`, and `src/content/portfolios/quarcc-v4b.json` is the
+build-time fallback.
 
-```json
-{
-  "portfolios": [
-    {
-      "slug": "portfolio-alpha",
-      "name": "Portfolio Alpha",
-      "strategy": "Statistical Arbitrage",
-      "status": "Active",
-      "summary": "A research-led portfolio focused on market neutral pair trading.",
-      "stats": {
-        "equity": "$1,245,300.50",
-        "dayChange": "+2.4%",
-        "sharpe": "1.8",
-        "beta": "0.45"
-      },
-      "holdings": [],
-      "chartData": []
-    }
-  ]
-}
-```
-
-If the variable is unset or the API is unavailable, the `paper-fund` page falls back to the file-based portfolio data in `src/content/portfolios`.
+The live service writes both files; the weekday Action in `quant-fund`
+commits them here when `WEBSITE_REPO_TOKEN` is configured.
