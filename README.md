@@ -3,9 +3,9 @@
 Astro-based QUARCC website with:
 
 - file-based blog content in `src/content/blog`
-- local structured site data for teams, events, and portfolio fallbacks
+- local structured site data for teams, events, trophies, and portfolio fallbacks
 - static Astro pages and layouts
-- React islands only where interactivity is still useful (`AsciiLogoAnimation`, CLI footer, portfolio dashboards)
+- React islands only where interactivity is still useful (`AsciiLogoAnimation`, the fund pages in `src/components/fund/`)
 
 ## Commands
 
@@ -21,8 +21,9 @@ npm run build
 - `src/content/blog/*.md`: blog posts with typed frontmatter
 - `src/content/events/*.json`: event entries
 - `src/content/teams/*.json`: team sections and members
+- `src/content/trophies/*.json`: trophy entries
+- `src/content/{home,about,join}`: page copy for home/about/join
 - `src/content/portfolios/*.json`: rendered paper-fund fallback snapshots
-- `src/data/site.ts`: shared page copy for home/about/join
 
 ## Blog Frontmatter
 

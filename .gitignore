@@ -13,7 +13,6 @@ node_modules
 dist
 dist-ssr
 *.local
-.playwright-cli/
 
 # Editor directories and files
 .vscode/*
@@ -26,8 +25,5 @@ dist-ssr
 *.sln
 *.sw?
 
-# local secrets and live-service cache
+# local secrets
 .env
-live/cache/
-__pycache__/
-*.pyc
