@@ -20,7 +20,7 @@
 \begin{center}
 {\large\bfseries QUARCC Purple: Encompassing LASSO, Semivariance Risk, and Relax-and-Round Construction in a Market-Neutral US Equity Fund}\\[6pt]
 {\normalsize QUARCC Purple team}\\
-{\small McGill--FIAM Asset Management Hackathon 2026, Final Round $\cdot$ Code and locked results: \href{https://github.com/NicholasXydis/QuarccPurple}{github.com/NicholasXydis/QuarccPurple}}\\[3pt]
+{\small McGill--FIAM Asset Management Hackathon 2026, Final Round}\\[3pt]
 {\small November 2026}
 \end{center}
 \vspace{2pt}
@@ -37,7 +37,7 @@
 
 The mandate requires 200--500 names, gross exposure at most 200\%, net exposure within $\pm 50\%$, a 5\% single-name limit, sector net exposure within $\pm 20\%$, and no short position below a \$500m market capitalisation. The benchmark is the 3-month T-bill plus 4\% a year, compounded monthly.
 
-The panel is the competition's US equity file of 147 characteristics from Jensen, Kelly, and Pedersen (2023; hereafter JKP), with daily stock returns. Licensed data cannot be redistributed; the public repository contains the code, the locked outputs needed to verify the headline results, and small public series. Every input is stamped with the time it became public: SEC filings at their acceptance time, rolled to the next session when accepted after the close, and exchange short interest at eight trading days after settlement. Rows flagged as revised are excluded because their first-reported value is unavailable. Forward-looking split factors are not used.
+The sample consists of US equities with the 147 characteristics of Jensen, Kelly, and Pedersen (2023; hereafter JKP) and daily stock returns. Every input enters the model at the time it became public: SEC filings at their acceptance time, rolled to the next session when accepted after the close, and exchange short interest eight trading days after settlement. Observations flagged as revised are excluded because their first-reported values are unavailable, and forward-looking split factors are not used.
 
 At each month-end the estimation universe requires $|\mathrm{prc}_{i,t}| \ge \$5$ and 126-day average daily dollar volume of at least \$2m. Short eligibility additionally requires market equity of at least \$500m, and candidate positions require at least \$3bn. A book is formed at each month-end and at the first session on or after the 15th of the following month, giving 136 rebalances. Trading starts one session after formation and runs over five sessions.
 
@@ -113,11 +113,11 @@ with $\gamma = 0.25$, $\lambda_\beta = 10$, feature-coverage penalty $\lambda_u 
 
 \textbf{Costs and borrow.} Half-spreads scale each stock's 21-day high--low estimate (Corwin and Schultz, 2012) by a ratio calibrated on 2015--2020 TAQ effective spreads within size groups. Executions pay brokerage and regulatory fees, the half-spread, and square-root impact (Almgren et al., 2005), which the QP approximates with a matched quadratic term. Short borrow is tiered on short interest over shares (D'Avolio, 2002): 30\,bps a year below 5\%, then 1\%, 3\%, and 8\% at the 5\%, 10\%, and 20\% thresholds.
 
-\textbf{Submitted book and ladder.} The submitted book scales core targets by $1.08$, with formation gross capped at 188\% and caps of 3.9\% long and 1.08\% short. Trades run in equal fifths over five sessions, with a 10\% daily ADV limit. Guards trim gross from 190\% to 185\% and any long from 4.4\% to 3.9\%, and cover any short whose capitalisation falls below a \$550m buffer. Eight local language-model agents read filings, draft commentary, measure crowding, and challenge the book; none sets a weight.
+\textbf{Final portfolio and trade schedule.} The final portfolio scales core targets by $1.08$, with formation gross capped at 188\% and caps of 3.9\% long and 1.08\% short. Trades run in equal fifths over five sessions, with a 10\% daily ADV limit. Guards trim gross from 190\% to 185\% and any long from 4.4\% to 3.9\%, and cover any short whose capitalisation falls below a \$550m buffer. Eight local language-model agents read filings, draft commentary, measure crowding, and critique the portfolio; none of them determines a portfolio weight.
 
 \begin{table*}[t]
 \centering
-\caption{Headline results, 4 January 2021 to 31 August 2026 (68 months, 1,421 sessions), after modelled costs. Volatility, Sharpe, Sortino, beta, and alpha use monthly returns; Sortino uses a 0\% target. S\&P 500 figures use the price index. Source: locked results in the public repository.}
+\caption{Headline results, 4 January 2021 to 31 August 2026 (68 months, 1,421 sessions), after modelled costs. Volatility, Sharpe, Sortino, beta, and alpha use monthly returns; Sortino uses a 0\% target. S\&P 500 figures use the price index.}
 \label{tab:results}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
@@ -156,25 +156,23 @@ Year & Fund & T-bill $+4\%$ \\
 
 \section{Results}
 
-Table~\ref{tab:results} reports results recomputed from the repository's locked daily ledger. The rule checks record zero breach days over the window, with 246--357 names held and gross exposure averaging 136.5\% (maximum 192.9\%, final 186.0\%). Single-name exposure reached at most 4.6\% and net exposure stayed between $-3.1\%$ and $+2.2\%$.
+Table~\ref{tab:results} reports the results. No mandate limit is breached on any day of the sample. The fund holds 246--357 names, with gross exposure averaging 136.5\% (maximum 192.9\%, final 186.0\%). Single-name exposure reaches at most 4.6\%, and net exposure stays between $-3.1\%$ and $+2.2\%$.
 
-Of the \$467.07m net profit, stock positions contributed \$257.7m, interest on cash \$239.5m, and costs took \$30.1m: \$9.5m of trading (14\,bps a year) and \$20.6m of borrow (29\,bps a year). Interest is thus nearly half of gross profit, which is why the T-bill-based hurdle is the appropriate comparison. In 2022, when the S\&P 500 total return was $-18.18\%$, the fund returned $+1.34\%$.
+Net profit of \$467.07m comprises \$257.7m from stock positions and \$239.5m of interest on cash, less \$30.1m of costs: \$9.5m of trading (14\,bps a year) and \$20.6m of borrow (29\,bps a year). Interest is nearly half of gross profit, so a T-bill-based benchmark is the appropriate comparison. In 2022, when the S\&P 500 total return is $-18.18\%$, the fund returns $+1.34\%$.
 
 \section{Limitations}
 
-\textit{The fund misses its benchmark.} The 7.00\% CAGR trails the 7.53\% hurdle by 53\,bps a year. Costs equal 72\% of the \$41.6m cumulative shortfall, and the information ratio before costs is about zero. The standard error of 0.42 means the data cannot distinguish a modest edge from none.
+\textit{Benchmark shortfall.} The 7.00\% CAGR trails the 7.53\% benchmark by 53\,bps a year. Costs equal 72\% of the \$41.6m cumulative shortfall, and the information ratio before costs is approximately zero. With a standard error of 0.42, the data cannot distinguish a modest edge from no edge.
 
-\textit{It is not a clean holdout.} Forecasts are walk-forward, but the construction settings, including the final gross scale, were chosen with 2021--2026 visible. Sharpe ratios and drawdowns should be read with that selection in mind.
+\textit{Selection.} Forecasts are walk-forward, but construction settings, including the final gross scale, were chosen with 2021--2026 visible. The sample is therefore not a clean holdout, and Sharpe ratios and drawdowns should be read with this selection in mind.
 
-\textit{It lags in rallies.} The fund trailed its hurdle in 2022, 2025, and 2026 to date. In 2025 it returned 2.08\% against a hurdle of 8.37\%. Gross exposure averaged 136.5\%, well below the 200\% limit, because the optimiser charges entry costs against a horizon-scaled forecast and builds slowly.
+\textit{Time variation.} The fund trails the benchmark in 2022, 2025, and 2026 to date; in 2025 it returns 2.08\% against 8.37\%. Average gross exposure of 136.5\% is well below the 200\% limit, which is consistent with the optimiser charging entry costs against a horizon-scaled forecast.
 
-\textit{Costs are modelled.} No order was executed. Fills, borrow availability, and impact at \$1 billion may differ from the model.
+\textit{Simulated execution.} All results are simulated and no order was executed. Fills, borrow availability, and market impact at \$1 billion may differ from the cost model.
 
-\textit{The live tracker is a paper mark.} QUARCC's public paper-fund page marks a single frozen 24 August 2026 formation forward with market data. It does not execute trades and is not a live track record.
+\section*{Code and Data Availability}
 
-\section*{Code and Data}
-
-Code is available under the MIT License at \href{https://github.com/NicholasXydis/QuarccPurple}{github.com/NicholasXydis/QuarccPurple}, with the fact sheet, the competition deck, and the locked results. Rule checks and headline recomputation run without licensed data. Licensed inputs from WRDS and the organisers are required for a full rebuild and cannot be shared.
+Code is available under the MIT License at \href{https://github.com/NicholasXydis/QuarccPurple}{github.com/NicholasXydis/QuarccPurple}. The characteristic and return data are licensed and cannot be redistributed.
 
 \vspace{3pt}
 \section*{References}

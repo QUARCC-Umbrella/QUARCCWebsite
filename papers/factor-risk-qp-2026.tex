@@ -55,7 +55,7 @@ Through CVXPY (Diamond and Boyd, 2016) with Clarabel (Goulart and Chen, 2024), t
 
 \begin{table*}[t]
 \centering
-\caption{Single-thread benchmarks on a 2-vCPU Linux VM ($\mathrm{tol}=10^{-8}$, medians of repeated runs, BLAS pinned to one thread, one core). Problems are synthetic. The baseline is CVXPY with Clarabel or, for the 100-name book, SLSQP, and accuracy is measured against it; ``sparse'' is the hand-built sparse Clarabel model; dashes mean not recorded.}
+\caption{Single-thread benchmarks on a 2-vCPU Linux VM ($\mathrm{tol}=10^{-8}$, medians of repeated runs, BLAS pinned to one thread, one core). Problems are synthetic. The baseline is CVXPY with Clarabel or, for the 100-name book, SLSQP, and accuracy is measured against it; ``sparse'' is the hand-built sparse Clarabel model; dashes denote quantities not measured.}
 \label{tab:benchmarks}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
@@ -137,7 +137,7 @@ which are added to the diagonal. Each pass remains a diagonal-plus-low-rank QP o
 
 \section{Fast Screening Estimators}
 
-\textbf{Loose-tolerance preview.} Stopping at $\mathrm{tol} = 10^{-3}$ and six iterations gives an approximate solution for screening and warm starts (Table~\ref{tab:preview}, from a separate timing run). The objective gap is $2.8$--$3.3 \times 10^{-3}$ and the maximum weight difference is at most $1.9 \times 10^{-2}$, so a preview ranks candidates but is not a book. Allowing up to 16 iterations tightens these to $7.5 \times 10^{-5}$ and $4 \times 10^{-3}$.
+\textbf{Loose-tolerance preview.} Stopping at $\mathrm{tol} = 10^{-3}$ and six iterations gives an approximate solution for screening and warm starts (Table~\ref{tab:preview}, a separate timing experiment). The objective gap is $2.8$--$3.3 \times 10^{-3}$ and the maximum weight difference is at most $1.9 \times 10^{-2}$, so a preview ranks candidates but is not a book. Allowing up to 16 iterations tightens these to $7.5 \times 10^{-5}$ and $4 \times 10^{-3}$.
 
 \begin{table}[h]
 \centering
@@ -159,7 +159,7 @@ $n$ & Exact & Preview & Speedup & Obj.\ gap & Max $|\Delta x|$ \\
 \begin{equation}
 \rho_{\text{contact}} = \frac{\#\{i : x_i \text{ at a bound}\} + \#\{\text{active bands}\}}{n_{\text{selected}}}. \label{eq:contact}
 \end{equation}
-On 16 labelled formations from our market-neutral research, all successful first rungs of a gross ladder had $\rho_{\text{contact}} < 0.47$, while the two failures had $0.59$ and $0.65$. A two-parameter logistic with threshold $0.53$ and slope $100$ turns this into a ranking score. The two failures come from a single calendar month, so this is a screening heuristic and not a probability.
+On 16 labelled formations of a market-neutral construction problem, all successful first rungs of a gross ladder had $\rho_{\text{contact}} < 0.47$, while the two failures had $0.59$ and $0.65$. A two-parameter logistic with threshold $0.53$ and slope $100$ turns this into a ranking score. The two failures come from a single calendar month, so this is a screening heuristic and not a probability.
 
 \section{Empirical Scaling}
 
@@ -187,11 +187,11 @@ This method, final QPs & 0.160 & 1.714 & 1.779 & 2.849 & 6.502 \\
 
 \section{Limitations}
 
-First, all benchmarks use synthetic problems on one machine, so absolute times will differ on real data and other hardware. Second, this solver is not a basis for any published performance figure: QUARCC Purple's submitted book was solved with Clarabel, and the four-stage result above measures runtime rather than investment outcomes. Third, the method assumes sign-fixed weights, so free-sign support selection with minimum positions still needs an outer ladder or a first-stage sign assignment. Fourth, L1 turnover reaches the exact objective to roughly $10^{-5}$, and the default quadratic soft-band penalty explains weight differences near $5 \times 10^{-4}$. Fifth, the contact screen rests on two failures from one month.
+First, all benchmarks use synthetic problems on one machine, so absolute times will differ on real data and other hardware. Second, the results measure computational performance and say nothing about investment outcomes. Third, the method assumes sign-fixed weights, so free-sign support selection with minimum positions still needs an outer ladder or a first-stage sign assignment. Fourth, L1 turnover reaches the exact objective to roughly $10^{-5}$, and the default quadratic soft-band penalty explains weight differences near $5 \times 10^{-4}$. Fifth, the contact screen rests on two failures from one month.
 
-\section*{Availability}
+\section*{Code Availability}
 
-The solver is an internal QUARCC research tool and is not publicly released at this time.
+The solver code is not publicly available.
 
 \vspace{4pt}
 \section*{References}

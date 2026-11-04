@@ -17,7 +17,7 @@ QUARCC Purple is a simulated \$1 billion US equity fund built for the final roun
 
 From January 2021 to August 2026, after modelled costs, the fund grows to \$1.467 billion: a 7.00% CAGR with 3.96% volatility, a Sharpe ratio of 0.91, a maximum drawdown of −2.99%, and an S&P 500 beta of 0.012. It does not beat its benchmark. The information ratio is −0.11 with a standard error of 0.42.
 
-The code and locked results are public in the [QuarccPurple repository](https://github.com/NicholasXydis/QuarccPurple). There is also a [fact sheet](https://github.com/NicholasXydis/QuarccPurple/blob/main/finals/QUARCC_Purple_Fact_Sheet.pdf), a [project site](https://quarccpurple.ca), and a [paper (PDF)](/papers/quarcc-purple-market-neutral-2026.pdf) with the full method and references.
+The code is public in the [QuarccPurple repository](https://github.com/NicholasXydis/QuarccPurple). There is also a [fact sheet](https://github.com/NicholasXydis/QuarccPurple/blob/main/finals/QUARCC_Purple_Fact_Sheet.pdf), a [project site](https://quarccpurple.ca), and a [paper (PDF)](/papers/quarcc-purple-market-neutral-2026.pdf) with the full method and references.
 
 ## Mandate
 
@@ -96,14 +96,14 @@ Eight local language-model agents read filings, draft commentary, measure crowdi
 | 2025 | 2.08% | 8.37% |
 | 2026 (to August) | 3.62% | 5.21% |
 
-The book holds 246 to 357 names, with gross exposure averaging 136.5%, and records zero rule breaches. Of the \$467 million net profit, stock positions contribute \$258 million, cash interest \$240 million, and costs take \$30 million. Interest is nearly half of gross profit, which is why the T-bill-based hurdle is the fair comparison.
+The book holds 246 to 357 names, with gross exposure averaging 136.5%, and breaches no mandate limit. Of the \$467 million net profit, stock positions contribute \$258 million, cash interest \$240 million, and costs take \$30 million. Interest is nearly half of gross profit, which is why the T-bill-based hurdle is the fair comparison.
 
 ## Limitations
 
-- **It misses the benchmark.** The fund trails its hurdle by 53 bps a year, and costs equal 72% of the cumulative shortfall. The information ratio before costs is about zero. A standard error of 0.42 cannot separate a modest edge from none.
-- **It is not a clean holdout.** Forecasts are walk-forward, but construction settings, including the final gross scale, were chosen with 2021 to 2026 visible.
-- **It lags when markets run.** The fund trailed the hurdle in 2022, 2025, and 2026 to date. Gross averaged 136.5%, well below the 200% limit, because the optimiser builds positions slowly.
-- **Execution is modelled.** No order was placed. Fills, borrow, and impact at \$1 billion may differ. Our [paper-fund page](/paper-fund) marks a single frozen 24 August 2026 formation forward with market data. It is not a live record.
+- **Benchmark shortfall.** The fund trails its hurdle by 53 bps a year, and costs equal 72% of the cumulative shortfall. The information ratio before costs is about zero. A standard error of 0.42 cannot separate a modest edge from none.
+- **Selection.** Forecasts are walk-forward, but construction settings, including the final gross scale, were chosen with 2021 to 2026 visible, so the sample is not a clean holdout.
+- **Time variation.** The fund trailed the hurdle in 2022, 2025, and 2026 to date. Gross averaged 136.5%, well below the 200% limit.
+- **Simulated execution.** No order was placed. Fills, borrow, and impact at \$1 billion may differ. Our [paper-fund page](/paper-fund) marks a single frozen 24 August 2026 formation forward with market data. It is not a live record.
 
 ## Read more
 

@@ -72,14 +72,14 @@ All problems are synthetic. Runs use one thread on a 2-vCPU Linux VM at toleranc
 
 The headline 50× mostly measures modelling overhead. Against the sparse model, the fairer comparison, the gain is 3.9× at $n = 1000$ and 3.1× on the ladder. In a synthetic 12-month run of a four-stage market-neutral construction at $n = 400$, total runtime falls from 8.73 s to 2.93 s. Exact final QPs alone reach 6.50 s; the rest of the saving comes from deliberate approximations.
 
-## What this does not show
+## Limitations
 
-- **It is not an investment result.** The benchmarks measure runtime on synthetic problems. No published QUARCC return depends on this solver: [QUARCC Purple](/blog/quarcc-purple-market-neutral-us-equities)'s submitted book and the [US Long-Short Portfolio](/blog/us-long-short-portfolio) were both solved with Clarabel.
+- **Computation, not investment results.** The benchmarks measure runtime on synthetic problems. The [QUARCC Purple](/blog/quarcc-purple-market-neutral-us-equities) and [US Long-Short](/blog/us-long-short-portfolio) results were both solved with Clarabel, not with this method.
 - **Weights differ.** Gaps near $5 \times 10^{-4}$ come mainly from the default quadratic soft-band penalty. A loose-tolerance preview is faster, with gaps up to $1.9 \times 10^{-2}$, so we use it to rank candidates and not as a book.
 - **Signs must be fixed.** Free-sign support selection with minimum positions still needs an outer ladder or a first-stage sign assignment.
 - **A contact-ratio screen is only a heuristic.** Motivated by jamming in constrained perceptrons (Franz and Parisi, 2016), it separated failed ladder rungs from successful ones on 16 labelled formations, but the two failures come from one calendar month.
 
-The solver is an internal research tool and is not publicly released at this time.
+The solver code is not publicly available.
 
 ## Read more
 

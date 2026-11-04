@@ -1,6 +1,6 @@
 ---
-title: "The US Long-Short Portfolio: Tail-Weighted Forecasts and an Audit of What Did Not Work"
-description: "A monthly dollar-neutral US equity book, what a review of its delisting treatment changed, why its results should not be read as achievable returns, and the later research that failed to replace it."
+title: "The US Long-Short Portfolio: Tail-Weighted Forecasts and Sensitivity to Delisting Assumptions"
+description: "A monthly dollar-neutral US equity portfolio: its forecasts and risk model, its sensitivity to delisting assumptions, why its results should not be read as achievable returns, and alternative specifications."
 pubDate: 2026-11-02
 updatedDate: 2026-11-04
 heroImage: ../../assets/blog/us-long-short-rank-ic.svg
@@ -13,9 +13,9 @@ draft: false
 featured: true
 ---
 
-The US Long-Short Portfolio is a monthly, dollar-neutral book built on 147 characteristics from Jensen, Kelly, and Pedersen (2023) across 529,082 US stock-months. Replayed in an event-driven engine from \$10 million over January 2021 to August 2026, it has a net information ratio of 3.77 against T-bill + 4%, 12.4% volatility, and 18.19× growth.
+The US Long-Short Portfolio is a monthly, dollar-neutral book built on 147 characteristics from Jensen, Kelly, and Pedersen (2023) across 529,082 US stock-months. In an event-driven simulation from \$10 million over January 2021 to August 2026, it has a net information ratio of 3.77 against T-bill + 4%, 12.4% volatility, and 18.19× growth.
 
-We do not read those figures as an achievable return. The design passed through 65 trials that had seen the evaluation window, about 91% of short gross sits in micro- and nano-capitalisation stocks, and borrow availability is modelled and not observed. This post explains the book and spends most of its length on those problems. The [paper (PDF)](/papers/us-long-short-portfolio-2026.pdf) has the full method, tables, and references.
+Those figures should not be read as achievable returns. The design passed through 65 trials that had seen the evaluation window, about 91% of short gross sits in micro- and nano-capitalisation stocks, and borrow availability is modelled and not observed. The [paper (PDF)](/papers/us-long-short-portfolio-2026.pdf) has the full method, tables, and references.
 
 ## Forecast and alpha
 
@@ -56,15 +56,15 @@ A single convex program maximises alpha net of risk, spread, commission, impact,
 | Beta to the S&P 500 | +0.09 | 1.00 |
 | Costs per year | 5.2% | |
 
-All figures come from the \$10 million ledger, net of modelled costs. Rolling 12-month beta ranges from −0.31 to +0.99, so the low full-sample beta hides real market exposure at times.
+All figures are simulated from \$10 million, net of modelled costs. Rolling 12-month beta ranges from −0.31 to +0.99, so the low full-sample beta hides real market exposure at times.
 
-## What a review changed
+## Sensitivity to data handling
 
-A review after the first registered run found three problems:
+Three data-handling choices materially affect the results:
 
-1. **Future information in the universe.** Forecasts were scored only for stocks whose next-month return existed, which is not known at formation. Scoring all stocks restores 2,311 name-months.
-2. **Exit liquidity.** A delisted name was filled with the smallest volume among requested names, so an exit could cost up to 244% of notional.
-3. **Missing returns.** A held stock with no return was booked at −30% if long and 0 if short. Both now close at the last available price, a return of zero.
+1. **Look-ahead in the universe.** Scoring only stocks with an observed next-month return uses information unavailable at formation. Scoring all stocks restores 2,311 name-months.
+2. **Exit liquidity.** Assigning a delisted name the smallest volume among requested names can make an exit cost up to 244% of notional.
+3. **Missing returns.** One treatment books a held stock with no return at −30% if long and 0 if short. The baseline closes both at the last available price, a return of zero.
 
 | Universe and exits | Missing return | IR | Growth | Costs/yr |
 | --- | --- | ---: | ---: | ---: |
@@ -73,34 +73,34 @@ A review after the first registered run found three problems:
 | All rows, repaired exits | −30% long | 3.602 | 17.52 | 5.11% |
 | **All rows, repaired exits** | **Last price** | **3.769** | **18.19** | **5.18%** |
 
-Fixing the first two problems at the original −30% assumption lowers the IR, from 3.63 to 3.60. The whole gain to 3.77 comes from the third choice, across 189 delisted positions, 147 of them long. Shumway (1997) shows performance-related delistings lose substantially, while cash mergers close near their last price, so the truth lies in between. Read 3.60 to 3.77 as a range.
+Fixing the first two problems at the original −30% assumption lowers the IR, from 3.63 to 3.60. The whole gain to 3.77 comes from the third choice, across 189 delisted positions, 147 of them long. Shumway (1997) shows performance-related delistings lose substantially, while cash mergers close near their last price, so the truth lies in between. We regard 3.60 to 3.77 as the plausible range.
 
-## Why these are not achievable returns
+## Limitations
 
-- **It is not a clean holdout.** Models are walk-forward, but 65 trials saw 2021 to 2026 results of earlier versions. The deflated Sharpe ratio is 0.886, below the usual 0.95, and the review above was carried out with results in view.
-- **The shorts are small and hard.** By gross, 91% of the short book is micro- or nano-cap, 61% trades below \$5, and the median short has a \$58 million market capitalisation. The model charges 3.4% a year for borrow and recall, but it has no record of actual availability or fee history.
-- **Capacity is not \$1 billion.** Our [paper-fund page](/paper-fund/us-long-short-equities) presents this book on a \$1 billion base through a linear 100× rescale, which is for display. On the development window a related 500-name control already has 34 to 42% of short gross beyond one day of 10% of daily volume at \$10 million, and its net return stops rising near 100 to 120% gross. Returns at \$1 billion would be far lower.
-- **The live page is not a track record.** It marks one 31 August 2026 formation forward with market data, and it does not execute trades.
+- **Selection.** Models are walk-forward, but 65 trials saw 2021 to 2026 results of earlier versions. The deflated Sharpe ratio is 0.886, below the conventional 0.95, and the data-handling corrections were made with results in view.
+- **Short-book composition.** By gross, 91% of the short book is micro- or nano-cap, 61% trades below \$5, and the median short has a \$58 million market capitalisation. The model charges 3.4% a year for borrow and recall, but it has no record of actual availability or fee history.
+- **Capacity.** Our [paper-fund page](/paper-fund/us-long-short-equities) presents this book on a \$1 billion base through a linear 100× rescale, which is for display. On the development window a related 500-name control already has 34 to 42% of short gross beyond one day of 10% of daily volume at \$10 million, and its net return stops rising near 100 to 120% gross. Returns at \$1 billion would be far lower.
+- **Paper marks.** The same page marks one 31 August 2026 formation forward with market data, and it does not execute trades.
 
-## What failed afterwards
+## Alternative specifications
 
-No later variant replaced the book.
+No alternative exceeds the baseline information ratio in the evaluation window, and the three development-window specifications below fall below the control.
 
 | Variant | Window | IR | Vol. | Max DD | Outcome |
 | --- | --- | ---: | ---: | ---: | --- |
-| 500-name control | Evaluation | 3.478 | 12.4% | −4.6% | Compliant comparison |
+| 500-name control | Evaluation | 3.478 | 12.4% | −4.6% | 500-name limit |
 | Normal-rank score blend | Evaluation | 3.555 | | | −2.12% a year vs. control ($t = -1.01$) |
 | Volatility target 8% | Evaluation | 3.697 | 8.7% | −3.5% | −11.1% a year vs. control ($t = -3.58$) |
 | Separated $\mu$, $\Sigma$, cost | Evaluation | 2.29 | 29.8% | −28.8% | 48.7× growth with a beta of +0.77 |
 | Unified compiler (best) | Development | 1.04 | 7.3% | −6.0% | Below control's 1.36 |
-| Fractional IR maximiser | Development | 0.24 | 12.7% | −12.4% | Stopped ($z = -2.26$) |
-| LightGBM mean forecast | Development | 0.62 | 31.6% | −57% | Stopped |
+| Fractional IR maximiser | Development | 0.24 | 12.7% | −12.4% | $z = -2.26$ vs. control |
+| LightGBM mean forecast | Development | 0.62 | 31.6% | −57% | Below control's 1.36 |
 
-Three findings are worth keeping:
+Three results stand out:
 
 - **Volatility targeting moves along the frontier.** At matched risk on the development window, the target arm and the control have the same frontier, so a higher Sharpe ratio reflects running smaller.
 - **Spreading bets loses the edge.** Policies linear in rank-normalised characteristics hold few small shorts and lose on the short leg, because the skill here is concentrated.
-- **A joint risk system failed its placebo test.** In a registered 144-month synthetic test against 16 shuffled-forecast placebos with the same risk, cost, and constraints, it lost 0.865% a month (95% CI −2.43% to +0.70%, $p = 0.283$) and ranked last. Its returns came from the machinery around the forecast. It was never run on 2021 to 2026 data.
+- **Placebo test of a joint risk system.** In a preregistered 144-month synthetic test against 16 shuffled-forecast placebos with the same risk, cost, and constraints, it lost 0.865% a month (95% CI −2.43% to +0.70%, $p = 0.283$) and ranked last. Its returns arose from the risk, cost, and constraint structure, not from forecast ordering. It was not evaluated on 2021 to 2026 data.
 
 ## Read more
 
