@@ -1,7 +1,7 @@
 {
   "portfolios": [
     {
-      "slug": "quarcc-v4b",
+      "slug": "market-neutral-us-equities",
       "name": "QUARCC Market Neutral US Quant Fund",
       "strategy": "US equity market-neutral long/short",
       "status": "Active",
@@ -18360,7 +18360,7 @@
     },
     {
       "slug": "us-long-short-equities",
-      "name": "QUARCC US Long-Short Equities",
+      "name": "QUARCC US Long-Short Portfolio",
       "strategy": "US equity long/short",
       "status": "Active",
       "summary": "Monthly US long-short equity book. 475 names, 100% target gross, monthly rebalance, benchmarked to the S&P 500. Live marks from the 31 Aug 2026 formation.",

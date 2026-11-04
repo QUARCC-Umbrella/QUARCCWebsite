@@ -1,0 +1,224 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[margin=0.72in,top=0.72in,bottom=0.75in,columnsep=0.25in]{geometry}
+\usepackage{amsmath,amssymb,bm,booktabs,array,tabularx}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\renewcommand{\arraystretch}{1.06}
+
+\begin{document}
+
+\twocolumn[{%
+\begin{center}
+{\large\bfseries Are Lagging Indicators Better Than Nothing? Macro-Financial Stress and a Geometric Brownian Benchmark}\\[6pt]
+{\normalsize QUARCC}\\
+{\small Quantitative Research Note}\\[3pt]
+{\small November 2026}
+\end{center}
+\vspace{2pt}
+\begin{center}
+\begin{minipage}{0.90\textwidth}
+\small
+\textbf{Abstract.} Credit spreads, volatility ranges, investor sentiment, and margin debt all report on conditions that have already arrived. We ask whether a stress index built from them is better than having no indicator at all. We define ``nothing'' as a geometric Brownian motion fitted to S\&P 500 excess returns, a market in which the past says nothing about the future. Over 326 months from August 1999 to September 2026, the answer depends on the question. For risk, lagged stress is better than nothing: it explains 46\% of the out-of-sample variation in next-month log realised variance, against 42\% for last month's variance and 56\% for the VIX, and it adds no significant information once the VIX is known. For direction, it is not: its out-of-sample $R^2$ for monthly returns is zero. Scaling S\&P 500 exposure with lagged stress raises the Sharpe ratio from 0.49 to 0.62 and reduces the maximum drawdown from 51\% to 33\%, a result outside all 10,000 simulated Brownian markets. Most of that gain comes from 1999--2012. On a simulated long-short portfolio with little market exposure, the same rule lowers the Sharpe ratio from 4.10 to 4.01.
+\end{minipage}
+\end{center}
+\vspace{8pt}
+}]
+
+\section{The Economic Question}
+
+Risk managers read stress indicators after the fact. A credit spread widens once lenders have already become concerned, bearish surveys follow falling prices, and margin debt is reported weeks late. If markets absorb information quickly, these signals should arrive too late to be useful.
+
+There are nevertheless economic reasons to expect them to help. Stress can persist because its causes persist. Intermediaries that lose capital cut their lending, which depresses prices and tightens funding further (Brunnermeier and Pedersen, 2009; Adrian and Shin, 2010). Credit spreads carry a premium that reflects the risk-bearing capacity of those intermediaries and predicts economic activity (Gilchrist and Zakrajšek, 2012). Volatility itself clusters (Mandelbrot, 1963; Engle, 1982), and turbulent periods can be poor times to hold risk (Moreira and Muir, 2017; Daniel and Moskowitz, 2016). None of this requires an indicator to lead the market. It only requires the state of the market to last longer than the delay in observing it.
+
+The relevant test therefore separates risk from direction. Persistence in the state of the market would make future risk forecastable. Expected returns are a harder target, because a stress signal that everyone can see should already be in prices (Goyal and Welch, 2008).
+
+\section{A Market With Nothing to Find}
+
+To define ``nothing'', we model the market as a geometric Brownian motion (Black and Scholes, 1973),
+\begin{equation}
+\frac{dP_t}{P_t} = \mu\,dt + \sigma\,dW_t, \label{eq:gbm}
+\end{equation}
+so monthly log excess returns are independent draws from a normal distribution with constant mean and variance. In this market, no function of the past can forecast the next month's risk or return. An indicator can then only add noise.
+
+We fit \eqref{eq:gbm} to monthly log excess returns of the S\&P 500 total return index over the Treasury bill rate. From August 1999 to September 2026 ($T = 326$), the annualised mean is 6.28\% and the annualised volatility is 15.24\%. We use the fit in two ways. Its constant variance is the forecast that indicators must beat, and its simulated paths form a placebo for trading rules. QUARCC's long-short equity research uses the same idea to validate portfolio pipelines, running them on zero-drift Brownian markets calibrated to realised S\&P 500 volatility, where no real edge can exist.
+
+\begin{table}[h]
+\centering
+\caption{The fitted Brownian market against the data. Statistics use monthly log excess returns. The last column gives the 5th to 95th percentile across 10,000 simulated markets of the same length.}
+\label{tab:gbm}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrr}
+\toprule
+Statistic & S\&P 500 & Brownian market \\
+\midrule
+Worst month & $-16.9\%$ & $-14.2\%$ to $-9.3\%$ \\
+Maximum drawdown & $55.6\%$ & $24.5\%$ to $57.8\%$ \\
+Autocorrelation of squared returns & $0.31$ & 95th pct.\ $0.09$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:gbm} shows where the fit fails. Its overall scale is reasonable, since the realised drawdown lies inside the simulated range. Its time structure is not. Squared returns are autocorrelated (Ljung--Box statistic 69.2 at 12 lags, $p < 10^{-9}$), and the worst month, October 2008, is 4.3 standard deviations below the mean. Returns also have skewness of $-0.63$ and excess kurtosis of 1.08. There is thus a structure in risk for an indicator to find.
+
+\section{A Stress Index}
+
+The index combines five public series, each chosen for a distinct channel:
+\begin{itemize}
+\item \textit{Credit:} ICE BofA US high-yield and investment-grade option-adjusted spreads measure the price lenders charge for risk.
+\item \textit{Uncertainty:} the within-month range of daily VIX closes, $\max_{d \in m(t)}\mathrm{VIX}_d - \min_{d \in m(t)}\mathrm{VIX}_d$, measures how unsettled expectations are.
+\item \textit{Sentiment:} the last AAII bearish reading of the month, dated by its Thursday report, measures retail fear (Baker and Wurgler, 2006).
+\item \textit{Leverage:} FINRA customer margin debt measures deleveraging through its six-month change, $\Delta^{\%}\mathrm{MD}_t = 100(\mathrm{MD}_{t-1}/\mathrm{MD}_{t-7} - 1)$. The one-month lag reflects its late publication.
+\end{itemize}
+Each series is standardised with an expanding mean and standard deviation over its own history up to month $t$ (Welford, 1962), written $z_t$. The index weights the five equally, with leverage growth entering negatively:
+\begin{equation}
+S_t = 0.2\left(z_t^{\text{HY}} + z_t^{\text{IG}} + z_t^{\text{VIX}} + z_t^{\text{AAII}} - z_t^{\text{MD}}\right). \label{eq:stress}
+\end{equation}
+The weights are not fitted to returns or to risk, which removes one route to overfitting, and they are a prior with no claim to optimality. Over the sample, $S_t$ ranges from $-0.86$ in December 2003 to $4.13$ in October 2008. Its first-order autocorrelation is 0.87, a half-life of about five months, so a one-month reporting delay costs little of the signal. All tests use $S_{t-1}$ to describe month $t$.
+
+\section{Forecasting Risk}
+
+We forecast next-month log realised variance, $\ln \mathrm{RV}_t$, the log of the sum of squared daily S\&P 500 log returns in month $t$. Each model is a regression re-estimated every month on an expanding window. The first 60 months are used for estimation, leaving 266 out-of-sample months from August 2004. The ``nothing'' model has an intercept only, matching a constant-volatility Brownian market. We report out-of-sample $R^2$ against that model, the change in QLIKE loss (Patton, 2011), and Diebold and Mariano (1995) $t$-statistics on squared error with Newey and West (1987) errors.
+
+\begin{table}[h]
+\centering
+\caption{Out-of-sample forecasts of log realised variance, 266 months. Negative QLIKE changes are improvements on the constant-variance Brownian benchmark.}
+\label{tab:risk}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrr}
+\toprule
+Predictor at $t-1$ & $R^2_{\text{oos}}$ & $\Delta$QLIKE & DM $t$ \\
+\midrule
+Stress index $S$ & 0.463 & $-0.359$ & 4.02 \\
+Log realised variance & 0.420 & $-0.323$ & 3.36 \\
+$S$ + realised variance & 0.486 & $-0.369$ & 4.05 \\
+Log VIX$^2$ & 0.560 & $-0.412$ & 4.45 \\
+$S$ + log VIX$^2$ & 0.578 & $-0.426$ & 4.72 \\
+\addlinespace[2pt]
+High-yield spread only & 0.348 & $-0.185$ & 3.00 \\
+Investment-grade spread only & 0.352 & $-0.175$ & 2.79 \\
+VIX range only & 0.293 & $-0.291$ & 2.90 \\
+AAII bearish only & 0.130 & $-0.109$ & 3.23 \\
+Margin debt only & 0.089 & $-0.096$ & 1.94 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:risk} gives a clear answer on risk. Every lagging signal has a positive out-of-sample $R^2$ against the Brownian benchmark, and the index has a $t$-statistic of 4.02. It is also useful beyond a simple volatility forecast, since adding it to last month's realised variance gives an incremental $R^2_{\text{oos}}$ of 0.114, with $t = 2.70$. Used alone, however, its advantage over realised variance is not significant ($t = 1.00$).
+
+The VIX sets a higher bar. It is forward-looking, because option prices embed expectations of future volatility (Christensen and Prabhala, 1998; Whaley, 2000). It beats realised variance significantly ($t = 2.99$), and adding the index to it gives an incremental $R^2_{\text{oos}}$ of only 0.040 ($t = 0.94$). An investor who can already see the VIX gains little that is measurable from the index.
+
+\section{Forecasting Direction}
+
+\begin{table}[h]
+\centering
+\caption{S\&P 500 by lagged stress $S_{t-1}$, $T = 326$. Mean excess return and realised volatility are annualised.}
+\label{tab:buckets}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrr}
+\toprule
+$S_{t-1}$ & Months & Mean & Vol. & Worst & Hit rate \\
+\midrule
+Below $-0.5$ & 45 & 10.1\% & 11.7\% & $-4.5\%$ & 68.9\% \\
+$-0.5$ to $0$ & 133 & 13.1\% & 12.4\% & $-8.0\%$ & 68.4\% \\
+$0$ to $0.5$ & 71 & 7.6\% & 18.8\% & $-9.4\%$ & 57.7\% \\
+$0.5$ to $1$ & 33 & 3.9\% & 20.8\% & $-8.4\%$ & 54.5\% \\
+$1$ and above & 44 & $-9.8\%$ & 35.1\% & $-16.9\%$ & 47.7\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:buckets} shows volatility rising threefold from the calmest to the most stressed months. Returns also fall across these buckets, to a mean of $-9.8\%$ when stress is highest, but this does not amount to reliable forecasting power. A full-sample regression of log excess returns on $S_{t-1}$ has a coefficient of $-0.0083$, with $t = -1.57$ and $R^2 = 0.022$. Out of sample, it has an $R^2$ of zero against the expanding mean, the Brownian drift. On direction, the indicator is no better than nothing.
+
+\section{Scaling Exposure}
+
+Forecasting risk can still pay if exposure falls when risk is high. The rule holds the index with weight
+\begin{equation}
+g_t = \mathrm{clip}\big(1 - \lambda\max(S_{t-1}, 0),\, 0.5,\, 1\big), \label{eq:g}
+\end{equation}
+and the remainder in Treasury bills, in the spirit of Barroso and Santa-Clara (2015). We compare it with a volatility-managed rule (Moreira and Muir, 2017), with weight $\sqrt{\tilde{\mathrm{RV}}_{t-1}/\mathrm{RV}_{t-1}}$ clipped to the same range, where $\tilde{\mathrm{RV}}_{t-1}$ is the expanding median. As a placebo, we apply each rule to the 10,000 Brownian markets, keeping the actual path of the rule's weights. Since weights there are unrelated to returns, any apparent gain is luck.
+
+\begin{table}[h]
+\centering
+\caption{Scaling S\&P 500 exposure, August 1999 to September 2026, before costs. Excess return and volatility are annualised. Drawdown is of total return, and the interval is a six-month block bootstrap.}
+\label{tab:rule}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrl}
+\toprule
+Rule & Excess & Vol. & Sharpe & Max DD & $\Delta$Sharpe, 95\% \\
+\midrule
+Unscaled & 7.45\% & 15.15\% & 0.492 & 50.9\% & --- \\
+$S$, $\lambda = 0.1$ & 7.68\% & 13.93\% & 0.551 & 40.9\% & $[0.006, 0.123]$ \\
+$S$, $\lambda = 0.3$ & 7.72\% & 12.47\% & 0.619 & 32.7\% & $[0.025, 0.237]$ \\
+$S$, $\lambda = 0.5$ & 7.75\% & 11.71\% & 0.662 & 29.1\% & $[0.049, 0.288]$ \\
+Vol.\ managed & 6.79\% & 12.16\% & 0.559 & 40.1\% & $[-0.035, 0.174]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Unscaled Sharpe ratio and the change from each rule, by period. The last row excludes September 2008 to March 2009.}
+\label{tab:sub}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrr}
+\toprule
+Period & Months & Unscaled & $\lambda = 0.3$ & Vol.\ mgd. \\
+\midrule
+1999--2012 & 161 & 0.091 & $+0.167$ & $+0.049$ \\
+2013--2026 & 165 & 0.938 & $+0.018$ & $+0.078$ \\
+Excl.\ crisis & 319 & 0.641 & $+0.069$ & $+0.015$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:rule} reports the results. Each stress rule reduces volatility and drawdown and, because stressed months had low returns, also leaves mean excess return slightly higher. For $\lambda = 0.3$, the Sharpe ratio rises by 0.127, against a placebo 5th to 95th percentile of $-0.055$ to $+0.043$. No placebo market matches any of the three stress rules, and the volatility-managed gain of 0.067 falls above 98.6\% of them. These gains would not arise in a Brownian market.
+
+Table~\ref{tab:sub} qualifies the result. The gain is concentrated in 1999--2012, which contains two bear markets, and it is small since 2013. Dropping the seven months from September 2008 removes about half of it. A rule of this kind is closer to insurance against a rare regime than to a steady source of return.
+
+\section{A Portfolio That Is Already Neutral}
+
+The market result does not need to carry over to a book with little market risk. We apply the same tests to the simulated US Long-Short Portfolio from January 2021 to August 2026, 68 months of excess returns. A regression on the market's excess return and $\Delta S_t = S_t - S_{t-1}$ gives a market beta of 0.058 with $t = 0.46$ and a stress-change beta of $-0.0050$ with $t = -0.39$, and $R^2 = 0.012$. With $\lambda = 0.3$, scaling lowers the Sharpe ratio from 4.10 to 4.01. An independent monthly bootstrap gives a 95\% interval of $[-0.23, 0.02]$ on the change, which sits at the 19th percentile of the placebo. With $\lambda = 0.1$, the Sharpe ratio is 4.08. The sample has only 2 months with $S_{t-1} \ge 1$ and nothing like 2008, so this result says little about a true crisis. Within this sample, cutting exposure removed profitable months without reducing a risk the portfolio carried.
+
+\section{Limitations}
+
+First, the sample holds few independent stress episodes, and 2008 alone drives much of the result. Second, the indicators use no future data in their computation, but they use current data vintages, so revised series may differ from what was seen at the time. Third, the three values of $\lambda$ were not selected out of sample and we do not adjust for testing several rules. Fourth, all rule results are before transaction costs. Fifth, the expanding z-scores depend on the start of each series. Sixth, the Brownian benchmark is deliberately simple, so beating it shows that structure exists but not that the index is the best way to capture it. Seventh, the long-short portfolio's returns are simulated.
+
+\section{Conclusion}
+
+Lagging indicators are better than nothing for measuring risk, and scaling exposure with them would have reduced drawdowns in the broad market. They are no better than nothing for forecasting direction, they add little to what the VIX already shows, and they did not help a portfolio with little market exposure. Their value comes from the persistence of market states, which is why they help most when the state is severe.
+
+\section*{Data and Code Availability}
+
+Inputs are public: S\&P 500 and VIX daily data, Treasury bill rates and ICE BofA spreads from FRED, AAII survey data, and FINRA margin statistics. FRED now publishes three years of the spread series, so earlier values come from a public archive of them, which matches FRED exactly where the two overlap. Earlier AAII readings likewise come from a public archive. The code is not publicly available.
+
+\vspace{4pt}
+\section*{References}
+\footnotesize
+\begin{list}{}{\setlength{\leftmargin}{1.4em}\setlength{\itemindent}{-1.4em}\setlength{\itemsep}{1.5pt}\setlength{\parsep}{0pt}}
+\item Adrian, Tobias, and Hyun Song Shin, 2010, Liquidity and leverage, \textit{Journal of Financial Intermediation} 19, 418--437.
+\item Baker, Malcolm, and Jeffrey Wurgler, 2006, Investor sentiment and the cross-section of stock returns, \textit{Journal of Finance} 61, 1645--1680.
+\item Barroso, Pedro, and Pedro Santa-Clara, 2015, Momentum has its moments, \textit{Journal of Financial Economics} 116, 111--120.
+\item Black, Fischer, and Myron Scholes, 1973, The pricing of options and corporate liabilities, \textit{Journal of Political Economy} 81, 637--654.
+\item Brunnermeier, Markus K., and Lasse Heje Pedersen, 2009, Market liquidity and funding liquidity, \textit{Review of Financial Studies} 22, 2201--2238.
+\item Christensen, B. J., and N. R. Prabhala, 1998, The relation between implied and realized volatility, \textit{Journal of Financial Economics} 50, 125--150.
+\item Daniel, Kent, and Tobias J. Moskowitz, 2016, Momentum crashes, \textit{Journal of Financial Economics} 122, 221--247.
+\item Diebold, Francis X., and Roberto S. Mariano, 1995, Comparing predictive accuracy, \textit{Journal of Business and Economic Statistics} 13, 253--263.
+\item Engle, Robert F., 1982, Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation, \textit{Econometrica} 50, 987--1007.
+\item Gilchrist, Simon, and Egon Zakrajšek, 2012, Credit spreads and business cycle fluctuations, \textit{American Economic Review} 102, 1692--1720.
+\item Goyal, Amit, and Ivo Welch, 2008, A comprehensive look at the empirical performance of equity premium prediction, \textit{Review of Financial Studies} 21, 1455--1508.
+\item Mandelbrot, Benoit, 1963, The variation of certain speculative prices, \textit{Journal of Business} 36, 394--419.
+\item Moreira, Alan, and Tyler Muir, 2017, Volatility-managed portfolios, \textit{Journal of Finance} 72, 1611--1644.
+\item Newey, Whitney K., and Kenneth D. West, 1987, A simple, positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix, \textit{Econometrica} 55, 703--708.
+\item Patton, Andrew J., 2011, Volatility forecast comparison using imperfect volatility proxies, \textit{Journal of Econometrics} 160, 246--256.
+\item Welford, B. P., 1962, Note on a method for calculating corrected sums of squares and products, \textit{Technometrics} 4, 419--420.
+\item Whaley, Robert E., 2000, The investor fear gauge, \textit{Journal of Portfolio Management} 26, 12--17.
+\end{list}
+
+\end{document}
