@@ -13,12 +13,6 @@
     flex-direction: column;
 }
 
-.layout-footer {
-    margin-top: auto;
-    padding-top: var(--spacing-md);
-    border-top: 1px solid var(--color-border);
-}
-
 .home-link {
     align-self: flex-start;
     margin-bottom: var(--spacing-md);
@@ -35,22 +29,4 @@
 .home-link:hover {
     color: var(--color-accent);
     text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-    .layout-container {
-        padding-bottom: 80px;
-    }
-
-    .layout-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--color-bg);
-        padding: var(--spacing-sm) var(--spacing-md);
-        margin-top: 0;
-        z-index: 100;
-        border-top: 1px solid var(--color-border);
-    }
 }

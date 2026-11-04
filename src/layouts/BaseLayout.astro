@@ -2,7 +2,6 @@
 import "../index.css";
 import "../components/Layout.css";
 import "katex/dist/katex.min.css";
-import CliInput from "../components/CliInput.jsx";
 
 const { title, description, showHomeLink = true, pageClass = "" } = Astro.props;
 ---
@@ -28,9 +27,6 @@ const { title, description, showHomeLink = true, pageClass = "" } = Astro.props;
       <main class:list={["layout-content", pageClass]}>
         <slot />
       </main>
-      <footer class="layout-footer">
-        <CliInput client:load />
-      </footer>
     </div>
   </body>
 </html>
