@@ -15,7 +15,7 @@ featured: true
 
 Portfolio research solves the same convex problem thousands of times, across gross targets, risk measures, and formation dates. These problems have structure that general-purpose modelling tools discard. In factor-risk QPs, the covariance is a low-rank term plus a diagonal. In scenario models such as CVaR and drawdown, a small dense block of weights couples to a large sparse block of per-scenario variables.
 
-This note describes two interior-point kernels QUARCC built to keep that structure through the solve. A synthetic 1,000-security factor-risk problem takes 23.6 ms in one thread, against 87.9 ms for a hand-built sparse Clarabel model and 1,165.3 ms for CVXPY with Clarabel. At 360,000 scenarios, CVaR models solve 11–17× faster than Riskfolio-Lib, and a 20-point risk-capped CVaR frontier completes in 15.6 s. The gain is much smaller on drawdown measures, and risk-capped CDaR doesn't always converge at large scale. The full derivations and every benchmark are in the [paper (PDF)](/papers/factor-risk-qp-2026.pdf).
+This note describes two interior-point kernels QUARCC built to keep that structure through the solve. A synthetic 1,000-security factor-risk problem takes 23.6 ms in one thread, against 87.9 ms for a hand-built sparse Clarabel model and 1,165.3 ms for CVXPY with Clarabel. At 360,000 scenarios, CVaR models solve 17–24× faster than Riskfolio-Lib, and a 20-point risk-capped CVaR frontier completes in 11.7 s. The gain is much smaller on drawdown measures, and risk-capped CDaR doesn't always converge at large scale. A batched solver now handles many problems of one structure in one loop, which helps on a CPU only for small problems and helps at scale only on a GPU. The full derivations and every benchmark are in the [paper (PDF)](/papers/factor-risk-qp-2026.pdf).
 
 ## Factor-risk QPs
 
@@ -64,7 +64,11 @@ With many rows, rounding can push the dual residual back up late in the solve. O
 
 CVaR depends only on the tail, so most scenarios play no part in the optimum. Write the Rockafellar-Uryasev objective on a subset $S$ of scenarios as $F_S(\mathbf{x}, t) = t + c \sum_{i \in S} \max(0, \ell_i(\mathbf{x}) - t)$. If $(\mathbf{x}, t)$ minimises $F_S$ and no dropped scenario has a loss above $t$, then $(\mathbf{x}, t)$ also minimises the objective on all scenarios: the dropped terms are nonnegative everywhere and zero at this point.
 
-The algorithm starts from the worst scenarios of two simple portfolios, solves the restricted problem, adds any violated scenarios, and repeats. The same argument applies to worst realisation.
+The algorithm starts from the worst scenarios of two simple portfolios, solves the restricted problem, adds violated scenarios, and repeats. Each round adds a capped number, taking the most violated first. The same argument applies to worst realisation.
+
+## Solving many problems at once
+
+Frontiers, bootstrap draws, and rolling windows produce many problems with the same sparse structure. A batched solver runs them in one interior-point loop, with every iterate an array of $K$ columns. Each problem keeps its own step length, centring, and convergence test, and leaves the batch when it converges. The same loop can run on a GPU. Drawdown measures have coupled auxiliaries, so they're still solved one at a time.
 
 ## Certificates and proofs
 
@@ -100,34 +104,48 @@ The 49× headline mostly measures modelling overhead. Against the sparse model, 
 
 | Measure | Ours, A (s) | Riskfolio-Lib, A (s) | Speedup, A | Speedup, B |
 | --- | ---: | ---: | ---: | ---: |
-| CVaR | 0.19–0.20 | 2.44–2.76 | 12.7–13.7× | 3.2–5.4× |
-| Worst realisation | 0.04–0.05 | 1.47–1.85 | 32.7–49.5× | 5.4–7.7× |
-| Mean absolute deviation | 0.23–0.24 | 2.30–2.68 | 10.2–11.1× | 8.2–11.3× |
-| Semi-deviation | 0.22–0.23 | 3.51–3.83 | 15.6–17.5× | 16.8–17.5× |
-| Variance | 0.01 | 0.06 | 5.4–5.7× | 5.2–5.7× |
-| CDaR | 2.28–2.64 | 3.85–4.49 | 1.5–2.0× | 1.3–2.2× |
-| Maximum drawdown | 0.75–0.85 | 3.06–3.34 | 3.6–4.5× | 2.2–4.5× |
-| Average drawdown | 0.53–0.61 | 2.56–2.61 | 4.3–4.8× | 2.6–5.0× |
+| CVaR | 0.13 | 2.42–2.81 | 18.9–21.1× | 15.4–17.8× |
+| Worst realisation | 0.04 | 1.48–1.80 | 39.6–49.6× | 15.7–17.9× |
+| Mean absolute deviation | 0.14–0.15 | 2.26–2.65 | 15.8–17.3× | 14.0–19.2× |
+| Semi-deviation | 0.15 | 3.52–3.83 | 23.4–26.0× | 24.4–25.0× |
+| Variance | 0.01 | 0.06 | 5.6–5.9× | 5.0–5.5× |
+| CDaR | 2.16–2.61 | 3.78–4.50 | 1.4–2.1× | 1.2–2.4× |
+| Maximum drawdown | 0.69–0.80 | 3.09–3.35 | 3.8–4.8× | 2.3–4.9× |
+| Average drawdown | 0.49–0.58 | 2.60–2.63 | 4.6–5.3× | 2.8–5.1× |
 
-The two columns of speedups show how much the gain depends on the data. Worst realisation falls from up to 50× to under 8× with no change in the method. On process A, relative objective differences are at most $2.2 \times 10^{-8}$.
+The two columns of speedups show how much the gain depends on the data. Worst realisation falls from up to 50× to under 18× with no change in the method. On process A, relative objective differences are at most $2.2 \times 10^{-8}$.
 
 **Screening at scale**: 8 assets, 2,000 block-bootstrapped 15-year monthly paths, 360,000 scenarios, and a 40% position cap.
 
 | Model | Ours (s) | Riskfolio-Lib (s) | Speedup | Scenarios kept | Weight gap |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| CVaR, minimum risk | 2.21 | 25.1 | 11.4× | 83,910 | 1.1e-8 |
-| CVaR, maximum Sharpe | 1.08 | 18.2 | 16.8× | 47,466 | 5.7e-9 |
-| Worst realisation, minimum risk | 0.033 | 6.17 | 189× | 128 | 2.8e-8 |
-| Worst realisation, maximum Sharpe | 0.034 | 7.06 | 210× | 128 | 3.5e-10 |
-| Mean absolute deviation, maximum Sharpe | 4.26 | 14.3 | 3.4× | no screening | 6.5e-6 |
+| CVaR, minimum risk | 1.42 | 24.5 | 17.3× | 83,910 | 1.1e-8 |
+| CVaR, maximum Sharpe | 0.75 | 17.9 | 23.8× | 47,466 | 5.7e-9 |
+| Worst realisation, minimum risk | 0.036 | 6.07 | 170× | 128 | 2.8e-8 |
+| Worst realisation, maximum Sharpe | 0.039 | 6.94 | 179× | 128 | 3.5e-10 |
+| Mean absolute deviation, maximum Sharpe | 3.03 | 14.2 | 4.7× | no screening | 6.5e-6 |
 
-On the same problem, all 19 risk-capped points of a 20-point CVaR frontier reach optimal status in 15.6 s in total. Without the correction step, the same run gives 4 optimal, 13 optimal but inaccurate, and 2 stalled points. On three of these points, Riskfolio-Lib takes more than 400 s per point, and expected returns agree to a relative $2 \times 10^{-6}$.
+On the same problem, all 19 risk-capped points of a 20-point CVaR frontier reach optimal status in 11.7 s in total. Without the correction step and stable Schur weights, the solver gave 4 optimal, 13 optimal but inaccurate, and 2 stalled points. On three of these points, Riskfolio-Lib takes more than 400 s per point, and expected returns agree to a relative $2 \times 10^{-6}$.
+
+**Batched solves** on the CPU, for bootstrap draws from a three-factor process with a crisis regime. All problems reached optimal status.
+
+| Problems | One by one (s) | Batched (s) | Speedup | Weight gap |
+| --- | ---: | ---: | ---: | ---: |
+| 100 variance, maximum Sharpe, 240 × 8 | 0.87 | 0.18 | 5.0× | 4e-16 |
+| 100 CVaR, minimum risk, 240 × 8 | 1.90 | 0.43 | 4.4× | 2e-14 |
+| 20 mean absolute deviation, maximum Sharpe, 20,000 × 12 | 3.45 | 4.73 | 0.7× | 1e-16 |
+| 20 CVaR, maximum Sharpe, 20,000 × 12 | 3.77 | 3.69 | 1.0× | 1e-6 |
+
+On a CPU, batching mainly removes per-call overhead, so it gains nothing on the large problems and is slower on mean absolute deviation.
+
+A GPU changes that. On a second machine, with a Ryzen 5 3600 limited to one BLAS thread and a Radeon RX 5500 XT, the same 20 mean-absolute-deviation problems take 3.18 s on the CPU, 0.60 s on the GPU, and 13.25 s with Riskfolio-Lib. The 20 CVaR problems take 2.22 s, 1.29 s, and 16.34 s. Small problems run the other way: 100 variance problems at 240 × 8 take 40 ms on the CPU and 206 ms on the GPU.
 
 ## Limitations
 
-- **Capped CDaR can fail at large scale.** At 90,000 scenarios, 4 of 7 risk-capped CDaR problems stop at the 100-iteration limit and return no weights. Other capped measures on the same grid reach optimal status.
-- **Drawdown measures gain least.** CDaR is only 1.3–2.2× faster, with up to 63 iterations.
-- **Synthetic data, one machine.** Absolute times and ratios will differ elsewhere, and they vary with the data, as the table above shows.
+- **Capped CDaR can fail at large scale.** At 90,000 scenarios, 3 of 7 risk-capped CDaR problems stop at the 100-iteration limit and return no weights. Other capped measures on the same grid reach optimal status.
+- **Drawdown measures gain least.** CDaR is only 1.2–2.4× faster, with up to 61 iterations, and drawdown measures aren't batched.
+- **GPU results are narrow.** They come from one card on one machine and a few problem sizes.
+- **Synthetic data, one main machine.** Absolute times and ratios will differ elsewhere, and they vary with the data, as the table above shows.
 - **Computation, not investment results.** The [QUARCC Purple](/blog/quarcc-purple-market-neutral-us-equities) and [US Long-Short](/blog/us-long-short-portfolio) results were both solved with Clarabel, not with this method.
 - **Factor-risk weights differ slightly.** Gaps near $5 \times 10^{-4}$ come mainly from the default quadratic soft-band penalty. Stopping at six iterations is 2.7–4.9× faster but leaves gaps up to $1.9 \times 10^{-2}$, which suits screening and warm starts only.
 - **Signs must be fixed in the factor-risk kernel.** Free-sign support selection with minimum positions still needs an outer ladder or a first-stage sign assignment.
