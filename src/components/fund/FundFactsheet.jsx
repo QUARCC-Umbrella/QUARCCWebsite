@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import FundChart from "./FundChart.jsx";
 import { SNAPSHOT_URL } from "../../lib/portfolioFeed.js";
 import {
+  NA,
   displayName,
   navBn,
   liveSince as liveSinceOf,
@@ -12,6 +13,7 @@ import {
   pct,
   period,
   signed,
+  text,
   titleCase,
   tone,
 } from "./format.js";
@@ -113,7 +115,7 @@ function Quote({ portfolio, facts, liveSince }) {
         <div className="fx-quote-row">
           <span className="fx-level">{navBn(facts.keyFacts?.nav)}</span>
           <span className={`fx-change ${tone(day)}`}>
-            {day === null ? "—" : `${day >= 0 ? "▲" : "▼"} ${signed(day, 2)}`}
+            {day === null ? NA : `${day >= 0 ? "▲" : "▼"} ${signed(day, 2)}`}
             <small>1 day</small>
           </span>
         </div>
@@ -140,7 +142,7 @@ function Facts({ portfolio, facts, liveSince }) {
     ["Strategy", portfolio.strategy],
     ["Benchmark", k.benchmark],
     ["Inception (simulated)", k.inception],
-    ["Live since", liveSince ? longDate(liveSince) : "—"],
+    ["Live since", liveSince ? longDate(liveSince) : NA],
     ["Holdings", k.holdings],
     ["Gross / net", k.grossNet],
     ["Rebalancing", k.rebalancing],
@@ -444,7 +446,7 @@ function Constraints({ rows }) {
           {Object.entries(rows).map(([key, row]) => (
             <tr key={key}>
               <th scope="row">{label(key)}</th>
-              <td>{row.limit}</td>
+              <td>{text(row.limit, "No limit")}</td>
               <td>{row.fund}</td>
               <td className={row.ok ? "fx-ok" : "fx-breach"}>{row.ok ? "✓ Within" : "✕ Breach"}</td>
             </tr>
@@ -580,7 +582,7 @@ export default function FundFactsheet({ portfolio }) {
             ["Net", signed(exposures.net, 1)],
             ["Long", pct(Math.abs(exposures.long ?? NaN), 1)],
             ["Short", pct(Math.abs(exposures.short ?? NaN), 1)],
-            ["Names", exposures.names ?? "—"],
+            ["Names", exposures.names ?? NA],
           ].map(([label, value]) => (
             <div key={label}>
               <dt>{label}</dt>

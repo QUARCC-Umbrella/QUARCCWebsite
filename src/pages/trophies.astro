@@ -30,7 +30,7 @@ const schema = [
       itemListElement: trophies.map((trophy, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        name: `${trophy.placementLabel ?? trophy.placement} — ${trophy.title}`,
+        name: `${trophy.placementLabel ?? trophy.placement}: ${trophy.title}`,
         description: trophy.summary,
       })),
     },
@@ -43,12 +43,12 @@ const schema = [
 ---
 
 <BaseLayout
-  title="Trophies — QUARCC Trading Competition and Hackathon Results"
+  title="Trophies | QUARCC Trading Competition and Hackathon Results"
   description="QUARCC's results: three first places at McHacks XIII, 2nd and $10,000 at McGill FIAM '24, 3rd at the Cornell Trading Competition, and more since 2024."
   schema={schema}
 >
   <PageHero
-    title={["Built to compete —", "and to place."]}
+    title={["Built to compete", "and to place."]}
     sub="QUARCC teams take on trading competitions and hackathons across North America, from McHacks in Montreal to Cornell."
   />
 

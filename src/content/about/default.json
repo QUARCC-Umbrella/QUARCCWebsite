@@ -11,7 +11,7 @@
       "Lectures, workshops",
       "and a research group."
     ],
-    "sub": "We host a variety of events throughout the year, including lectures, workshops and social gatherings — and run a research group for members who want to keep building.",
+    "sub": "We host a variety of events throughout the year, including lectures, workshops and social gatherings, and we run a research group for members who want to keep building.",
     "cards": [
       {
         "label": "Lectures",
@@ -21,7 +21,7 @@
       {
         "label": "Workshops",
         "title": "Hands-on sessions",
-        "body": "Python for data analysis, algorithmic trading and backtesting — from raw data to a working strategy."
+        "body": "Python for data analysis, algorithmic trading and backtesting, from raw data to a working strategy."
       },
       {
         "label": "Research",
@@ -31,7 +31,7 @@
       {
         "label": "Social",
         "title": "Gatherings",
-        "body": "Poker nights and Tuesday meet-ups — puzzles, chess and people who like building things."
+        "body": "Poker nights and Tuesday meet-ups with puzzles, chess and people who like building things."
       }
     ]
   },
@@ -79,7 +79,7 @@
       {
         "label": "The club",
         "title": "Events & community",
-        "body": "Speaker series, workshops and socials — open to every student, at any level, as long as you're willing to learn.",
+        "body": "Speaker series, workshops and socials, open to every student at any level, as long as you're willing to learn.",
         "cta": "See events",
         "href": "/events/"
       },

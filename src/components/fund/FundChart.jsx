@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { shortDate, longDate } from "./format.js";
+import { NA, shortDate, longDate } from "./format.js";
 
 const RANGES = [
   { key: "1Y", years: 1 },
@@ -254,7 +254,7 @@ export default function FundChart({
               <span key={row.key}>
                 <i style={{ background: row.color }} />
                 {row.name}
-                <b>{Number.isFinite(row.value) ? tipFormat(row.value) : "—"}</b>
+                <b>{Number.isFinite(row.value) ? tipFormat(row.value) : NA}</b>
               </span>
             ))}
           </div>

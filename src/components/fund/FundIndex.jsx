@@ -1,5 +1,5 @@
 import useLivePortfolios from "./useLivePortfolios.js";
-import { displayName, navBn, marksStamp, num, parsePct, pct, period, signed, tone } from "./format.js";
+import { NA, displayName, navBn, marksStamp, num, parsePct, pct, period, signed, tone } from "./format.js";
 import "./fund.css";
 
 function Spark({ daily, color }) {
@@ -79,7 +79,7 @@ export default function FundIndex({ portfolios: initial }) {
               <strong>{displayName(portfolio.name)}</strong>
               <small>
                 {portfolio.factsheet?.keyFacts?.assetClass ?? portfolio.strategy} ·{" "}
-                {portfolio.exposures?.names ?? "—"} names
+                {portfolio.exposures?.names ?? NA} names
               </small>
             </span>
             {COLUMNS.map(([name, key]) => (

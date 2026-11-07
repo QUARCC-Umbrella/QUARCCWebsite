@@ -2,7 +2,7 @@
   "items": [
     {
       "q": "Who can join the club?",
-      "a": "Anyone. The ideal candidate is a STEM student, but it isn't required — any education level is fine as long as you're willing to learn."
+      "a": "Anyone. The ideal candidate is a STEM student, but it isn't required. Any education level is fine as long as you're willing to learn."
     },
     {
       "q": "What are the prerequisites?",
@@ -14,7 +14,7 @@
     },
     {
       "q": "Do you offer workshops or training?",
-      "a": "Yes — workshops, plus a drive library of books and projects available to members on Discord."
+      "a": "Yes. We run workshops, and members get a drive library of books and projects on Discord."
     },
     {
       "q": "How do I apply?",

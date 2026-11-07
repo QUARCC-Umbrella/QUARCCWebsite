@@ -1,6 +1,6 @@
 import { useId } from "react";
 import useLivePortfolios from "./useLivePortfolios.js";
-import { displayName, navBn, num, period, signed } from "./format.js";
+import { NA, displayName, navBn, num, period, signed } from "./format.js";
 
 const YEAR_MS = 365.25 * 864e5;
 
@@ -87,7 +87,7 @@ export default function FundCards({ portfolios: initial, variant = "feature" }) 
               </div>
               <strong className="fc-mini__name">{displayName(portfolio.name)}</strong>
               <span className="fc-mini__meta">
-                Sharpe {num(s.sharpe, 2)} · {s.asset} · {s.names ?? "—"} names
+                Sharpe {num(s.sharpe, 2)} · {s.asset} · {s.names ?? NA} names
               </span>
             </a>
           );
@@ -112,7 +112,7 @@ export default function FundCards({ portfolios: initial, variant = "feature" }) 
               <a href={`/paper-fund/${portfolio.slug}/`}>{displayName(portfolio.name)}</a>
             </h2>
             <p className="fc-card__meta">
-              {s.asset} · {s.names ?? "—"} names
+              {s.asset} · {s.names ?? NA} names
             </p>
             <div className="fc-card__stats">
               <div className="fc-nav">

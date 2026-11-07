@@ -35,7 +35,7 @@ const schema = [
     "@id": `${url}#factsheet`,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     url,
-    headline: `${name} — fact sheet`,
+    headline: `${name} fact sheet`,
     description: portfolio.summary,
     image: [absoluteUrl("/quarcc-logo-512.png")],
     ...(published ? { datePublished: new Date(published).toISOString() } : {}),
@@ -60,7 +60,7 @@ const schema = [
 ---
 
 <BaseLayout
-  title={`${name} — Fact Sheet | QUARCC Paper Funds`}
+  title={`${name} Fact Sheet | QUARCC Paper Funds`}
   description={portfolio.summary}
   ogType="article"
   published={published}

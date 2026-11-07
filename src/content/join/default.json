@@ -4,7 +4,7 @@
       "Interested in quant?",
       "Join us."
     ],
-    "sub": "We welcome students from all backgrounds. Exec and QRG applications open each semester — but feel free to reach out anytime.",
+    "sub": "We welcome students from all backgrounds. Exec and QRG applications open each semester, but feel free to reach out anytime.",
     "chips": [
       "Finance",
       "Computer science",
@@ -22,7 +22,7 @@
       {
         "label": "The club",
         "title": "Open for all students",
-        "body": "Events, workshops and a network of like-minded people. No prerequisites — any education level is fine as long as you're eager to learn.",
+        "body": "Events, workshops and a network of like-minded people. No prerequisites. Any education level is fine as long as you're eager to learn.",
         "rows": [
           [
             "Recruitment",
@@ -88,11 +88,11 @@
     "title": [
       "Find us here."
     ],
-    "sub": "Questions about events, sponsorship or anything else — any channel works."
+    "sub": "Questions about events, sponsorship or anything else? Any channel works."
   },
   "quote": {
     "label": "Who succeeds here",
-    "text": "“Someone who likes building and creating — with initiative, and organised.”",
+    "text": "“Someone who likes building and creating, takes initiative and stays organised.”",
     "chips": [
       "Puzzles",
       "Chess",
