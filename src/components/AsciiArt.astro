@@ -5,18 +5,22 @@
 interface Props {
   variant?: "logo" | "field";
   seed?: number;
+  /** Where the logo sits when the box is wider than the logo's proportions. */
+  align?: "end" | "center";
   class?: string;
 }
 
-const { variant = "logo", seed = 1, class: className = "" } = Astro.props;
+const { variant = "logo", seed = 1, align = "end", class: className = "" } = Astro.props;
 ---
 
-<canvas class:list={["ascii-canvas", className]} data-ascii={variant} data-seed={seed} aria-hidden="true"></canvas>
+<canvas class:list={["ascii-canvas", className]} data-ascii={variant} data-seed={seed} data-align={align} aria-hidden="true"></canvas>
 
 <script>
   const LOGO_SRC = "/quarcc-logo.png";
   // Opaque part of quarcc-logo.png (252x168).
   const LOGO_BOX = { x: 44, y: 18, w: 178, h: 105 };
+  // Proportions the logo is drawn at (the mockup's 847x545 art box).
+  const LOGO_ASPECT = 847 / 545;
   const GLYPHS = "#$@%&8BWM0QOZXmwqpdbkhao*+=-:;~^\"'{}[]()<>/\\|!?lIi1rtfjxzcvun_,.";
   const DIGITS = "0123456789";
 
@@ -65,8 +69,14 @@ const { variant = "logo", seed = 1, class: className = "" } = Astro.props;
     if (!width || !height) return;
     const cw = 7.8;
     const ch = 13.3;
-    const cols = Math.floor(width / cw);
-    const rows = Math.floor(height / ch);
+    // Fit the logo inside the canvas without stretching, so a shorter box shrinks
+    // the art instead of slicing it.
+    const drawW = Math.min(width, height * LOGO_ASPECT);
+    const drawH = drawW / LOGO_ASPECT;
+    const left = (width - drawW) * (canvas.dataset.align === "center" ? 0.5 : 1);
+    const cols = Math.floor(drawW / cw);
+    const rows = Math.floor(drawH / ch);
+    if (!cols || !rows) return;
 
     const off = document.createElement("canvas");
     off.width = cols;
@@ -94,7 +104,7 @@ const { variant = "logo", seed = 1, class: className = "" } = Astro.props;
         }
         if (interior) continue;
         cells.push({
-          x: x * cw,
+          x: left + x * cw,
           y: y * ch,
           glyph: GLYPHS[Math.floor(rand() * GLYPHS.length)],
           // Reveal sweeps in from the top-left with some scatter.
