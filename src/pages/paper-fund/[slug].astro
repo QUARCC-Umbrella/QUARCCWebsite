@@ -1,8 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PortfolioDetailClient from "../../components/PortfolioDetailClient.jsx";
-import { getPortfolios, toContentSlug } from "../../lib/content";
+import { fundUrl, getPortfolios, toContentSlug } from "../../lib/content";
 import { LIVE_FUNDS } from "../../lib/funds";
+import { ORG_ID, absoluteUrl, breadcrumbSchema } from "../../lib/site";
 
 export async function getStaticPaths() {
   const portfolios = await getPortfolios();
@@ -17,32 +18,85 @@ export async function getStaticPaths() {
 }
 
 const { portfolio } = Astro.props as unknown as {
-  portfolio: Record<string, unknown> & { name: string; summary: string };
+  portfolio: Record<string, any> & { name: string; summary: string; slug: string; asOf?: string };
 };
+
+const url = absoluteUrl(fundUrl(portfolio.slug));
+const name = String(portfolio.name).replace(/^QUARCC\s+/i, "");
+const inception = portfolio.factsheet?.keyFacts?.inception;
+const published = portfolio.formation ?? portfolio.liveSince;
+const modified = portfolio.asOf;
+
+// A fact sheet is a regularly updated report (schema.org Report is a kind of Article):
+// dateModified moves with every daily mark, so search engines expect it to change.
+const schema = [
+  {
+    "@type": "Report",
+    "@id": `${url}#factsheet`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    url,
+    headline: `${name} — fact sheet`,
+    description: portfolio.summary,
+    image: [absoluteUrl("/quarcc-logo-512.png")],
+    ...(published ? { datePublished: new Date(published).toISOString() } : {}),
+    ...(modified ? { dateModified: new Date(modified).toISOString() } : {}),
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    about: {
+      "@type": "InvestmentFund",
+      name: portfolio.name,
+      description: portfolio.strategy,
+      provider: { "@id": ORG_ID },
+      ...(inception ? { foundingDate: inception } : {}),
+    },
+    inLanguage: "en-CA",
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Paper funds", path: "/paper-fund/" },
+    { name, path: fundUrl(portfolio.slug) },
+  ]),
+];
 ---
 
-<BaseLayout title={`${portfolio.name} - QUARCC`} description={portfolio.summary}>
+<BaseLayout
+  title={`${name} — Fact Sheet | QUARCC Paper Funds`}
+  description={portfolio.summary}
+  ogType="article"
+  published={published}
+  modified={modified}
+  schema={schema}
+>
   <div class="fund-page">
-    <a href="/paper-fund" class="fund-back">← All paper funds</a>
-    <PortfolioDetailClient client:load portfolio={portfolio} />
+    <div class="wrap">
+      <nav class="post-crumbs" aria-label="Breadcrumb">
+        <a href="/paper-fund/">~/paper-funds</a><span aria-hidden="true">/</span><span>{portfolio.slug}</span>
+      </nav>
+      <PortfolioDetailClient client:load portfolio={portfolio} />
+    </div>
   </div>
 </BaseLayout>
 
 <style>
   .fund-page {
-    width: 100%;
-    max-width: 1180px;
-    margin: 0 auto;
+    position: relative;
+    padding-top: 150px;
+    overflow-x: clip;
   }
 
-  .fund-back {
-    display: inline-block;
-    margin: 0.5rem 0 1.6rem;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
+  .fund-page::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -260px;
+    width: 1200px;
+    height: 700px;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(178, 68, 208, 0.16), rgba(178, 68, 208, 0));
+    pointer-events: none;
   }
 
-  .fund-back:hover {
-    color: var(--color-primary);
+  .fund-page .wrap {
+    position: relative;
   }
 </style>

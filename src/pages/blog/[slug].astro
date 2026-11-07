@@ -1,8 +1,11 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import { render } from "astro:content";
+import "katex/dist/katex.min.css";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { formatDate, getBlogPosts, toContentSlug } from "../../lib/content";
+import AsciiArt from "../../components/AsciiArt.astro";
+import { getBlogPosts, postLabel, postUrl, shortDate, tagSlug, toContentSlug } from "../../lib/content";
+import { DEFAULT_IMAGE, ORG_ID, SITE_URL, absoluteUrl, breadcrumbSchema } from "../../lib/site";
 import "../../styles/blog.css";
 
 export async function getStaticPaths() {
@@ -16,61 +19,123 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const relatedPosts = (await getBlogPosts()).filter((entry) => entry.id !== post.id).slice(0, 3);
+
+const url = absoluteUrl(postUrl(post.id));
+const modified = post.data.updatedDate ?? post.data.pubDate;
+// Social cards need a raster image; SVG hero charts fall back to the logo.
+let shareImage = DEFAULT_IMAGE;
+if (post.data.heroImage && post.data.heroImage.format !== "svg") {
+  shareImage = (await getImage({ src: post.data.heroImage, width: Math.min(1200, post.data.heroImage.width), format: "jpg" })).src;
+}
+const schemaImages = post.data.heroImage
+  ? [absoluteUrl(post.data.heroImage.format === "svg" ? post.data.heroImage.src : shareImage), absoluteUrl(DEFAULT_IMAGE)]
+  : [absoluteUrl(DEFAULT_IMAGE)];
+
+const schema = [
+  {
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    url,
+    headline: post.data.title,
+    description: post.data.description,
+    image: schemaImages,
+    datePublished: post.data.pubDate.toISOString(),
+    dateModified: modified.toISOString(),
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    isPartOf: { "@id": `${SITE_URL}/blog/#blog` },
+    articleSection: post.data.category,
+    keywords: post.data.tags.join(", "),
+    inLanguage: "en-CA",
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog/" },
+    { name: post.data.title, path: postUrl(post.id) },
+  ]),
+];
 ---
 
 <BaseLayout
-  title={`${post.data.title} - QUARCC`}
+  title={`${post.data.title} — QUARCC`}
   description={post.data.description}
-  pageClass="blog-shell"
+  image={shareImage}
+  imageAlt={post.data.heroImageAlt || post.data.title}
+  ogType="article"
+  published={post.data.pubDate}
+  modified={modified}
+  schema={schema}
 >
-  <article class="blog-post">
-    <a href="/blog" class="blog-back">← Posts</a>
-
-    {post.data.heroImage ? (
-      <div class="blog-hero-image">
-        <Image
-          src={post.data.heroImage}
-          alt={post.data.heroImageAlt || post.data.title}
-          widths={[1200]}
-          sizes="(max-width: 820px) 100vw, 48rem"
-        />
+  <article class="post">
+    <header class="post-hero">
+      <div class="wrap post-hero__inner">
+        <nav class="post-crumbs" aria-label="Breadcrumb">
+          <a href="/blog/">~/blog</a><span aria-hidden="true">/</span><span>{postLabel(post)}</span>
+        </nav>
+        <p class="post-meta">
+          <span class="label">{post.data.category}</span> · <time datetime={post.data.pubDate.toISOString()}>{shortDate(post.data.pubDate)}</time>
+          {post.data.updatedDate ? (
+            <> · Updated <time datetime={post.data.updatedDate.toISOString()}>{shortDate(post.data.updatedDate)}</time></>
+          ) : null}
+        </p>
+        <h1 class="post-title">{post.data.title}</h1>
+        <p class="post-lead">{post.data.description}</p>
+        {post.data.tags.length ? (
+          <ul class="chips post-tags" role="list">
+            {[...new Set(post.data.tags.map(tagSlug))].map((tag) => (
+              <li><a class="chip chip--plain chip--sm" href={`/blog/?tag=${tag}`}>#{tag}</a></li>
+            ))}
+          </ul>
+        ) : null}
       </div>
-    ) : null}
+    </header>
 
-    <h1 class="blog-post-title">{post.data.title}</h1>
-    <div class="blog-post-meta">
-      <span>{formatDate(post.data.pubDate)}</span>
-      {post.data.updatedDate ? (
-        <span class="blog-post-updated">Updated {formatDate(post.data.updatedDate)}</span>
+    <div class="wrap post-body">
+      {post.data.heroImage ? (
+        <figure class="blog-hero-image">
+          <Image
+            src={post.data.heroImage}
+            alt={post.data.heroImageAlt || post.data.title}
+            widths={[800, 1200]}
+            sizes="(max-width: 820px) 100vw, 48rem"
+            loading="eager"
+          />
+        </figure>
       ) : null}
-    </div>
 
-    {post.data.tags.length ? (
-      <div class="blog-post-tags">
-        {post.data.tags.map((tag) => (
-          <span class="blog-post-tag">{tag}</span>
-        ))}
+      <div class="blog-prose">
+        <Content />
       </div>
-    ) : null}
 
-    <p class="blog-post-lead">{post.data.description}</p>
-
-    <div class="blog-prose">
-      <Content />
+      <p class="notice post-notice">
+        <span class="label">Not investment advice</span>
+        <span>QUARCC is not a financial advisor. Posts are research and education.</span>
+      </p>
     </div>
-
-    <section class="blog-more">
-      <h2 class="blog-sidebar-title">More From The Archive</h2>
-      <ul class="blog-more-list" role="list">
-        {relatedPosts.map((entry) => (
-          <li class="blog-post-row">
-            <div class="blog-date">{formatDate(entry.data.pubDate)}</div>
-            <a class="blog-preview-title" href={`/blog/${toContentSlug(entry.id)}`}>
-              {entry.data.title}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
   </article>
+
+  {relatedPosts.length ? (
+    <section class="section post-more" aria-labelledby="more-title">
+      <div class="wrap">
+        <div class="blog-year__head">
+          <h2 id="more-title">More from the archive.</h2>
+          <a class="btn btn--ghost" href="/blog/">All posts <span class="arrow">→</span></a>
+        </div>
+        <div class="grid grid-3">
+          {relatedPosts.map((entry, index) => (
+            <article class="post-card">
+              <a class={`thumb thumb--g${index % 3}`} href={postUrl(entry.id)} tabindex="-1" aria-hidden="true">
+                <AsciiArt variant="field" seed={21 + index * 5} />
+                <span class="thumb__label">{postLabel(entry)}</span>
+              </a>
+              <p class="post-meta"><span class="label">{entry.data.category}</span> · {shortDate(entry.data.pubDate)}</p>
+              <h3><a href={postUrl(entry.id)}>{entry.data.title}</a></h3>
+              <p class="post-card__desc">{entry.data.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
 </BaseLayout>

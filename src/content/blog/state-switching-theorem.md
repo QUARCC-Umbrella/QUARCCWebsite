@@ -4,6 +4,8 @@ description: "A research-style overview of a three-state endogenous regime-switc
 pubDate: 2026-03-08
 heroImage: ../../assets/blog/Andrei_Markov.jpg
 heroImageAlt: "Creator of the Markov Chain, Andrey Andreyevich Markov"
+category: "Research"
+label: "state-switching"
 tags:
   - quantitative-finance
   - regime-switching

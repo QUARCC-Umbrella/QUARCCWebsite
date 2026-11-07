@@ -1,38 +1,82 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SystemBox from "../components/SystemBox.astro";
-import TeamMember from "../components/TeamMember.astro";
-import { getTeams } from "../lib/content";
-import "./Teams.css";
+import PageHero from "../components/PageHero.astro";
+import SectionHead from "../components/SectionHead.astro";
+import MemberCard from "../components/MemberCard.astro";
+import { getJoinContent, getTeams, toContentSlug } from "../lib/content";
+import { CONTACT, ORG_ID, absoluteUrl, breadcrumbSchema } from "../lib/site";
 
 const teams = await getTeams();
+const join = await getJoinContent();
+const qrgRows = join.paths.cards.find((card) => card.label === "QRG")?.rows ?? [];
+const coDirectors = qrgRows.find(([label]) => label.toLowerCase().startsWith("co-director"))?.[1];
+
+const schema = [
+  {
+    "@type": "AboutPage",
+    url: absoluteUrl("/teams/"),
+    name: "The people behind QUARCC",
+    about: {
+      "@id": ORG_ID,
+      member: teams.flatMap((team) =>
+        team.data.members.map((member) => ({
+          "@type": "OrganizationRole",
+          roleName: member.role,
+          member: {
+            "@type": "Person",
+            name: member.name,
+            ...(member.linkedin ? { sameAs: [member.linkedin] } : {}),
+          },
+        })),
+      ),
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Teams", path: "/teams/" },
+  ]),
+];
 ---
 
 <BaseLayout
-  title="Teams - QUARCC"
-  description="Meet the QUARCC executive team and explore our research groups: SMA (Stock Market Analysts) and QRG (Quantitative Research Group)."
+  title="Teams — The People Behind QUARCC"
+  description="Meet QUARCC's Executive Council, the Research Leads who manage our paper portfolios, and the Quantitative Analysts on our systematic-trading curriculum."
+  schema={schema}
 >
-  <div class="teams-page">
-    {teams.map((team) => (
-      <SystemBox title={team.data.name}>
-        {team.data.description ? (
-          <p class="team-section-copy">
-            {team.data.description}
+  <PageHero
+    title={["The people", "behind QUARCC."]}
+    sub="An executive council that runs the club, and a research group of leads and analysts who manage our paper portfolios."
+  />
+
+  <section class="teams-stats">
+    <div class="wrap">
+      <div class="stat-strip stat-strip--3">
+        {teams.map((team) => (
+          <a class="stat" href={`#${toContentSlug(team.id)}`}>
+            <p class="stat__head"><span class="stat__num">{team.data.members.length}</span><span class="stat__name">{team.data.name}</span></p>
+            <p class="stat__body">{team.data.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {teams.map((team) => (
+    <section class="section team-section" id={toContentSlug(team.id)} aria-labelledby={`${toContentSlug(team.id)}-title`}>
+      <div class="wrap">
+        <SectionHead id={`${toContentSlug(team.id)}-title`} title={[team.data.name]} sub={team.data.description} />
+        {toContentSlug(team.id) === "qrg" && coDirectors ? (
+          <p class="qrg-banner">
+            <span class="label">QRG</span>
+            <span>Co-Directors: {coDirectors}</span>
+            <span aria-hidden="true">·</span>
+            <a href={`mailto:${CONTACT.researchEmail}`}>{CONTACT.researchEmail}</a>
           </p>
         ) : null}
-        <div class="team-member-list">
-          {team.data.members.map((member) => (
-            <TeamMember
-              name={member.name}
-              role={member.role}
-              image={member.image}
-              linkedin={member.linkedin}
-              email={member.email}
-              website={member.website}
-            />
-          ))}
+        <div class="grid grid-4">
+          {team.data.members.map((member) => <MemberCard {...member} />)}
         </div>
-      </SystemBox>
-    ))}
-  </div>
+      </div>
+    </section>
+  ))}
 </BaseLayout>

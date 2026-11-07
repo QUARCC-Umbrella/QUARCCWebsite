@@ -1,51 +1,71 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import FundCards from "../components/fund/FundCards.jsx";
 import FundIndex from "../components/fund/FundIndex.jsx";
-import { getPortfolios, toContentSlug } from "../lib/content";
-import { LIVE_FUNDS } from "../lib/funds";
+import { fundUrl, getPortfolios, toContentSlug } from "../lib/content";
+import { LIVE_FUNDS, byLiveOrder } from "../lib/funds";
+import { ORG_ID, absoluteUrl, breadcrumbSchema } from "../lib/site";
 
 const entries = await getPortfolios();
 const live = entries
   .map((entry) => ({ id: toContentSlug(entry.id), slug: toContentSlug(entry.id), ...entry.data }))
-  .filter((portfolio) => LIVE_FUNDS.includes(portfolio.slug));
+  .filter((portfolio) => LIVE_FUNDS.includes(portfolio.slug))
+  .sort(byLiveOrder);
+const lastMark = live.map((portfolio) => portfolio.asOf).filter(Boolean).sort().pop();
+
+const schema = [
+  {
+    "@type": "CollectionPage",
+    url: absoluteUrl("/paper-fund/"),
+    name: "QUARCC paper funds",
+    description: "Systematic US equity long/short paper funds, marked daily against live prices.",
+    ...(lastMark ? { dateModified: new Date(lastMark).toISOString() } : {}),
+    publisher: { "@id": ORG_ID },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: live.map((portfolio, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: portfolio.name,
+        url: absoluteUrl(fundUrl(portfolio.slug)),
+      })),
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Paper funds", path: "/paper-fund/" },
+  ]),
+];
 ---
 
 <BaseLayout
-  title="Paper Funds - QUARCC"
-  description="QUARCC's systematic paper funds: US equity long/short books, marked daily against live prices."
+  title="Paper Funds — QUARCC Systematic US Equity Books, Marked Daily"
+  description="QUARCC's systematic paper funds: US equity long/short books built from machine-learning return forecasts, marked daily against live prices. NAV, returns, Sharpe and fact sheets."
+  modified={lastMark}
+  schema={schema}
 >
-  <div class="fxi paper-funds">
-    <header class="fxi-hero">
-      <p class="fx-kicker"><span>QUARCC</span><span>Paper funds</span></p>
-      <h1>Paper funds</h1>
-      <p>
-        Systematic US equity long/short books built by QUARCC from machine-learning return
-        forecasts. Each fund is simulated out of sample up to its formation date and marked daily
-        against live prices since. Open a fund for its fact sheet.
+  <PageHero
+    title={["Paper funds,", "marked daily."]}
+    sub="Systematic US equity long/short books built from machine-learning return forecasts. Each fund is simulated out of sample up to its formation date, and marked daily against live prices since."
+  />
+
+  <section class="funds" aria-label="Live paper funds">
+    <div class="wrap">
+      {live.length ? (
+        <>
+          <FundCards client:load portfolios={live} variant="feature" />
+          <div class="fxi funds-table">
+            <FundIndex client:load portfolios={live} />
+          </div>
+        </>
+      ) : (
+        <p>No live funds yet.</p>
+      )}
+      <p class="funds-disclaimer">
+        Paper portfolios for research and education. No capital is invested; this is not an offer or investment
+        advice. Simulated results have limits and do not guarantee future returns.
       </p>
-    </header>
-
-    {live.length > 0 ? <FundIndex client:load portfolios={live} /> : <p>No live funds yet.</p>}
-
-    <p class="paper-funds-disclaimer">
-      Paper portfolios for research and education. No capital is invested; this is not an offer
-      or investment advice. Simulated results have limits and do not guarantee future returns.
-    </p>
-  </div>
+    </div>
+  </section>
 </BaseLayout>
-
-<style>
-  .paper-funds {
-    width: 100%;
-    max-width: 1180px;
-    margin: 1rem auto 0;
-  }
-
-  .paper-funds-disclaimer {
-    max-width: 46rem;
-    margin: 2.2rem 0 0;
-    font-size: 0.74rem;
-    line-height: 1.5;
-    color: var(--fx-soft);
-  }
-</style>

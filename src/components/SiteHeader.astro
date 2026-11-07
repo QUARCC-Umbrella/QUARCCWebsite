@@ -1,0 +1,37 @@
+---
+import { NAV } from "../lib/site";
+
+const path = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const isActive = (href: string) => path.startsWith(href);
+---
+
+<header class="site-header" data-site-header>
+  <div class="site-header__inner">
+    <a href="/" class="site-logo" aria-label="QUARCC home">
+      <img src="/quarcc-logo.png" alt="QUARCC" width="84" height="56" />
+    </a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      {NAV.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+    <a href="/join/" class="site-header__cta" aria-current={isActive("/join/") ? "page" : undefined}>
+      Join QUARCC
+    </a>
+    <button class="menu-toggle" type="button" aria-controls="site-nav" aria-expanded="false" data-menu-toggle>
+      <span></span>
+      <b class="sr-only">Menu</b>
+    </button>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  toggle?.addEventListener("click", () => {
+    const open = header?.classList.toggle("is-open") ?? false;
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+</script>

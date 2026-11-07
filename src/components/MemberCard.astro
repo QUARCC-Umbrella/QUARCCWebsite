@@ -1,0 +1,35 @@
+---
+import { initials } from "../lib/site";
+
+interface Props {
+  name: string;
+  role: string;
+  email?: string;
+  linkedin?: string;
+  website?: string;
+  image?: string;
+}
+
+const { name, role, email, linkedin, website, image } = Astro.props;
+---
+
+<article class="card member">
+  <div class="avatar" aria-hidden="true">
+    {image ? <img src={image} alt="" loading="lazy" width="52" height="52" /> : initials(name)}
+  </div>
+  <h3 class="member__name">{name}</h3>
+  <p class="member__role">{role}</p>
+  <div class="member__links">
+    {email ? <a href={`mailto:${email}`} aria-label={`Email ${name}`}>Email<span class="ext">↗</span></a> : null}
+    {linkedin ? (
+      <a class="is-accent" href={linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${name} on LinkedIn`}>
+        LinkedIn<span class="ext">↗</span>
+      </a>
+    ) : null}
+    {website ? (
+      <a href={website} target="_blank" rel="noopener noreferrer" aria-label={`${name}'s website`}>
+        Website<span class="ext">↗</span>
+      </a>
+    ) : null}
+  </div>
+</article>

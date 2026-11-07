@@ -1,6 +1,6 @@
 {
   "name": "Executive Council",
-  "description": "Leadership team responsible for operations, strategy, and execution.",
+  "description": "Leadership team responsible for operations, strategy and execution.",
   "leadLabel": "Executive Team",
   "order": 1,
   "members": [

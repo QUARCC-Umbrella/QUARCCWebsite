@@ -1,0 +1,143 @@
+---
+// Decorative ASCII art drawn on a canvas, so the characters never become page text.
+//   variant="logo"  – the QUARCC logo as ASCII (hero backgrounds)
+//   variant="field" – faint digit noise (blog thumbnails)
+interface Props {
+  variant?: "logo" | "field";
+  seed?: number;
+  class?: string;
+}
+
+const { variant = "logo", seed = 1, class: className = "" } = Astro.props;
+---
+
+<canvas class:list={["ascii-canvas", className]} data-ascii={variant} data-seed={seed} aria-hidden="true"></canvas>
+
+<script>
+  const LOGO_SRC = "/quarcc-logo.png";
+  // Opaque part of quarcc-logo.png (252x168).
+  const LOGO_BOX = { x: 44, y: 18, w: 178, h: 105 };
+  const GLYPHS = "#$@%&8BWM0QOZXmwqpdbkhao*+=-:;~^\"'{}[]()<>/\\|!?lIi1rtfjxzcvun_,.";
+  const DIGITS = "0123456789";
+
+  function rng(seed: number) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  let logoMask: Promise<HTMLImageElement> | null = null;
+  function loadLogo() {
+    logoMask ??= new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = LOGO_SRC;
+    });
+    return logoMask;
+  }
+
+  function setup(canvas: HTMLCanvasElement) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    const ctx = canvas.getContext("2d")!;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    return { ctx, width: rect.width, height: rect.height };
+  }
+
+  async function drawLogo(canvas: HTMLCanvasElement) {
+    const img = await loadLogo();
+    const { ctx, width, height } = setup(canvas);
+    if (!width || !height) return;
+    const cw = 7.8;
+    const ch = 13.3;
+    const cols = Math.floor(width / cw);
+    const rows = Math.floor(height / ch);
+
+    const off = document.createElement("canvas");
+    off.width = cols;
+    off.height = rows;
+    const octx = off.getContext("2d", { willReadFrequently: true })!;
+    octx.drawImage(img, LOGO_BOX.x, LOGO_BOX.y, LOGO_BOX.w, LOGO_BOX.h, 0, 0, cols, rows);
+    const alpha = octx.getImageData(0, 0, cols, rows).data;
+    const on = (x: number, y: number) =>
+      x >= 0 && y >= 0 && x < cols && y < rows && alpha[(y * cols + x) * 4 + 3] > 70;
+
+    const rand = rng(Number(canvas.dataset.seed) || 1);
+    ctx.font = `13px "Geist Mono", ui-monospace, monospace`;
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "rgba(170, 140, 190, 0.6)";
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (!on(x, y)) continue;
+        // Hollow out thick strokes so the letters read as outlines, like the mockup.
+        let interior = true;
+        for (let dy = -1; dy <= 1 && interior; dy++) {
+          for (let dx = -3; dx <= 3; dx++) {
+            if (!on(x + dx, y + dy)) {
+              interior = false;
+              break;
+            }
+          }
+        }
+        if (interior) continue;
+        const glyph = GLYPHS[Math.floor(rand() * GLYPHS.length)];
+        ctx.fillText(glyph, x * cw, y * ch);
+      }
+    }
+  }
+
+  function drawField(canvas: HTMLCanvasElement) {
+    const { ctx, width, height } = setup(canvas);
+    if (!width || !height) return;
+    const rand = rng(Number(canvas.dataset.seed) || 1);
+    const cw = 6.6;
+    const ch = 11.5;
+    const cols = Math.ceil(width / cw);
+    const rows = Math.ceil(height / ch);
+    const gx = 0.25 + rand() * 0.5;
+    const gy = 0.3 + rand() * 0.4;
+    ctx.font = `11px "Geist Mono", ui-monospace, monospace`;
+    ctx.textBaseline = "top";
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (rand() < 0.18) continue;
+        const dx = x / cols - gx;
+        const dy = y / rows - gy;
+        const glow = Math.max(0, 1 - Math.sqrt(dx * dx * 1.6 + dy * dy) * 1.9);
+        const a = 0.05 + glow * 0.13 + rand() * 0.04;
+        ctx.fillStyle = `rgba(199, 173, 208, ${a.toFixed(3)})`;
+        const glyph = rand() < 0.85 ? DIGITS[Math.floor(rand() * 10)] : " .+-x="[Math.floor(rand() * 6)];
+        ctx.fillText(glyph, x * cw, y * ch);
+      }
+    }
+  }
+
+  function drawAll() {
+    document.querySelectorAll<HTMLCanvasElement>("canvas[data-ascii]").forEach((canvas) => {
+      if (canvas.dataset.ascii === "field") drawField(canvas);
+      else drawLogo(canvas).catch(() => {});
+    });
+  }
+
+  const start = () => {
+    drawAll();
+    let last = window.innerWidth;
+    window.addEventListener("resize", () => {
+      if (Math.abs(window.innerWidth - last) < 2) return;
+      last = window.innerWidth;
+      drawAll();
+    });
+  };
+
+  if (document.fonts?.ready) document.fonts.ready.then(start);
+  else start();
+</script>

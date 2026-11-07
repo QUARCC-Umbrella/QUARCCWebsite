@@ -1,0 +1,38 @@
+---
+import { CONTACT, PARTNER_MAILTO } from "../lib/site";
+
+const offers = [
+  ["Résumé book", "Exclusive access to vetted members and their work."],
+  ["Judge & speak", "Guest-judge a competition or run a workshop."],
+  ["Fund research", "Sponsor a grant and get first look at the results."],
+];
+---
+
+<section class="partner" aria-labelledby="partner-title">
+  <div class="wrap">
+    <div class="partner__box">
+      <div>
+        <h2 id="partner-title">We filter the signal<br />from the noise.</h2>
+        <p class="partner__lead">
+          Hire students with practical experience. Get first access to our résumé book, guest-judge a
+          competition, or fund a research grant.
+        </p>
+        <div class="partner__actions">
+          <a class="btn btn--cream" href={PARTNER_MAILTO}>Partner with QUARCC</a>
+          <a class="btn btn--ghost" href={`mailto:${CONTACT.email}`}>{CONTACT.email} <span class="arrow">→</span></a>
+        </div>
+      </div>
+      <ol class="partner__list">
+        {offers.map(([title, body], index) => (
+          <li>
+            <span class="num">{String(index + 1).padStart(2, "0")}</span>
+            <div>
+              <strong>{title}</strong>
+              <span>{body}</span>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

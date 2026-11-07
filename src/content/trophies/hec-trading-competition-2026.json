@@ -3,10 +3,17 @@
   "competition": "",
   "placement": "Semi Finalist",
   "date": "2026-02-17",
-  "summary": "QUARCC were semi-finalists at HEC Trading Competition with Carter Cameron, Hubert Lefebvre, and Anas Maaiti ",
+  "summary": "Semi-finalists at the HEC Trading Competition.",
   "detail": "QUARCC were semi-finalists at HEC Trading Competition building an equity trading strategy with 14 sharpe ratio & 55 sortino ratio in the week long competition.(Carter Cameron, Hubert Lefebvre, and Anas Maaiti) \n\n .",
   "emoji": "🏆",
   "images": [],
   "link": "",
-  "order": 2
+  "order": 2,
+  "kind": "Trading competition",
+  "placementLabel": "Semi-finalist",
+  "team": [
+    "Carter Cameron",
+    "Hubert Lefebvre",
+    "Anas Maaiti"
+  ]
 }

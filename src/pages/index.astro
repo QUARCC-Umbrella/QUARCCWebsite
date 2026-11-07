@@ -1,96 +1,183 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import AsciiLogoAnimation from "../components/AsciiLogoAnimation.jsx";
-import SystemBox from "../components/SystemBox.astro";
-import "../pages/Home.css";
-import { formatDate, getHomeContent, getLatestBlogPosts, toContentSlug } from "../lib/content";
+import SectionHead from "../components/SectionHead.astro";
+import MemberCard from "../components/MemberCard.astro";
+import AsciiArt from "../components/AsciiArt.astro";
+import FundCards from "../components/fund/FundCards.jsx";
+import {
+  getHomeContent,
+  getLatestBlogPosts,
+  getPortfolios,
+  getTeams,
+  gettrophies,
+  postUrl,
+  season,
+  toContentSlug,
+} from "../lib/content";
+import { LIVE_FUNDS, byLiveOrder } from "../lib/funds";
+import { SITE_URL, absoluteUrl } from "../lib/site";
 
-const posts = await getLatestBlogPosts(3);
 const home = await getHomeContent();
+const posts = await getLatestBlogPosts(3);
+const teams = await getTeams();
+const council = teams.find((team) => toContentSlug(team.id) === "executives")?.data.members ?? [];
+const trophies = (await gettrophies()).map((entry) => entry.data);
+const featured = trophies.find((trophy) => trophy.featured) ?? trophies[0];
+const funds = (await getPortfolios())
+  .map((entry) => ({ id: toContentSlug(entry.id), slug: toContentSlug(entry.id), ...entry.data }))
+  .filter((portfolio) => LIVE_FUNDS.includes(portfolio.slug))
+  .sort(byLiveOrder);
+
+const schema = [
+  {
+    "@type": "WebPage",
+    "@id": `${SITE_URL}/#webpage`,
+    url: absoluteUrl("/"),
+    name: "QUARCC — The largest quant hub in Montreal",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#organization` },
+  },
+];
 ---
 
 <BaseLayout
-  title="QUARCC - Quantitative Research and Competitions Club"
-  description="QUARCC is a student-run club at Concordia University dedicated to quantitative finance, featuring research groups and algorithmic trading."
-  showHomeLink={false}
+  title="QUARCC — Quantitative Research and Competitions Club, Montreal"
+  description="QUARCC is Montreal's student quant club: published research, live paper funds, trading competitions, workshops and a speaker series at Concordia University."
+  schema={schema}
 >
-  <div class="home-container">
-    <div class="home-left">
-      <div class="hero-logo-wrap">
-        <AsciiLogoAnimation client:load />
+  <section class="home-hero">
+    <div class="home-hero__bg" aria-hidden="true"></div>
+    <div class="wrap home-hero__inner">
+      <h1 class="home-hero__title">{home.hero.title[0]} <br />{home.hero.title[1]}</h1>
+      <p class="home-hero__sub">{home.hero.sub}</p>
+      <div class="home-hero__actions">
+        <a class="btn btn--navy" href="/blog/">Explore the research</a>
+        <a class="btn btn--ghost" href="/join/">Join QUARCC <span class="arrow">→</span></a>
       </div>
-      <div class="news-container">
-        <div class="posts-section">
-          <div class="posts-intro">
-            <h2>Posts</h2>
-            <p>Latest writing from QUARCC.</p>
+    </div>
+
+    <div class="strategies">
+      <div class="strategies__head">
+        <h2>{home.strategies.title}</h2>
+        <span class="strategies__badge"><span class="live-dot"></span>{home.strategies.badge}</span>
+        <a class="strategies__all" href="/paper-fund/">All strategies <span class="arrow">→</span></a>
+      </div>
+      <FundCards client:visible portfolios={funds} variant="compact" />
+    </div>
+  </section>
+
+  <section class="section home-map" aria-labelledby="map-title">
+    <div class="wrap">
+      <SectionHead id="map-title" title={home.map.title} sub={home.map.sub} />
+      <div class="grid grid-3">
+        {home.pillars.map((pillar) => (
+          <article class="card pillar">
+            <p class="label">{pillar.label}</p>
+            <h3>{pillar.title}</h3>
+            <p>{pillar.body}</p>
+          </article>
+        ))}
+      </div>
+      <div class="audience card">
+        <div>
+          <p class="label label--muted">{home.audience.label}</p>
+          <p class="audience__text">{home.audience.text}</p>
+        </div>
+        <ul class="chips" role="list">
+          {home.audience.chips.map((chip) => <li class="chip">{chip}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-learn" aria-labelledby="learn-title">
+    <div class="wrap">
+      <SectionHead id="learn-title" title={home.learn.title} sub={home.learn.sub} />
+      <ol class="journey" role="list">
+        {home.learn.steps.map(([title, body], index) => (
+          <li>
+            <span class="journey__dot" aria-hidden="true"></span>
+            <span class="journey__num">{String(index + 1).padStart(2, "0")}</span>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="grid grid-4 resources">
+        {home.learn.resources.map((item) => (
+          <a class="card resource" href={item.href} {...(item.href?.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+            <p class="label">{item.label}</p>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-research" aria-labelledby="research-title">
+    <div class="home-research__art" aria-hidden="true"><AsciiArt variant="logo" seed={7} /></div>
+    <div class="wrap">
+      <SectionHead id="research-title" title={home.research.title} sub={home.research.sub} />
+      <div class="grid grid-3">
+        {posts.map((post) => (
+          <a class="card research-card" href={postUrl(post.id)}>
+            <p class="label">{post.data.category}</p>
+            <h3>{post.data.title}</h3>
+            <p>{post.data.description}</p>
+            <span class="research-card__path">{post.data.label ?? toContentSlug(post.id)}/ <span class="arrow">→</span></span>
+          </a>
+        ))}
+      </div>
+      <a class="btn btn--navy research-more" href="/blog/">Explore the research</a>
+    </div>
+  </section>
+
+  <section class="section home-compete" aria-labelledby="compete-title">
+    <div class="wrap">
+      <SectionHead id="compete-title" title={home.compete.title} sub={home.compete.sub} />
+      <div class="compete">
+        {featured ? (
+          <a class="compete__feature" href="/trophies/">
+            <span class="pill"><span class="live-dot"></span>{featured.placementLabel ?? featured.placement} · {season(featured.date)}</span>
+            <h3>{featured.title}</h3>
+            <p>{featured.summary} {featured.categories.length ? `Categories: ${featured.categories.join(", ")}.` : ""}</p>
+            {featured.highlights.length ? (
+              <dl class="compete__stats">
+                {featured.highlights.map((item) => (
+                  <div>
+                    <dt>{item.value}</dt>
+                    <dd>{item.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
+          </a>
+        ) : null}
+        <div class="compete__table">
+          <div class="compete__row compete__row--head">
+            <span>Competition</span>
+            <span>Season · Result</span>
           </div>
-          <div class="news-list">
-            {posts.map((post) => (
-              <a href={`/blog/${toContentSlug(post.id)}`} class="news-card">
-                <div class="news-card-title">{post.data.title}</div>
-                <div class="news-card-date">{formatDate(post.data.pubDate)}</div>
-                <div class="news-card-summary">{post.data.description}</div>
-              </a>
-            ))}
-          </div>
+          {trophies.slice(0, 5).map((trophy) => (
+            <a class="compete__row" href="/trophies/">
+              <span class="compete__name">{trophy.title}</span>
+              <span class="compete__meta">
+                {season(trophy.date)} <b>{trophy.placementLabel ?? trophy.placement}</b>
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </div>
-    <div class="home-right">
-      <SystemBox title="Club Details">
-        {home.clubDetails.map(([label, value]) => (
-          <div class="detail-row">
-            <span class="label">{label}:</span> <span class="value">{value}</span>
-          </div>
-        ))}
-      </SystemBox>
+  </section>
 
-      <SystemBox title="System Navigation">
-        <div class="nav-links-grid">
-          <a href="/about" class="nav-link">
-            <span class="nav-key">about</span>
-            <span class="nav-desc">Club Information</span>
-          </a>
-          <a href="/events" class="nav-link">
-            <span class="nav-key">events</span>
-            <span class="nav-desc">Upcoming Events</span>
-          </a>
-          <a href="/blog" class="nav-link">
-            <span class="nav-key">blog</span>
-            <span class="nav-desc">Latest Articles</span>
-          </a>
-          <a href="/teams" class="nav-link">
-            <span class="nav-key">teams</span>
-            <span class="nav-desc">Our Structure</span>
-          </a>
-          <a href="/join" class="nav-link">
-            <span class="nav-key">join</span>
-            <span class="nav-desc">Recruitment</span>
-          </a>
-          <a href="/trophies" class="nav-link">
-            <span class="nav-key">trophies</span>
-            <span class="nav-desc">Competition Wins</span>
-          </a>
-          <a href="/paper-fund" class="nav-link">
-            <span class="nav-key">paper-fund</span>
-            <span class="nav-desc">Live Funds</span>
-          </a>
-        </div>
-      </SystemBox>
-
-      <SystemBox title="Project Status">
-        {home.projectStatus.map(([label, value]) => (
-          <div class="detail-row">
-            <span class="label">{label}:</span> <span class="value">{value}</span>
-          </div>
-        ))}
-        <div class="detail-row">
-          <span class="label">FAQ:</span> 
-          <a href="/faq" class="value faq-link">View Questions</a>
-        </div>
-      </SystemBox>
+  <section class="section home-people" aria-labelledby="people-title">
+    <div class="wrap">
+      <SectionHead id="people-title" title={home.people.title} sub={home.people.sub} />
+      <div class="grid grid-4">
+        {council.map((member) => <MemberCard {...member} />)}
+      </div>
     </div>
-  </div>
+  </section>
 </BaseLayout>
-

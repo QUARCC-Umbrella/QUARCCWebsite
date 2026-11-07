@@ -1,134 +1,141 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SystemBox from "../components/SystemBox.astro";
-import { gettrophies } from "../lib/content";
-import "../styles/trophies.css";
+import PageHero from "../components/PageHero.astro";
+import { dateParts, gettrophies } from "../lib/content";
+import { ORG_ID, absoluteUrl, breadcrumbSchema } from "../lib/site";
 
-const trophies = (await gettrophies()).map((entry) => ({
-  id: entry.id,
-  ...entry.data,
-}));
+const trophies = (await gettrophies()).map((entry) => ({ id: entry.id, ...entry.data }));
+const featured = trophies.find((trophy) => trophy.featured);
+const results = trophies.filter((trophy) => trophy !== featured);
+const firstYear = Math.min(...trophies.map((trophy) => dateParts(trophy.date).year));
+const lastYear = Math.max(...trophies.map((trophy) => dateParts(trophy.date).year));
+
+const stats = [
+  { value: "3×", label: "1st place at McHacks XIII", accent: true },
+  { value: "$10,000", label: "won at McGill FIAM ’24" },
+  { value: "3rd", label: "at the Cornell Trading Competition" },
+  { value: String(trophies.length), label: `competitions placed since ${firstYear}` },
+];
+
+const paragraphs = (text: string) => text.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
+
+const schema = [
+  {
+    "@type": "CollectionPage",
+    url: absoluteUrl("/trophies/"),
+    name: "QUARCC competition results",
+    about: { "@id": ORG_ID },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: trophies.map((trophy, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: `${trophy.placementLabel ?? trophy.placement} — ${trophy.title}`,
+        description: trophy.summary,
+      })),
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Trophies", path: "/trophies/" },
+  ]),
+];
 ---
 
 <BaseLayout
-  title="trophies - QUARCC"
-  description="Celebrating QUARCC's competition wins, hackathon trophies, and achievements in quantitative finance."
+  title="Trophies — QUARCC Trading Competition and Hackathon Results"
+  description="QUARCC's results: three first places at McHacks XIII, 2nd and $10,000 at McGill FIAM '24, 3rd at the Cornell Trading Competition, and more since 2024."
+  schema={schema}
 >
-  <div style="max-width: 860px; margin: 0 auto;">
-    <SystemBox title="Club trophies">
-      {
-        trophies.length ? (
-          <div class="trophies-grid">
-            {trophies.map((v) => (
-              <button
-                class="trophy-card"
-                data-trophy-id={v.id}
-                aria-label={`View details for ${v.title}`}
-              >
-                <div class="trophy-emoji">{v.emoji}</div>
-                <div class="trophy-placement">{v.placement}</div>
-                <div class="trophy-title">{v.title}</div>
-                <div class="trophy-competition">{v.competition}</div>
-                <div class="trophy-date">{v.date}</div>
-                <p class="trophy-summary">{v.summary}</p>
-                <div class="trophy-cta">── click to expand ──</div>
-              </button>
-            ))}
+  <PageHero
+    title={["Built to compete —", "and to place."]}
+    sub="QUARCC teams take on trading competitions and hackathons across North America, from McHacks in Montreal to Cornell."
+  />
+
+  <section class="trophy-stats">
+    <div class="wrap">
+      <div class="stat-strip stat-strip--4">
+        {stats.map((stat) => (
+          <div class="stat stat--big">
+            <p class:list={["stat__big", { "is-accent": stat.accent }]}>{stat.value}</p>
+            <p class="stat__mono">{stat.label}</p>
           </div>
-        ) : (
-          <p>No trophies recorded yet. Check back soon!</p>
-        )
-      }
-    </SystemBox>
-  </div>
-
-  <!-- Modal overlay -->
-  <div id="trophy-modal-overlay" class="trophy-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="trophy-modal">
-      <button class="trophy-modal-close" id="trophy-modal-close" aria-label="Close">✕</button>
-      <div class="trophy-modal-emoji" id="modal-emoji"></div>
-      <div class="trophy-modal-placement" id="modal-placement"></div>
-      <div class="trophy-modal-title" id="modal-title"></div>
-      <div class="trophy-modal-competition" id="modal-competition"></div>
-      <div class="trophy-modal-date" id="modal-date"></div>
-      <div class="trophy-modal-detail" id="modal-detail"></div>
-      <div class="trophy-modal-images" id="modal-images"></div>
-      <a class="trophy-modal-link" id="modal-link" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">→ External Link</a>
+        ))}
+      </div>
     </div>
-  </div>
+  </section>
+
+  {featured ? (
+    <section class="trophy-featured">
+      <div class="wrap">
+        <details class="feature-card">
+          <summary>
+            <div class="feature-card__left">
+              <span class="feature-card__emoji" aria-hidden="true">{featured.emoji}</span>
+              <p class="feature-card__headline">{featured.headline ?? featured.placement}</p>
+              <p class="label">{featured.headlineLabel ?? featured.placementLabel}</p>
+            </div>
+            <div class="feature-card__right">
+              <p class="feature-card__meta">{featured.date}<span aria-hidden="true">·</span>{featured.kind}</p>
+              <h2>{featured.title}</h2>
+              <p class="feature-card__summary">{featured.summary}</p>
+              {featured.categories.length ? (
+                <ul class="chips" role="list">
+                  {featured.categories.map((category) => <li class="chip">{category}</li>)}
+                </ul>
+              ) : null}
+              <span class="more-toggle" aria-hidden="true"></span>
+            </div>
+          </summary>
+          <div class="result-detail feature-card__detail">
+            {paragraphs(featured.detail).map((paragraph) => <p>{paragraph}</p>)}
+            {featured.link ? <a href={featured.link} target="_blank" rel="noopener noreferrer">External link ↗</a> : null}
+          </div>
+        </details>
+      </div>
+    </section>
+  ) : null}
+
+  <section class="section trophy-results" aria-labelledby="results-title">
+    <div class="wrap">
+      <div class="results-head">
+        <h2 id="results-title">Every result.</h2>
+        <span>{firstYear} – {lastYear}</span>
+      </div>
+      <div class="results">
+        {results.map((trophy) => (
+          <details class="result">
+            <summary>
+              <p class="result__place"><span aria-hidden="true">{trophy.emoji}</span>{trophy.placementLabel ?? trophy.placement}</p>
+              <div class="result__main">
+                <h3>{trophy.title}</h3>
+                <p class="result__summary">{trophy.summary}</p>
+                {trophy.team.length ? (
+                  <div class="result__team">
+                    <span>Team</span>
+                    <ul class="chips" role="list">
+                      {trophy.team.map((name) => <li class="chip chip--plain chip--sm">{name}</li>)}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+              <div class="result__side">
+                <time datetime={trophy.date}>{trophy.date}</time>
+                <span class="more-toggle" aria-hidden="true"></span>
+              </div>
+            </summary>
+            <div class="result-detail">
+              {paragraphs(trophy.detail).map((paragraph) => <p>{paragraph}</p>)}
+              {trophy.images.length ? (
+                <div class="result-detail__images">
+                  {trophy.images.map((src) => <img src={src} alt={trophy.title} loading="lazy" />)}
+                </div>
+              ) : null}
+              {trophy.link ? <a href={trophy.link} target="_blank" rel="noopener noreferrer">External link ↗</a> : null}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
 </BaseLayout>
-
-<!-- Inline trophy data for JS -->
-<script define:vars={{ trophies }}>
-  const overlay = document.getElementById("trophy-modal-overlay");
-  const closeBtn = document.getElementById("trophy-modal-close");
-
-  const fields = {
-    emoji: document.getElementById("modal-emoji"),
-    placement: document.getElementById("modal-placement"),
-    title: document.getElementById("modal-title"),
-    competition: document.getElementById("modal-competition"),
-    date: document.getElementById("modal-date"),
-    detail: document.getElementById("modal-detail"),
-    images: document.getElementById("modal-images"),
-    link: document.getElementById("modal-link"),
-  };
-
-  function openModal(v) {
-    fields.emoji.textContent = v.emoji || "🏆";
-    fields.placement.textContent = v.placement;
-    fields.title.textContent = v.title;
-    fields.competition.textContent = v.competition;
-    fields.date.textContent = v.date;
-    fields.detail.textContent = v.detail;
-
-    // Images
-    fields.images.innerHTML = "";
-    if (v.images && v.images.length) {
-      v.images.forEach((src) => {
-        const img = document.createElement("img");
-        img.src = src;
-        img.alt = v.title;
-        fields.images.appendChild(img);
-      });
-      fields.images.style.display = "grid";
-    } else {
-      fields.images.style.display = "none";
-    }
-
-    // External link
-    if (v.link) {
-      fields.link.href = v.link;
-      fields.link.style.display = "inline-block";
-    } else {
-      fields.link.style.display = "none";
-    }
-
-    overlay.classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModal() {
-    overlay.classList.remove("open");
-    document.body.style.overflow = "";
-  }
-
-  // Wire up cards
-  document.querySelectorAll(".trophy-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      const id = card.getAttribute("data-trophy-id");
-      const v = trophies.find((x) => x.id === id);
-      if (v) openModal(v);
-    });
-  });
-
-  // Close handlers
-  closeBtn.addEventListener("click", closeModal);
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) closeModal();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
-  });
-</script>
-

@@ -191,7 +191,7 @@ export default function FundChart({
         >
           {showLive ? (
             <g className="fx-live-band">
-              <rect x={x(liveT)} y={pad.top} width={pad.left + plotW - x(liveT)} height={plotH} />
+              <rect x={x(liveT)} y={pad.top} width={Math.max(0, pad.left + plotW - x(liveT))} height={plotH} />
               <line x1={x(liveT)} x2={x(liveT)} y1={pad.top} y2={pad.top + plotH} />
               <text x={x(liveT) - 6} y={pad.top + 11} textAnchor="end">
                 Live

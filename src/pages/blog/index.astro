@@ -1,75 +1,153 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { formatDate, getBlogPosts, toContentSlug } from "../../lib/content";
-import "../../styles/blog.css";
+import PageHero from "../../components/PageHero.astro";
+import AsciiArt from "../../components/AsciiArt.astro";
+import { getBlogPosts, postLabel, postUrl, shortDate, tagSlug } from "../../lib/content";
+import { ORG_ID, SITE_URL, absoluteUrl, breadcrumbSchema } from "../../lib/site";
 
 const posts = await getBlogPosts();
-const tags = Array.from(new Set(posts.flatMap((post) => post.data.tags))).slice(0, 12);
+const [latest, ...rest] = posts;
 
-const groupedPosts = posts.reduce((groups, post) => {
-  const year = String(post.data.pubDate.getFullYear());
-  if (!groups[year]) {
-    groups[year] = [];
-  }
-  groups[year].push(post);
+// Tags in order of first appearance, merged by slug ("Quantitative Finance" == "quantitative-finance").
+const tagMap = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) tagMap.set(tagSlug(tag), (tagMap.get(tagSlug(tag)) ?? 0) + 1);
+}
+// The six most-used tags fit on one row.
+const tags = [...tagMap.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 6)
+  .map(([tag]) => tag);
+type Post = CollectionEntry<"blog">;
+const tagsOf = (post: Post) => [...new Set(post.data.tags.map(tagSlug))].join(" ");
+
+const byYear = posts.reduce<Record<string, Post[]>>((groups, post) => {
+  const year = String(post.data.pubDate.getUTCFullYear());
+  (groups[year] ??= []).push(post);
   return groups;
 }, {});
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 
-const years = Object.keys(groupedPosts).sort((a, b) => Number(b) - Number(a));
+const schema = [
+  {
+    "@type": "Blog",
+    "@id": `${SITE_URL}/blog/#blog`,
+    url: absoluteUrl("/blog/"),
+    name: "QUARCC Blog",
+    description: "News, publications and research from QUARCC.",
+    publisher: { "@id": ORG_ID },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.data.title,
+      url: absoluteUrl(postUrl(post.id)),
+      datePublished: post.data.pubDate.toISOString(),
+      dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+    })),
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog/" },
+  ]),
+];
 ---
 
 <BaseLayout
-  title="Blog - QUARCC"
-  description="Editorial notes, workshop reflections, and research updates from QUARCC."
-  pageClass="blog-shell"
+  title="Blog — Quant Research and Publications from QUARCC"
+  description="News, publications and research from QUARCC: portfolio optimisation, market-neutral and long-short equity funds, and regime-switching models."
+  schema={schema}
 >
-  <section>
-    <h1 class="blog-page-title">Posts</h1>
-    <p class="blog-page-intro">
-      News, Publication and research from QUARCC.
-    </p>
-  </section>
-
-  <div class="blog-grid">
-    <div>
-      {years.map((year) => (
-        <section class="blog-year-section">
-          <h2 class="blog-year-heading">{year}</h2>
-          <ul class="blog-post-list" role="list">
-            {groupedPosts[year].map((post) => (
-              <li class="blog-post-list-item">
-                <div class="blog-post-row">
-                  <div class="blog-date">{formatDate(post.data.pubDate)}</div>
-                  <div>
-                    <a class="blog-preview-title" href={`/blog/${toContentSlug(post.id)}`}>
-                      {post.data.title}
-                    </a>
-                    <p class="blog-preview-description">{post.data.description}</p>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+  <PageHero
+    kickerPath="~/blog"
+    kickerLabel="Latest articles"
+    title={["Posts."]}
+    sub="News, publications and research from QUARCC — editorial notes, workshop reflections and research write-ups."
+  >
+    <div class="tag-filter" role="group" aria-label="Filter posts by tag">
+      <button type="button" class="tag-btn is-active" data-tag="" aria-pressed="true">All posts</button>
+      {tags.map((tag) => (
+        <button type="button" class="tag-btn" data-tag={tag} aria-pressed="false">#{tag}</button>
       ))}
     </div>
+  </PageHero>
 
-    <aside class="blog-sidebar">
-      <section>
-        <h2 class="blog-sidebar-title">Tags</h2>
-        <div class="blog-tag-cloud">
-          {tags.map((tag) => (
-            <span class="blog-tag-link">{tag}</span>
-          ))}
+  {latest ? (
+    <section class="blog-latest" data-post data-tags={tagsOf(latest)}>
+      <div class="wrap blog-latest__grid">
+        <a class="thumb thumb--lg" href={postUrl(latest.id)} tabindex="-1" aria-hidden="true">
+          <AsciiArt variant="field" seed={3} />
+          <span class="thumb__label">{postLabel(latest)}</span>
+        </a>
+        <div class="blog-latest__body">
+          <p class="post-meta"><span class="label">Latest</span> · {shortDate(latest.data.pubDate)}</p>
+          <h2><a href={postUrl(latest.id)}>{latest.data.title}</a></h2>
+          <p class="blog-latest__desc">{latest.data.description}</p>
+          <a class="btn btn--ghost" href={postUrl(latest.id)}>Read the post <span class="arrow">→</span></a>
         </div>
-      </section>
+      </div>
+    </section>
+  ) : null}
 
-      <section>
-        <h2 class="blog-sidebar-title">Not Investment Advice</h2>
-        <p class="blog-note">
-          QUARCC is not a financial advisor.
-        </p>
-      </section>
-    </aside>
-  </div>
+  <section class="section blog-archive" aria-label="All posts">
+    <div class="wrap">
+      {years.map((year) => {
+        const yearPosts = byYear[year].filter((post) => post.id !== latest?.id);
+        return yearPosts.length ? (
+          <div class="blog-year" data-year>
+            <div class="blog-year__head">
+              <h2>{year}</h2>
+              <span>{byYear[year].length} {byYear[year].length === 1 ? "post" : "posts"}</span>
+            </div>
+            <div class="grid grid-3">
+              {yearPosts.map((post, index) => (
+                <article class="post-card" data-post data-tags={tagsOf(post)}>
+                  <a class={`thumb thumb--g${index % 3}`} href={postUrl(post.id)} tabindex="-1" aria-hidden="true">
+                    <AsciiArt variant="field" seed={11 + index * 7} />
+                    <span class="thumb__label">{postLabel(post)}</span>
+                  </a>
+                  <p class="post-meta"><span class="label">{post.data.category}</span> · {shortDate(post.data.pubDate)}</p>
+                  <h3><a href={postUrl(post.id)}>{post.data.title}</a></h3>
+                  <p class="post-card__desc">{post.data.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : null;
+      })}
+      <p class="blog-empty" hidden data-empty>No posts with that tag yet.</p>
+      <div class="notice blog-notice">
+        <span class="label">Not investment advice</span>
+        <span>QUARCC is not a financial advisor. Posts are research and education.</span>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-btn");
+  const posts = document.querySelectorAll<HTMLElement>("[data-post]");
+  const years = document.querySelectorAll<HTMLElement>("[data-year]");
+  const empty = document.querySelector<HTMLElement>("[data-empty]");
+
+  function apply(tag: string) {
+    let shown = 0;
+    posts.forEach((post) => {
+      const match = !tag || (post.dataset.tags ?? "").split(" ").includes(tag);
+      post.hidden = !match;
+      if (match) shown++;
+    });
+    years.forEach((year) => {
+      year.hidden = !year.querySelector("[data-post]:not([hidden])");
+    });
+    if (empty) empty.hidden = shown > 0;
+    buttons.forEach((button) => {
+      const active = button.dataset.tag === tag;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  buttons.forEach((button) => button.addEventListener("click", () => apply(button.dataset.tag ?? "")));
+  const initial = new URLSearchParams(location.search).get("tag");
+  if (initial) apply(initial);
+</script>

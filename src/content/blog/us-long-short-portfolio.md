@@ -5,6 +5,8 @@ pubDate: 2026-11-02
 updatedDate: 2026-11-04
 heroImage: ../../assets/blog/us-long-short-rank-ic.svg
 heroImageAlt: "Grouped bar chart of rank IC. Short pool: +0.062 in 2016 to 2020 and +0.142 in 2021 to 2026. Long pool: −0.012 and −0.011."
+category: "Paper fund"
+label: "us-long-short"
 tags:
   - Quantitative Finance
   - Portfolio Construction

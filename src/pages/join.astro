@@ -1,42 +1,121 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SystemBox from "../components/SystemBox.astro";
+import PageHero from "../components/PageHero.astro";
+import SectionHead from "../components/SectionHead.astro";
 import { getJoinContent } from "../lib/content";
+import { CONTACT, absoluteUrl, breadcrumbSchema } from "../lib/site";
 
 const join = await getJoinContent();
+
+const channels = [
+  { label: "Email", value: CONTACT.email, href: `mailto:${CONTACT.email}` },
+  { label: "Instagram", value: CONTACT.instagramHandle, href: CONTACT.instagram },
+  { label: "LinkedIn", value: CONTACT.linkedinHandle, href: CONTACT.linkedin },
+  { label: "Discord", value: CONTACT.discordHandle, href: CONTACT.discord },
+];
+const external = (href: string) => (href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {});
+
+const schema = [
+  {
+    "@type": "ContactPage",
+    url: absoluteUrl("/join/"),
+    name: "Join QUARCC",
+    mainEntity: {
+      "@id": absoluteUrl("/#organization"),
+      contactPoint: [
+        { "@type": "ContactPoint", contactType: "general inquiries", email: CONTACT.email },
+        { "@type": "ContactPoint", contactType: "research group", email: CONTACT.researchEmail },
+      ],
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Join", path: "/join/" },
+  ]),
+];
 ---
 
 <BaseLayout
-  title="Join Us - QUARCC"
-  description="Join QUARCC to connect with like-minded students and gain hands-on experience in quantitative finance."
+  title="Join QUARCC — Quant Finance Club Recruitment in Montreal"
+  description="Join QUARCC: open to students from every background in finance, computer science, math and engineering. Message us on Discord or come to a Tuesday meeting."
+  schema={schema}
 >
-  <div style="max-width: 800px; margin: 0 auto;">
-    {join.sections.map((section) => (
-      <SystemBox title={section.title}>
-        {section.lines.map((line) => (
-          <p>
-            {line.startsWith("Email: ") ? (
-              <>
-                Email: <a href={`mailto:${line.replace("Email: ", "")}`}>{line.replace("Email: ", "")}</a>
-              </>
-            ) : line.startsWith("Instagram: ") ? (
-              <>
-                Instagram: <a href={line.replace("Instagram: ", "")}>{line.replace("Instagram: ", "")}</a>
-              </>
-            ) : line.startsWith("LinkedIn: ") ? (
-              <>
-                LinkedIn: <a href={line.replace("LinkedIn: ", "")}>{line.replace("LinkedIn: ", "")}</a>
-              </>
-            ) : line.startsWith("Discord: ") ? (
-              <>
-                Discord: <a href={line.replace("Discord: ", "")}>{line.replace("Discord: ", "")}</a>
-              </>
-            ) : (
-              line
-            )}
-          </p>
+  <PageHero kickerPath="~/join" kickerLabel="Recruitment" title={join.hero.title} sub={join.hero.sub}>
+    <ul class="chips join-chips" role="list">
+      {join.hero.chips.map((chip) => <li class="chip">{chip}</li>)}
+    </ul>
+    <div class="hero-actions">
+      <a class="btn btn--cream" href={CONTACT.discord} target="_blank" rel="noopener noreferrer">Message us on Discord <span class="arrow">↗</span></a>
+      <a class="btn btn--navy" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+    </div>
+  </PageHero>
+
+  <section class="section join-paths" aria-labelledby="paths-title">
+    <div class="wrap">
+      <SectionHead id="paths-title" title={join.paths.title} sub={join.paths.sub} />
+      <div class="grid grid-2">
+        {join.paths.cards.map((card) => (
+          <article class="card card--glow path-card">
+            <p class="label"><span class="live-dot"></span>{card.label}</p>
+            <h3>{card.title}</h3>
+            <p>{card.body}</p>
+            <dl class="path-card__rows">
+              {card.rows.map(([label, value]) => (
+                <div>
+                  <dt>{label}</dt>
+                  <dd>{value.includes("@") ? <a href={`mailto:${value}`}>{value}</a> : value}</dd>
+                </div>
+              ))}
+            </dl>
+            {card.href ? (
+              <a class:list={["btn", card.style === "navy" ? "btn--navy" : "btn--cream"]} href={card.href} {...external(card.href)}>
+                {card.cta} <span class="arrow">↗</span>
+              </a>
+            ) : null}
+          </article>
         ))}
-      </SystemBox>
-    ))}
-  </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section join-steps" aria-labelledby="steps-title">
+    <div class="wrap">
+      <h2 id="steps-title" class="steps-heading">{join.steps.title.join(" ")}</h2>
+      <ol class="grid grid-3 steps" role="list">
+        {join.steps.items.map(([title, body], index) => (
+          <li class="card step">
+            <span class="step__num">{String(index + 1).padStart(2, "0")}</span>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section join-contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <SectionHead id="contact-title" title={join.contact.title} sub={join.contact.sub} />
+      <div class="grid grid-4">
+        {channels.map((channel) => (
+          <a class="card channel" href={channel.href} {...external(channel.href)}>
+            <span class="channel__top"><span class="label">{channel.label}</span><span aria-hidden="true">↗</span></span>
+            <span class="channel__value">{channel.value}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="join-quote">
+    <div class="wrap">
+      <figure class="quote-card">
+        <p class="label label--muted">{join.quote.label}</p>
+        <blockquote>{join.quote.text}</blockquote>
+        <ul class="chips" role="list">
+          {join.quote.chips.map((chip) => <li class="chip chip--plain">{chip}</li>)}
+        </ul>
+      </figure>
+    </div>
+  </section>
 </BaseLayout>

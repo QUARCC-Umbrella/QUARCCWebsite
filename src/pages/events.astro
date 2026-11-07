@@ -1,90 +1,188 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SystemBox from "../components/SystemBox.astro";
-import { getEvents } from "../lib/content";
+import PageHero from "../components/PageHero.astro";
+import SectionHead from "../components/SectionHead.astro";
+import { dateParts, eventEnd, eventStart, getEvents, isValidIsoDate, linkLabel } from "../lib/content";
+import { CONTACT, ORG_ID, absoluteUrl, breadcrumbSchema } from "../lib/site";
 
-const events = (await getEvents()).map((entry) => entry.data);
-const now = new Date();
-const getEventDateTime = (event) => new Date(`${event.date}T${event.endTime}`);
-const upcomingEvents = events
-  .filter((event) => getEventDateTime(event) >= now)
-  .sort((a, b) => getEventDateTime(a) - getEventDateTime(b));
-const pastEvents = events
-  .filter((event) => getEventDateTime(event) < now)
-  .sort((a, b) => getEventDateTime(b) - getEventDateTime(a));
+type Event = CollectionEntry<"events">["data"];
+type SpeakerEvent = Event & { speaker: NonNullable<Event["speaker"]> };
+
+const events: Event[] = (await getEvents()).map((entry) => entry.data);
+const now = Date.now();
+// Invalid calendar dates (e.g. "2026-04-31") roll forward instead of failing the build.
+const endTime = (event: Event) => new Date(eventEnd(event)).getTime() || 0;
+const upcoming = events.filter((event) => endTime(event) >= now).sort((a, b) => endTime(a) - endTime(b));
+const past = events.filter((event) => endTime(event) < now).sort((a, b) => endTime(b) - endTime(a));
+const speakers = events
+  .filter((event): event is SpeakerEvent => Boolean(event.speaker))
+  .sort((a, b) => endTime(a) - endTime(b))
+  .slice(-4);
+
+const pastByYear = past.reduce<Record<string, Event[]>>((groups, event) => {
+  const year = String(dateParts(event.date).year);
+  (groups[year] ??= []).push(event);
+  return groups;
+}, {});
+const years = Object.keys(pastByYear).sort((a, b) => Number(b) - Number(a));
+
+const summary = (event: Event) => event.summary ?? event.description.split(/\n\s*\n/)[0];
+const where = (event: Event) => event.venue ?? [event.location, event.room].filter(Boolean).join(", ");
+const cardDate = (event: Event) => {
+  const { monthName, day, year } = dateParts(event.date);
+  return `${monthName} ${day}, ${year}`;
+};
+
+const HALL = {
+  "@type": "Place",
+  name: "Concordia University, Henry F. Hall Building",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "1455 De Maisonneuve Blvd. W.",
+    addressLocality: "Montreal",
+    addressRegion: "QC",
+    postalCode: "H3G 1M8",
+    addressCountry: "CA",
+  },
+};
+
+const eventSchema = (event: Event) => ({
+  "@type": "Event",
+  name: event.title,
+  description: summary(event),
+  startDate: eventStart(event),
+  endDate: eventEnd(event),
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  location: event.location.includes("Hall")
+    ? { ...HALL, name: `${HALL.name}${event.room ? `, ${event.room}` : ""}` }
+    : { "@type": "Place", name: where(event), address: { "@type": "PostalAddress", addressLocality: "Montreal", addressRegion: "QC", addressCountry: "CA" } },
+  organizer: { "@id": ORG_ID },
+  ...(event.speaker ? { performer: { "@type": "Person", name: event.speaker.name, jobTitle: event.speaker.role, worksFor: { "@type": "Organization", name: event.speaker.org } } } : {}),
+  isAccessibleForFree: true,
+  url: absoluteUrl("/events/"),
+});
+
+const schema = [
+  {
+    "@type": "CollectionPage",
+    url: absoluteUrl("/events/"),
+    name: "QUARCC events",
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: [...upcoming, ...past]
+        .filter((event) => isValidIsoDate(event.date))
+        .map((event, index) => ({ "@type": "ListItem", position: index + 1, item: eventSchema(event) })),
+    },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Events", path: "/events/" },
+  ]),
+];
 ---
 
 <BaseLayout
-  title="Events - QUARCC"
-  description="Stay updated with QUARCC's upcoming workshops, lectures, and social events in quantitative finance."
+  title="Events — QUARCC Speaker Series, Workshops and Socials"
+  description="QUARCC events in Montreal: a speaker series with practitioners from National Bank, TD Asset Management and Mackenzie Investments, Python workshops and poker nights."
+  schema={schema}
 >
-  <div style="max-width: 800px; margin: 0 auto;">
-    <SystemBox title="Upcoming Events">
-      {
-        upcomingEvents.length ? (
-          <ul style="list-style-type: none; padding: 0;">
-            {upcomingEvents.map((event) => (
-              <li style="margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #eee;">
-                <div style="font-weight: bold; font-size: 1.2em;">
-                  {event.link ? (
-                    <a href={event.link} target="_blank" rel="noopener noreferrer">
-                      {event.title}
-                    </a>
-                  ) : (
-                    event.title
-                  )}
-                </div>
-                <div style="color: #8f9ab2; margin-bottom: 5px;">
-                  {event.date} | {event.startTime} - {event.endTime}
-                </div>
-                <div style="margin-bottom: 5px;">
-                  📍 <a href={event.locationLink} target="_blank" rel="noopener noreferrer">
-                    {event.location}
-                  </a>
-                  {event.room ? <span> ({event.room})</span> : null}
-                </div>
-                <div style="white-space: pre-line;">{event.description}</div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No upcoming events at the moment. Check back soon!</p>
-        )
-      }
-    </SystemBox>
+  <PageHero
+    title={["Speakers, workshops", "and the odd poker night."]}
+    sub="Workshops are ongoing. We usually meet on Tuesdays after work hours in Concordia's Hall Building — new events are announced on Instagram first."
+  />
 
-    <SystemBox title="Past Events">
-      {
-        pastEvents.length ? (
-          <ul style="list-style-type: none; padding: 0;">
-            {pastEvents.map((event) => (
-              <li style="margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #eee;">
-                <div style="font-weight: bold; font-size: 1.2em;">
-                  {event.link ? (
-                    <a href={event.link} target="_blank" rel="noopener noreferrer">
-                      {event.title}
-                    </a>
-                  ) : (
-                    event.title
-                  )}
+  <section class="events-upcoming" aria-labelledby="upcoming-title">
+    <div class="wrap">
+      {upcoming.length ? (
+        <div class="upcoming upcoming--list">
+          <p class="dash-label" id="upcoming-title">Upcoming events</p>
+          {upcoming.map((event) => {
+            const d = dateParts(event.date);
+            return (
+              <article class="event-row">
+                <div class="event-row__date">
+                  <span class="event-row__day">{String(d.day).padStart(2, "0")}</span>
+                  <span class="event-row__month">{d.monthName} {d.year}</span>
                 </div>
-                <div style="color: #8f9ab2; margin-bottom: 5px;">
-                  {event.date} | {event.startTime} - {event.endTime}
+                <div>
+                  <p class="label">{event.category}{event.partner ? ` · ${event.partner}` : ""}</p>
+                  <h3>{event.title}</h3>
+                  <p class="event-row__meta">
+                    {event.startTime} – {event.endTime} ·{" "}
+                    {event.locationLink ? <a href={event.locationLink} target="_blank" rel="noopener noreferrer">{where(event)}</a> : where(event)}
+                  </p>
+                  <p class="event-row__desc">{event.description}</p>
                 </div>
-                <div style="margin-bottom: 5px;">
-                  📍 <a href={event.locationLink} target="_blank" rel="noopener noreferrer">
-                    {event.location}
-                  </a>
-                  {event.room ? <span> ({event.room})</span> : null}
+                {event.link ? <a class="event-row__link" href={event.link} target="_blank" rel="noopener noreferrer">{linkLabel(event.link)} <span>↗</span></a> : <span></span>}
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="upcoming">
+          <div>
+            <p class="dash-label" id="upcoming-title">Upcoming events</p>
+            <h2>No upcoming events at the moment.</h2>
+            <p class="prose-muted">Check back soon — or follow along so you hear about the next speaker first.</p>
+          </div>
+          <div class="upcoming__actions">
+            <a class="btn btn--cream" href={CONTACT.instagram} target="_blank" rel="noopener noreferrer">Follow {CONTACT.instagramHandle} <span class="arrow">↗</span></a>
+            <a class="btn btn--navy" href={CONTACT.discord} target="_blank" rel="noopener noreferrer">Join the Discord <span class="arrow">↗</span></a>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {speakers.length ? (
+    <section class="section events-speakers" aria-labelledby="speakers-title">
+      <div class="wrap">
+        <SectionHead id="speakers-title" title={["Who's been in the room."]} sub="Practitioners from Canada's banks and asset managers, on how quant actually works inside their desks." />
+        <div class="grid grid-4">
+          {speakers.map((event) => (
+            <article class="card card--glow speaker">
+              <p class="label">{event.speaker.org}</p>
+              <h3>{event.speaker.name}</h3>
+              <p class="speaker__role">{event.speaker.role}</p>
+              <p class="speaker__date">{cardDate(event)}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
+
+  <section class="section events-past" aria-labelledby="past-title">
+    <div class="wrap">
+      <h2 id="past-title" class="past-heading">Past events.</h2>
+      {years.map((year) => (
+        <div class="past-year">
+          <p class="past-year__label">{year}</p>
+          {pastByYear[year].map((event) => {
+            const d = dateParts(event.date);
+            return (
+              <article class="event-row">
+                <div class="event-row__date">
+                  <span class="event-row__day">{String(d.day).padStart(2, "0")}</span>
+                  <span class="event-row__month">{d.monthName} {d.year}</span>
                 </div>
-                <div style="white-space: pre-line;">{event.description}</div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No past events to show.</p>
-        )
-      }
-    </SystemBox>
-  </div>
+                <div>
+                  <p class="label">{event.category}{event.partner ? ` · ${event.partner}` : ""}</p>
+                  <h3>{event.title}</h3>
+                  <p class="event-row__meta">
+                    {event.startTime} – {event.endTime} ·{" "}
+                    {event.locationLink ? <a href={event.locationLink} target="_blank" rel="noopener noreferrer">{where(event)}</a> : where(event)}
+                  </p>
+                  <p class="event-row__desc">{summary(event)}</p>
+                </div>
+                {event.link ? <a class="event-row__link" href={event.link} target="_blank" rel="noopener noreferrer">{linkLabel(event.link)} <span>↗</span></a> : <span></span>}
+              </article>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  </section>
 </BaseLayout>

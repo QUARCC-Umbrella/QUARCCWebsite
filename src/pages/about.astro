@@ -1,20 +1,100 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SystemBox from "../components/SystemBox.astro";
-import { getAboutContent } from "../lib/content";
+import PageHero from "../components/PageHero.astro";
+import SectionHead from "../components/SectionHead.astro";
+import FaqList from "../components/FaqList.astro";
+import { getAboutContent, getFaq } from "../lib/content";
+import { SITE_URL, absoluteUrl, breadcrumbSchema } from "../lib/site";
 
 const about = await getAboutContent();
+const faq = await getFaq();
+
+const schema = [
+  {
+    "@type": "AboutPage",
+    url: absoluteUrl("/about/"),
+    name: "About QUARCC",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#organization` },
+  },
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about/" },
+  ]),
+];
 ---
 
 <BaseLayout
-  title="About - QUARCC"
-  description="Learn about QUARCC's mission to educate students in quantitative finance through workshops, lectures, and research."
+  title="About QUARCC — A Student-Run Quant Finance Club in Montreal"
+  description="QUARCC is a student-run quantitative finance club in Montreal: a speaker series, hands-on workshops, socials, and a research group running live paper portfolios."
+  schema={schema}
 >
-  <div style="max-width: 800px; margin: 0 auto;">
-    <SystemBox title="About QUARCC">
-      {about.paragraphs.map((paragraph, index) => (
-        <p style={index ? "margin-top: 1rem;" : ""}>{paragraph}</p>
-      ))}
-    </SystemBox>
-  </div>
+  <PageHero title={about.hero.title} sub={about.hero.sub} />
+
+  <section class="section about-offer" aria-labelledby="offer-title">
+    <div class="wrap">
+      <SectionHead id="offer-title" title={about.offer.title} sub={about.offer.sub} />
+      <div class="grid grid-4 offer-cards">
+        {about.offer.cards.map((card) => (
+          <article class="card">
+            <p class="label">{card.label}</p>
+            <h3>{card.title}</h3>
+            <p>{card.body}</p>
+          </article>
+        ))}
+      </div>
+
+      <div class="about-panels">
+        <div class="terminal">
+          <div class="terminal__bar"><span class="dash-label">Club details</span></div>
+          <dl>
+            {about.clubDetails.map(([label, value]) => (
+              <>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </>
+            ))}
+          </dl>
+          <p class="terminal__prompt">[user@quarcc ~]$<span class="cursor" aria-hidden="true"></span></p>
+        </div>
+        <div class="status card">
+          <p class="dash-label">Project status</p>
+          <dl>
+            {about.projectStatus.map((item) => (
+              <div>
+                <dt>{item.label}</dt>
+                <dd class:list={{ "is-live": item.live }}>
+                  {item.live ? <span class="live-dot"></span> : null}
+                  {item.value.includes("@") ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section about-halves" aria-labelledby="halves-title">
+    <div class="wrap">
+      <SectionHead id="halves-title" title={about.halves.title} sub={about.halves.sub} />
+      <div class="grid grid-2">
+        {about.halves.cards.map((card) => (
+          <article class="card card--glow half">
+            <p class="label">{card.label}</p>
+            <h3>{card.title}</h3>
+            <p>{card.body}</p>
+            {card.href ? <a class="half__link" href={card.href}>{card.cta} <span class="arrow">→</span></a> : null}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section about-faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <h2 id="faq-title" class="faq-heading">{about.faqTitle}</h2>
+      <FaqList items={faq} />
+    </div>
+  </section>
 </BaseLayout>
