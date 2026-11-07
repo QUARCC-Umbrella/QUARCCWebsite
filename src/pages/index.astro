@@ -67,55 +67,6 @@ const schema = [
     </div>
   </section>
 
-  <section class="section home-map" aria-labelledby="map-title">
-    <div class="wrap">
-      <SectionHead id="map-title" title={home.map.title} sub={home.map.sub} />
-      <div class="grid grid-3">
-        {home.pillars.map((pillar) => (
-          <article class="card pillar">
-            <p class="label">{pillar.label}</p>
-            <h3>{pillar.title}</h3>
-            <p>{pillar.body}</p>
-          </article>
-        ))}
-      </div>
-      <div class="audience card">
-        <div>
-          <p class="label label--muted">{home.audience.label}</p>
-          <p class="audience__text">{home.audience.text}</p>
-        </div>
-        <ul class="chips" role="list">
-          {home.audience.chips.map((chip) => <li class="chip">{chip}</li>)}
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="section home-learn" aria-labelledby="learn-title">
-    <div class="wrap">
-      <SectionHead id="learn-title" title={home.learn.title} sub={home.learn.sub} />
-      <ol class="journey" role="list">
-        {home.learn.steps.map(([title, body], index) => (
-          <li>
-            <span class="journey__dot" aria-hidden="true"></span>
-            <span class="journey__num">{String(index + 1).padStart(2, "0")}</span>
-            <h3>{title}</h3>
-            <p>{body}</p>
-          </li>
-        ))}
-      </ol>
-      <div class="grid grid-4 resources">
-        {home.learn.resources.map((item) => (
-          <a class="card resource" href={item.href} {...(item.href?.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
-            <p class="label">{item.label}</p>
-            <h3>{item.title}</h3>
-            <p>{item.body}</p>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <section class="section home-research" aria-labelledby="research-title">
     <div class="home-research__art" aria-hidden="true"><AsciiArt variant="logo" seed={7} align="center" /></div>
     <div class="wrap">

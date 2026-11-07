@@ -122,13 +122,6 @@ const home = defineCollection({
   schema: z.object({
     hero: headed,
     strategies: z.object({ title: z.string(), badge: z.string() }),
-    map: headed,
-    pillars: z.array(labelledCard),
-    audience: z.object({ label: z.string(), text: z.string(), chips: z.array(z.string()) }),
-    learn: headed.extend({
-      steps: z.array(z.tuple([z.string(), z.string()])),
-      resources: z.array(labelledCard),
-    }),
     research: headed,
     compete: headed,
     people: headed,

@@ -236,23 +236,12 @@
   color: rgba(239, 230, 214, 0.5);
 }
 
-.home-map {
-  padding-top: 110px;
-  background:
-    radial-gradient(450px 260px at max(250px, calc(50% - 470px)) 260px, rgba(178, 68, 208, 0.22), rgba(178, 68, 208, 0)),
-    linear-gradient(180deg, #0d0816 0%, #170a24 90px, var(--bg) 420px);
-}
-
-.home-map .section-head,
-.home-learn .section-head,
 .home-research .section-head,
 .home-compete .section-head,
 .home-people .section-head {
   margin-bottom: 56px;
 }
 
-.home-map .section-head h2,
-.home-learn .section-head h2,
 .home-research .section-head h2,
 .home-compete .section-head h2,
 .home-people .section-head h2 {
@@ -260,8 +249,6 @@
   line-height: 0.95;
 }
 
-.home-map .section-head p,
-.home-learn .section-head p,
 .home-research .section-head p,
 .home-compete .section-head p,
 .home-people .section-head p {
@@ -269,127 +256,10 @@
   line-height: 1.55;
 }
 
-.pillar {
-  min-height: 240px;
-  padding: 36px 32px;
-}
-
-.pillar h3 {
-  font-size: 34px;
-}
-
-.pillar p:last-child {
-  font-size: 15px;
-  line-height: 1.55;
-}
-
-.audience {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-  margin-top: 57px;
-  padding: 28px 32px;
-}
-
-.audience__text {
-  margin-top: 10px !important;
-  max-width: 400px;
-  font-size: 16px !important;
-  color: var(--cream) !important;
-}
-
-.home-map {
-  padding-bottom: 0;
-}
-
-.home-learn {
-  padding-top: 57px;
-}
-
-.home-learn .wrap {
-  border-top: 1px solid var(--line);
-  padding-top: 40px;
-}
-
-.journey {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.journey li {
-  position: relative;
-  padding-right: 24px;
-}
-
-.journey li::before {
-  content: "";
-  position: absolute;
-  left: 6px;
-  right: 0;
-  top: 5.5px;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(178, 68, 208, 0.7), rgba(178, 68, 208, 0.15));
-}
-
-.journey li:last-child::before {
-  right: 36px;
-}
-
-.journey__dot {
-  position: relative;
-  display: block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #d9b8e6;
-  box-shadow: 0 0 10px rgba(178, 68, 208, 0.7);
-}
-
-.journey li:last-child .journey__dot {
-  background: var(--purple);
-}
-
-.journey__num {
-  display: block;
-  margin-top: 16px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: rgba(239, 230, 214, 0.5);
-}
-
-.journey h3 {
-  margin-top: 22px;
-  font-size: 32px;
-  line-height: 1;
-}
-
-.journey p {
-  margin-top: 22px;
-  max-width: 210px;
-  font-size: 14.5px;
-  line-height: 1.45;
-  color: rgba(239, 230, 214, 0.65);
-}
-
-.resources {
-  margin-top: 48px;
-}
-
-.resource {
-  padding: 26px 24px 28px;
-  transition: border-color 0.15s ease;
-}
-
-.resource:hover,
 .research-card:hover {
   border-color: rgba(178, 68, 208, 0.45);
 }
 
-.resource h3,
 .research-card h3 {
   margin-top: 12px;
   font-family: var(--sans);
@@ -399,14 +269,11 @@
   letter-spacing: 0;
 }
 
-.resource p:last-child {
-  margin-top: 10px;
-  font-size: 14.5px;
-}
-
 .home-research {
   padding-top: 90px;
   overflow: hidden;
+  /* Follows the hero directly: blend from the hero colour into the page. */
+  background: linear-gradient(180deg, #0d0816 0%, var(--bg) 320px);
 }
 
 .home-research::after {
@@ -1882,11 +1749,6 @@ summary:hover .more-toggle::before {
 }
 
 @media (max-width: 1080px) {
-  .journey {
-    grid-template-columns: repeat(3, 1fr);
-    row-gap: 40px;
-  }
-
   .stat-strip--4 {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1955,17 +1817,10 @@ summary:hover .more-toggle::before {
     flex-wrap: wrap;
   }
 
-  .home-map .section-head h2,
-  .home-learn .section-head h2,
   .home-research .section-head h2,
   .home-compete .section-head h2,
   .home-people .section-head h2 {
     font-size: 46px;
-  }
-
-  .audience {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .faq-grid {
@@ -2034,10 +1889,6 @@ summary:hover .more-toggle::before {
 }
 
 @media (max-width: 640px) {
-  .journey {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .stat-strip--4 {
     grid-template-columns: 1fr;
   }
