@@ -890,16 +890,45 @@ p {
   height: 100%;
 }
 
-/* Fade every edge of the ASCII logo so it dissolves into the page at any size. */
+/* Animated ASCII art: a band of light drifts across the glyphs (an animated mask, so it
+   runs off the main thread). The logo also fades out at every edge so it dissolves into
+   the page at any size. */
+.ascii-canvas[data-ascii="cloud"] {
+  --ascii-wave: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.62) 0, #000 360px, rgba(0, 0, 0, 0.62) 720px);
+  -webkit-mask-image: var(--ascii-wave);
+  mask-image: var(--ascii-wave);
+  animation: ascii-wave 16s linear infinite;
+}
+
 .ascii-canvas[data-ascii="logo"] {
+  --ascii-wave: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0, #000 300px, rgba(0, 0, 0, 0.55) 600px);
   -webkit-mask-image:
+    var(--ascii-wave),
     linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%),
     linear-gradient(180deg, transparent 0, #000 8%, #000 70%, transparent 100%);
   mask-image:
+    var(--ascii-wave),
     linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%),
     linear-gradient(180deg, transparent 0, #000 8%, #000 70%, transparent 100%);
-  -webkit-mask-composite: source-in;
+  -webkit-mask-composite: source-in, source-in;
   mask-composite: intersect;
+  animation: ascii-wave-logo 12s linear infinite;
+}
+
+@keyframes ascii-wave {
+  from { -webkit-mask-position: 0 0; mask-position: 0 0; }
+  to { -webkit-mask-position: 720px 0; mask-position: 720px 0; }
+}
+
+@keyframes ascii-wave-logo {
+  from { -webkit-mask-position: 0 0, 0 0, 0 0; mask-position: 0 0, 0 0, 0 0; }
+  to { -webkit-mask-position: 600px 0, 0 0, 0 0; mask-position: 600px 0, 0 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ascii-canvas[data-ascii] {
+    animation: none;
+  }
 }
 
 .notice {
