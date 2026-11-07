@@ -11,8 +11,8 @@ export const DEFAULT_IMAGE = "/quarcc-logo-512.png";
 export const CONTACT = {
   email: "info@quarcc.com",
   researchEmail: "research.quarcc@gmail.com",
-  instagram: "https://www.instagram.com/quarcc.csu/",
-  instagramHandle: "@quarcc.csu",
+  instagram: "https://www.instagram.com/quarcc.mtl/",
+  instagramHandle: "@quarcc.mtl",
   linkedin: "https://www.linkedin.com/company/quarcc/",
   linkedinHandle: "/company/quarcc",
   discord: "https://discord.gg/9w7AZxP5",

@@ -380,29 +380,6 @@ p {
   color: rgba(239, 230, 214, 0.55);
 }
 
-.kicker {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(239, 230, 214, 0.75);
-}
-
-.kicker__path {
-  color: var(--purple);
-  text-transform: none;
-  letter-spacing: 0.04em;
-}
-
-.kicker__rule {
-  width: 48px;
-  height: 1px;
-  background: rgba(239, 230, 214, 0.3);
-}
-
 .dash-label {
   display: inline-flex;
   align-items: center;
@@ -467,10 +444,6 @@ p {
 .page-hero__inner {
   position: relative;
   z-index: 1;
-}
-
-.page-hero .kicker {
-  margin: -6px 0 28px;
 }
 
 .hero-title {

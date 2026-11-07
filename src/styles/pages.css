@@ -17,6 +17,37 @@
   background: #0d0816 url("/images/home-hero.webp") center top / 1440px 900px no-repeat;
 }
 
+/* A brighter copy of the ASCII cloud, revealed through a soft spotlight that drifts
+   across the hero so the characters appear to shimmer. */
+.home-hero__bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: brightness(1.55) saturate(1.15);
+  -webkit-mask-image: radial-gradient(closest-side, #000, transparent);
+  mask-image: radial-gradient(closest-side, #000, transparent);
+  -webkit-mask-size: 55% 75%;
+  mask-size: 55% 75%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: hero-cloud 16s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes hero-cloud {
+  0% { -webkit-mask-position: 0% 15%; mask-position: 0% 15%; opacity: 0.35; }
+  35% { -webkit-mask-position: 70% 0%; mask-position: 70% 0%; opacity: 0.6; }
+  70% { -webkit-mask-position: 100% 60%; mask-position: 100% 60%; opacity: 0.4; }
+  100% { -webkit-mask-position: 25% 85%; mask-position: 25% 85%; opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__bg::before {
+    display: none;
+  }
+}
+
 .home-hero__bg::after {
   content: "";
   position: absolute;
