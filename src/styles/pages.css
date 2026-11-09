@@ -23,8 +23,8 @@
    sides into the page instead. */
 @media (min-width: 1441px) {
   .home-hero__bg {
-    -webkit-mask-image: linear-gradient(90deg, transparent calc(50% - 720px), #000 calc(50% - 500px), #000 calc(50% + 500px), transparent calc(50% + 720px));
-    mask-image: linear-gradient(90deg, transparent calc(50% - 720px), #000 calc(50% - 500px), #000 calc(50% + 500px), transparent calc(50% + 720px));
+    -webkit-mask-image: linear-gradient(90deg, transparent calc(50% - 720px), #000 calc(50% - 660px), #000 calc(50% + 660px), transparent calc(50% + 720px));
+    mask-image: linear-gradient(90deg, transparent calc(50% - 720px), #000 calc(50% - 660px), #000 calc(50% + 660px), transparent calc(50% + 720px));
   }
 }
 
@@ -32,7 +32,7 @@
   content: "";
   position: absolute;
   inset: auto 0 0 0;
-  height: 140px;
+  height: 60px;
   background: linear-gradient(180deg, rgba(13, 8, 22, 0), #0d0816);
 }
 
