@@ -1087,3 +1087,26 @@ a.fxi-row:hover .fxi-name strong {
 .fx-holdings thead th:nth-child(3) {
   text-align: left;
 }
+
+@media (max-width: 640px) {
+  /* Four number columns left ~78px each, and "US$20.22bn" ran into the 1D figure. */
+  .fxi-row,
+  .funds .fxi-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .fx-table th,
+  .fx-table td {
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
+
+  /* Wide tables scroll sideways on phones: show a faint lit edge on the right
+     while more columns are hidden. The "local" cover rides along with the
+     content and hides the edge once the table is scrolled to its end. */
+  .fx-scroll {
+    background:
+      linear-gradient(to left, var(--bg, #0a060e) 40%, rgba(10, 6, 14, 0)) right center / 24px 100% no-repeat local,
+      radial-gradient(farthest-side at 100% 50%, rgba(178, 68, 208, 0.28), rgba(178, 68, 208, 0)) right center / 14px 100% no-repeat scroll;
+  }
+}

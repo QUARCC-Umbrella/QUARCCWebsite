@@ -1889,19 +1889,6 @@ summary:hover .more-toggle::before {
 }
 
 @media (max-width: 640px) {
-  .stat-strip--4 {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-strip--4 .stat {
-    border-left: 0 !important;
-    border-top: 1px solid var(--line);
-  }
-
-  .stat-strip--4 .stat:first-child {
-    border-top: 0;
-  }
-
   .fc-card__stats {
     grid-template-columns: 1fr 1fr;
     row-gap: 18px;
@@ -1927,5 +1914,123 @@ summary:hover .more-toggle::before {
 
   .blog-latest__body h2 {
     font-size: 38px;
+  }
+}
+
+/* ================= Phones ================= */
+
+@media (max-width: 640px) {
+  /* Section-specific top padding (80-130px) is sized for desktop; on phones it
+     stacked with the bottom padding into ~170px gaps between sections. */
+  .section {
+    padding-bottom: 48px;
+  }
+
+  .home-research,
+  .home-compete,
+  .home-people,
+  .about-offer,
+  .about-halves,
+  .about-faq,
+  .events-speakers,
+  .events-past,
+  .blog-archive,
+  .team-section,
+  .trophy-featured,
+  .trophy-results,
+  .join-paths,
+  .join-steps,
+  .join-contact,
+  .join-quote {
+    padding-top: 48px;
+  }
+
+  .page-hero {
+    padding-top: 124px;
+  }
+
+  .home-research .section-head,
+  .home-compete .section-head,
+  .home-people .section-head {
+    margin-bottom: 32px;
+  }
+
+  .section-head {
+    margin-bottom: 28px;
+  }
+
+  /* Member cards: avatar beside the name instead of stacked above it, so a team
+     of 12 reads as a list rather than 2,700px of cards. */
+  .grid:has(> .member) {
+    gap: 10px;
+  }
+
+  .member {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 16px;
+    align-items: center;
+    padding: 16px 18px;
+  }
+
+  .member .avatar {
+    grid-row: 1 / span 3;
+    align-self: start;
+    width: 44px;
+    height: 44px;
+    font-size: 12px;
+  }
+
+  .member .member__name {
+    margin-top: 0;
+    font-size: 16px;
+  }
+
+  .member .member__role {
+    font-size: 14px;
+  }
+
+  .member__links {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  /* Taller tap targets without changing the visual spacing. */
+  .member__links a {
+    padding: 8px 0;
+  }
+
+  /* Speaker cards kept a desktop min-height that left a blank band on phones. */
+  .speaker {
+    min-height: 0;
+    padding: 24px 22px 22px;
+  }
+
+  .speaker h3 {
+    font-size: 30px;
+  }
+
+  .speaker__date {
+    padding-top: 18px;
+  }
+
+  /* Trophy stats stay 2 x 2 (the 1080px layout) with tighter type. */
+  .stat--big {
+    padding: 22px 18px 24px;
+  }
+
+  .stat__big {
+    font-size: 40px;
+  }
+
+  .stat__mono {
+    margin-top: 12px;
+  }
+
+  .strategies__all,
+  .half__link,
+  .fc-card__link,
+  .event-row__link {
+    padding-block: 8px;
   }
 }
