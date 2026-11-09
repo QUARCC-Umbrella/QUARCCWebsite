@@ -13,19 +13,12 @@
 
 .home-hero__bg {
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 900px;
-  /* Purple backdrop only; the digits are drawn and animated by the cloud canvas. */
-  background: #0d0816 url("/images/home-hero-bg.webp") center top / 1440px 900px no-repeat;
-}
-
-/* Past 1440px the 1440px-wide artwork would end in straight vertical lines: fade its
-   sides into the page instead. */
-@media (min-width: 1441px) {
-  .home-hero__bg {
-    -webkit-mask-image: linear-gradient(90deg, transparent calc(50% - 720px), #000 calc(50% - 660px), #000 calc(50% + 660px), transparent calc(50% + 720px));
-    mask-image: linear-gradient(90deg, transparent calc(50% - 720px), #000 calc(50% - 660px), #000 calc(50% + 660px), transparent calc(50% + 720px));
-  }
+  inset: 0;
+  /* Purple backdrop only; the digits are drawn and animated by the cloud canvas. It is
+     stretched exactly like the cloud map (AsciiArt cloudDensity: full width, at least
+     0.34x the 1440px art, at least 900px tall), so the glow stays behind the digits and
+     both reach every edge of the hero. */
+  background: #0d0816 url("/images/home-hero-bg.webp") center top / max(100%, 490px) max(100%, 900px) no-repeat;
 }
 
 .home-hero__bg::after {
@@ -1708,10 +1701,6 @@ summary:hover .more-toggle::before {
   .about-panels,
   .blog-latest__grid {
     grid-template-columns: 1fr;
-  }
-
-  .home-hero__bg {
-    background-size: cover;
   }
 }
 
