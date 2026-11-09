@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import AsciiFill from "./AsciiFill.jsx";
 import { NA, shortDate, longDate } from "./format.js";
 
 const RANGES = [
@@ -97,11 +98,26 @@ export default function FundChart({
     };
   }, [series, hidden, range, rebase, baseline]);
 
+  const plotW = width - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
+
+  // ASCII fill under the lead (fund) line, in fractions of the plot box. Kept out
+  // of the render path so hovering doesn't redraw it.
+  const fill = useMemo(() => {
+    const lead = view?.lines.find((l) => l.key === series[0]?.key);
+    if (!lead || lead.points.length < 2) return null;
+    const { t0, t1, y0, y1 } = view;
+    const fy = (v) => 1 - (v - y0) / (y1 - y0 || 1);
+    return {
+      color: lead.color,
+      baseline: baseline !== null ? fy(baseline) : 1,
+      points: lead.points.map((p) => [(p.t - t0) / (t1 - t0 || 1), fy(p.value)]),
+    };
+  }, [view, series, baseline]);
+
   if (!view) return null;
 
   const { lines, t0, t1, y0, y1 } = view;
-  const plotW = width - pad.left - pad.right;
-  const plotH = height - pad.top - pad.bottom;
   const x = (t) => pad.left + ((t - t0) / (t1 - t0 || 1)) * plotW;
   const y = (v) => pad.top + (1 - (v - y0) / (y1 - y0 || 1)) * plotH;
   const yTicks = niceTicks(y0, y1, compact ? 4 : 5);
@@ -179,6 +195,15 @@ export default function FundChart({
       ) : null}
 
       <div className="fx-chart-plot" ref={ref}>
+        {fill ? (
+          <AsciiFill
+            points={fill.points}
+            baseline={fill.baseline}
+            color={fill.color}
+            size={compact ? 7 : 8}
+            style={{ left: pad.left, top: pad.top, width: plotW, height: plotH }}
+          />
+        ) : null}
         <svg
           width={width}
           height={height}

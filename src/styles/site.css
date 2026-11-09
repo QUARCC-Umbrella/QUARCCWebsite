@@ -123,20 +123,6 @@ p {
   padding: 0;
 }
 
-.post-crumbs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 26px;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: rgba(239, 230, 214, 0.55);
-}
-
-.post-crumbs a {
-  color: var(--purple);
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -741,14 +727,16 @@ p {
   text-transform: uppercase;
 }
 
+/* Whole word visible: the box is sized by the glyphs (incl. the Q's tail), not clipped. */
 .site-footer__mark {
   margin: 22px 0 0;
-  height: 212px;
-  overflow: hidden;
+  padding-bottom: 0.14em;
   text-align: center;
+  white-space: nowrap;
   font-family: var(--serif);
-  font-size: 384px;
-  line-height: 0.82;
+  /* "QUARCC" is ~2.92em wide, so 30vw keeps it inside the viewport at any width. */
+  font-size: min(384px, 30vw);
+  line-height: 0.9;
   letter-spacing: 0;
   color: rgba(239, 230, 214, 0.065);
   user-select: none;
@@ -1077,11 +1065,6 @@ body .fxi {
 
   .partner h2 {
     font-size: 44px;
-  }
-
-  .site-footer__mark {
-    font-size: 26vw;
-    height: 18vw;
   }
 }
 

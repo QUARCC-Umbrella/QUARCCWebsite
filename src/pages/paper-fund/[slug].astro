@@ -53,14 +53,14 @@ const schema = [
   },
   breadcrumbSchema([
     { name: "Home", path: "/" },
-    { name: "Paper funds", path: "/paper-fund/" },
+    { name: "Live Strategies", path: "/paper-fund/" },
     { name, path: fundUrl(portfolio.slug) },
   ]),
 ];
 ---
 
 <BaseLayout
-  title={`${name} Fact Sheet | QUARCC Paper Funds`}
+  title={`${name} Fact Sheet | QUARCC Live Strategies`}
   description={portfolio.summary}
   ogType="article"
   published={published}
@@ -69,9 +69,6 @@ const schema = [
 >
   <div class="fund-page">
     <div class="wrap">
-      <nav class="post-crumbs" aria-label="Breadcrumb">
-        <a href="/paper-fund/">~/paper-funds</a><span aria-hidden="true">/</span><span>{portfolio.slug}</span>
-      </nav>
       <PortfolioDetailClient client:load portfolio={portfolio} />
     </div>
   </div>

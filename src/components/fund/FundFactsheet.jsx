@@ -471,13 +471,6 @@ export default function FundFactsheet({ portfolio }) {
   return (
     <article className="fx">
       <header className="fx-hero">
-        <p className="fx-kicker">
-          <span>QUARCC</span>
-          <span>Paper fund</span>
-          <span className="fx-status">
-            <i /> {portfolio.status}
-          </span>
-        </p>
         <h1>{displayName(portfolio.name)}</h1>
         <Quote portfolio={portfolio} facts={facts} liveSince={liveSince} />
       </header>

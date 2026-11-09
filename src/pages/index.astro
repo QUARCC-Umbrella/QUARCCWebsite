@@ -33,7 +33,7 @@ const schema = [
     "@type": "WebPage",
     "@id": `${SITE_URL}/#webpage`,
     url: absoluteUrl("/"),
-    name: "QUARCC: The largest quant hub in Montreal",
+    name: "QUARCC: The Quantitative Research & Competitions Club",
     isPartOf: { "@id": `${SITE_URL}/#website` },
     about: { "@id": `${SITE_URL}/#organization` },
   },
@@ -49,7 +49,7 @@ const schema = [
     <div class="home-hero__bg" aria-hidden="true"><AsciiArt variant="cloud" seed={5} /></div>
     <div class="wrap home-hero__inner">
       <div class="home-hero__halo" aria-hidden="true"></div>
-      <h1 class="home-hero__title">{home.hero.title[0]} <br />{home.hero.title[1]}</h1>
+      <h1 class="home-hero__title">{home.hero.title[0]}<br /> {home.hero.title[1]}</h1>
       <p class="home-hero__sub">{home.hero.sub}</p>
       <div class="home-hero__actions">
         <a class="btn btn--navy" href="/blog/">Explore the research</a>
@@ -60,7 +60,6 @@ const schema = [
     <div class="strategies">
       <div class="strategies__head">
         <h2>{home.strategies.title}</h2>
-        <span class="strategies__badge"><span class="live-dot"></span>{home.strategies.badge}</span>
         <a class="strategies__all" href="/paper-fund/">All strategies <span class="arrow">→</span></a>
       </div>
       <FundCards client:visible portfolios={funds} variant="compact" />
@@ -91,7 +90,6 @@ const schema = [
       <div class="compete">
         {featured ? (
           <a class="compete__feature" href="/trophies/">
-            <span class="pill"><span class="live-dot"></span>{featured.placementLabel ?? featured.placement} · {season(featured.date)}</span>
             <h3>{featured.title}</h3>
             <p>{featured.summary} {featured.categories.length ? `Categories: ${featured.categories.join(", ")}.` : ""}</p>
             {featured.highlights.length ? (

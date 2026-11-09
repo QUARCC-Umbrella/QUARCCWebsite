@@ -23,12 +23,12 @@ export const CONTACT = {
 export const PARTNER_MAILTO = `mailto:${CONTACT.email}?subject=${encodeURIComponent("Partnering with QUARCC")}`;
 
 export const NAV = [
-  { href: "/about/", label: "About" },
-  { href: "/events/", label: "Events" },
-  { href: "/blog/", label: "Blog" },
-  { href: "/teams/", label: "Teams" },
+  { href: "/paper-fund/", label: "Live Strategies" },
+  { href: "/blog/", label: "Papers" },
   { href: "/trophies/", label: "Trophies" },
-  { href: "/paper-fund/", label: "Paper funds" },
+  { href: "/events/", label: "Events" },
+  { href: "/teams/", label: "Teams" },
+  { href: "/about/", label: "About" },
 ];
 
 export const FOOTER_EXPLORE = [...NAV, { href: "/faq/", label: "FAQ" }];

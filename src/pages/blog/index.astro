@@ -47,22 +47,22 @@ const schema = [
   },
   breadcrumbSchema([
     { name: "Home", path: "/" },
-    { name: "Blog", path: "/blog/" },
+    { name: "Papers", path: "/blog/" },
   ]),
 ];
 ---
 
 <BaseLayout
-  title="Blog | Quant Research and Publications from QUARCC"
+  title="Papers | Quant Research and Publications from QUARCC"
   description="News, publications and research from QUARCC: portfolio optimisation, market-neutral and long-short equity funds, and regime-switching models."
   schema={schema}
 >
   <PageHero
-    title={["Posts."]}
+    title={["Papers"]}
     sub="News, publications and research from QUARCC: editorial notes, workshop reflections and research write-ups."
   >
     <div class="tag-filter" role="group" aria-label="Filter posts by tag">
-      <button type="button" class="tag-btn is-active" data-tag="" aria-pressed="true">All posts</button>
+      <button type="button" class="tag-btn is-active" data-tag="" aria-pressed="true">All papers</button>
       {tags.map((tag) => (
         <button type="button" class="tag-btn" data-tag={tag} aria-pressed="false">#{tag}</button>
       ))}
@@ -86,7 +86,7 @@ const schema = [
     </section>
   ) : null}
 
-  <section class="section blog-archive" aria-label="All posts">
+  <section class="section blog-archive" aria-label="All papers">
     <div class="wrap">
       {years.map((year) => {
         const yearPosts = byYear[year].filter((post) => post.id !== latest?.id);

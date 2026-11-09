@@ -2,7 +2,7 @@
   "hero": {
     "title": [
       "Interested in quant?",
-      "Join us."
+      "Join us"
     ],
     "sub": "We welcome students from all backgrounds. Exec and QRG applications open each semester, but feel free to reach out anytime.",
     "chips": [
@@ -15,7 +15,7 @@
   "paths": {
     "title": [
       "The club, or the",
-      "research group."
+      "research group"
     ],
     "sub": "The club hosts events and is open to everyone. The research group is for those who want to constantly take on new projects.",
     "cards": [
@@ -67,7 +67,7 @@
   },
   "steps": {
     "title": [
-      "Three steps, no forms."
+      "Three steps, no forms"
     ],
     "items": [
       [
@@ -86,7 +86,7 @@
   },
   "contact": {
     "title": [
-      "Find us here."
+      "Find us here"
     ],
     "sub": "Questions about events, sponsorship or anything else? Any channel works."
   },

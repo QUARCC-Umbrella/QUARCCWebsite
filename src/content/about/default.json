@@ -2,14 +2,14 @@
   "hero": {
     "title": [
       "A student-run club",
-      "for quantitative finance."
+      "for quantitative finance"
     ],
     "sub": "QUARCC is a student-run club in Montreal, Quebec, with members across universities and colleges as well. We give students the opportunity to learn about, and engage with, the field of quantitative finance."
   },
   "offer": {
     "title": [
       "Lectures, workshops",
-      "and a research group."
+      "and a research group"
     ],
     "sub": "We host a variety of events throughout the year, including lectures, workshops and social gatherings, and we run a research group for members who want to keep building.",
     "cards": [
@@ -72,7 +72,7 @@
   ],
   "halves": {
     "title": [
-      "Two halves, one club."
+      "Two halves, one club"
     ],
     "sub": "The club hosts events. The research group is for those who want to constantly take on new projects.",
     "cards": [
@@ -92,5 +92,5 @@
       }
     ]
   },
-  "faqTitle": "Frequently asked."
+  "faqTitle": "Frequently asked"
 }

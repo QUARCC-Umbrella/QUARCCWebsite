@@ -79,36 +79,6 @@
 
 /* ---------- hero ---------- */
 
-.fx-kicker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.1rem;
-  margin: 0 0 0.9rem;
-  font-family: var(--fx-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fx-muted);
-}
-
-.fx-kicker span:first-child {
-  color: var(--fx-fund);
-}
-
-.fx-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.fx-status i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--fx-fund);
-  box-shadow: 0 0 0 3px rgba(209, 186, 255, 0.15);
-}
-
 .fx-hero h1 {
   margin: 0 0 1.6rem;
   max-width: 18ch;
@@ -438,9 +408,24 @@ button.fx-legend-item[aria-pressed="false"] {
 }
 
 .fx-chart-plot svg {
+  position: relative;
   display: block;
   width: 100%;
   overflow: visible;
+}
+
+.fxi-spark {
+  position: relative;
+  display: block;
+  width: 112px;
+  height: 32px;
+}
+
+.fxi-spark svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .fx-grid {
@@ -1064,7 +1049,7 @@ a.fxi-row:hover .fxi-name strong {
     grid-row: 1;
   }
 
-  .fxi-trend svg {
+  .fxi-trend .fxi-spark {
     width: 100%;
     max-width: 112px;
   }

@@ -121,7 +121,7 @@ const home = defineCollection({
   type: "data",
   schema: z.object({
     hero: headed,
-    strategies: z.object({ title: z.string(), badge: z.string() }),
+    strategies: z.object({ title: z.string() }),
     research: headed,
     compete: headed,
     people: headed,

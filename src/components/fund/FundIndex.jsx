@@ -1,3 +1,4 @@
+import AsciiFill from "./AsciiFill.jsx";
 import useLivePortfolios from "./useLivePortfolios.js";
 import { NA, displayName, navBn, marksStamp, num, parsePct, pct, period, signed, tone } from "./format.js";
 import "./fund.css";
@@ -13,18 +14,20 @@ function Spark({ daily, color }) {
   const w = 112;
   const h = 32;
   const t0 = Date.parse(points[0].date);
-  const path = points
-    .map((d, i) => {
-      const x = ((Date.parse(d.date) - t0) / (last - t0 || 1)) * w;
-      const y = h - 2 - ((d.fund - lo) / (hi - lo || 1)) * (h - 4);
-      return `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join("");
+  const xy = points.map((d) => [
+    ((Date.parse(d.date) - t0) / (last - t0 || 1)) * w,
+    h - 2 - ((d.fund - lo) / (hi - lo || 1)) * (h - 4),
+  ]);
+  const path = xy.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join("");
   const up = values[values.length - 1] >= values[0];
+  const stroke = color ?? (up ? "#c45be0" : "#d07ab0");
   return (
-    <svg className="fxi-spark" width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
-      <path d={path} fill="none" stroke={color ?? (up ? "#c45be0" : "#d07ab0")} strokeWidth="1.4" />
-    </svg>
+    <span className="fxi-spark">
+      <AsciiFill points={xy.map(([x, y]) => [x / w, y / h])} color={stroke} size={5} />
+      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+        <path d={path} fill="none" stroke={stroke} strokeWidth="1.4" vectorEffect="non-scaling-stroke" />
+      </svg>
+    </span>
   );
 }
 

@@ -1,4 +1,5 @@
-import { useId } from "react";
+import { useMemo } from "react";
+import AsciiFill from "./AsciiFill.jsx";
 import useLivePortfolios from "./useLivePortfolios.js";
 import { NA, displayName, navBn, num, period, signed } from "./format.js";
 
@@ -13,37 +14,34 @@ function lastYear(daily = []) {
   return cut.length >= 2 ? cut : rows;
 }
 
-function AreaChart({ daily, width, height, tone, dot = false }) {
-  const id = useId().replace(/:/g, "");
-  const points = lastYear(daily);
-  if (points.length < 2) return <div style={{ height }} />;
-  const values = points.map((d) => d.fund);
-  const lo = Math.min(...values);
-  const hi = Math.max(...values);
-  const t0 = Date.parse(points[0].date);
-  const t1 = Date.parse(points[points.length - 1].date);
-  const pad = 4;
-  const xy = points.map((d) => [
-    ((Date.parse(d.date) - t0) / (t1 - t0 || 1)) * (width - (dot ? 8 : 0)),
-    pad + (1 - (d.fund - lo) / (hi - lo || 1)) * (height - pad * 2 - 6),
-  ]);
+function AreaChart({ daily, width, height, tone, dot = false, glyph = 8 }) {
+  const xy = useMemo(() => {
+    const points = lastYear(daily);
+    if (points.length < 2) return null;
+    const values = points.map((d) => d.fund);
+    const lo = Math.min(...values);
+    const hi = Math.max(...values);
+    const t0 = Date.parse(points[0].date);
+    const t1 = Date.parse(points[points.length - 1].date);
+    const pad = 4;
+    return points.map((d) => [
+      ((Date.parse(d.date) - t0) / (t1 - t0 || 1)) * (width - (dot ? 8 : 0)),
+      pad + (1 - (d.fund - lo) / (hi - lo || 1)) * (height - pad * 2 - 6),
+    ]);
+  }, [daily, width, height, dot]);
+  const fill = useMemo(() => xy?.map(([x, y]) => [x / width, y / height]), [xy, width, height]);
+  if (!xy) return <div style={{ height }} />;
   const line = xy.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join("");
-  const area = `${line}L${xy[xy.length - 1][0].toFixed(1)},${height}L0,${height}Z`;
   const stroke = tone === "lilac" ? "#d9c4e2" : "#c45be0";
-  const fill = tone === "lilac" ? "rgba(217,196,226," : "rgba(178,68,208,";
   const [lx, ly] = xy[xy.length - 1];
   return (
-    <svg className="fc-chart" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <linearGradient id={`g${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={`${fill}0.32)`} />
-          <stop offset="1" stopColor={`${fill}0.06)`} />
-        </linearGradient>
-      </defs>
-      <path d={area} fill={`url(#g${id})`} />
-      <path d={line} fill="none" stroke={stroke} strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
-      {dot ? <circle cx={lx} cy={ly} r="3.5" fill={stroke} /> : null}
-    </svg>
+    <div className="fc-chart">
+      <AsciiFill points={fill} color={stroke} size={glyph} />
+      <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-hidden="true">
+        <path d={line} fill="none" stroke={stroke} strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
+        {dot ? <circle cx={lx} cy={ly} r="3.5" fill={stroke} /> : null}
+      </svg>
+    </div>
   );
 }
 
@@ -83,7 +81,7 @@ export default function FundCards({ portfolios: initial, variant = "feature" }) 
                     <small>YTD</small>
                   </span>
                 </div>
-                <AreaChart daily={s.daily} width={560} height={150} tone={index % 2 ? "lilac" : "purple"} dot />
+                <AreaChart daily={s.daily} width={560} height={150} tone={index % 2 ? "lilac" : "purple"} dot glyph={7} />
               </div>
               <strong className="fc-mini__name">{displayName(portfolio.name)}</strong>
               <span className="fc-mini__meta">

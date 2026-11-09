@@ -66,12 +66,16 @@
   font-size: 82px;
   line-height: 0.9;
   letter-spacing: -0.012em;
+  text-wrap: balance;
 }
 
 .home-hero__sub {
-  margin-top: 28px;
+  max-width: 660px;
+  margin: 28px auto 0;
   font-size: 19px;
+  line-height: 1.45;
   color: rgba(239, 230, 214, 0.85);
+  text-wrap: balance;
 }
 
 .home-hero__actions {
@@ -107,27 +111,6 @@
   line-height: 1.1;
 }
 
-.strategies__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 26px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(178, 68, 208, 0.5);
-  background: rgba(178, 68, 208, 0.12);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--purple);
-}
-
-.strategies__badge .live-dot {
-  width: 5px;
-  height: 5px;
-}
-
 .strategies__all {
   margin-left: auto;
   font-size: 14.5px;
@@ -154,16 +137,12 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(239, 230, 214, 0.08);
-  background:
-    radial-gradient(90% 80% at 50% 110%, rgba(178, 68, 208, 0.28), rgba(178, 68, 208, 0) 70%),
-    linear-gradient(180deg, #120a1c 0%, #1a0d26 100%);
+  background: linear-gradient(180deg, #120a1c 0%, #1a0d26 100%);
   transition: border-color 0.15s ease;
 }
 
 .fc-mini__panel.is-lilac {
-  background:
-    radial-gradient(90% 80% at 40% 110%, rgba(199, 173, 208, 0.22), rgba(199, 173, 208, 0) 70%),
-    linear-gradient(180deg, #130c1b 0%, #1c1424 100%);
+  background: linear-gradient(180deg, #130c1b 0%, #1c1424 100%);
 }
 
 .fc-mini:hover .fc-mini__panel {
@@ -374,29 +353,8 @@
   position: relative;
 }
 
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 29px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(178, 68, 208, 0.5);
-  background: rgba(178, 68, 208, 0.14);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--purple);
-}
-
-.pill .live-dot {
-  width: 5px;
-  height: 5px;
-}
-
 .compete__feature h3 {
-  margin-top: 20px;
+  margin-top: 0;
   font-size: 50px;
   line-height: 1;
 }
@@ -1553,25 +1511,9 @@ summary:hover .more-toggle::before {
   overflow: hidden;
 }
 
-.fc-card::before {
-  content: "";
-  position: absolute;
-  left: -120px;
-  top: -200px;
-  width: 640px;
-  height: 460px;
-  background: radial-gradient(closest-side, rgba(178, 68, 208, 0.32), rgba(178, 68, 208, 0));
-}
-
 .fc-card.is-lilac {
   border-color: rgba(199, 173, 208, 0.22);
   background: linear-gradient(180deg, #2a1f33 0%, #0e0a14 72%);
-}
-
-.fc-card.is-lilac::before {
-  left: auto;
-  right: -60px;
-  background: radial-gradient(closest-side, rgba(199, 173, 208, 0.22), rgba(199, 173, 208, 0));
 }
 
 .fc-card > * {
@@ -1643,6 +1585,31 @@ summary:hover .more-toggle::before {
 .fc-card__chart .fc-chart {
   width: 100%;
   height: 112px;
+}
+
+/* ---------- ASCII chart fill (AsciiFill.jsx) ---------- */
+
+.ascii-fill {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The canvas sits under the line: the svg is positioned and comes later. */
+.fc-chart {
+  position: relative;
+  display: block;
+}
+
+.fc-chart svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 .funds-table {
@@ -1920,6 +1887,12 @@ summary:hover .more-toggle::before {
 /* ================= Phones ================= */
 
 @media (max-width: 640px) {
+  /* The two-line desktop title can't fit its first line on a phone; drop the
+     forced break and let text-wrap: balance even the lines out. */
+  .home-hero__title br {
+    display: none;
+  }
+
   /* Section-specific top padding (80-130px) is sized for desktop; on phones it
      stacked with the bottom padding into ~170px gaps between sections. */
   .section {

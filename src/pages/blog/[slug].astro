@@ -51,7 +51,7 @@ const schema = [
   },
   breadcrumbSchema([
     { name: "Home", path: "/" },
-    { name: "Blog", path: "/blog/" },
+    { name: "Papers", path: "/blog/" },
     { name: post.data.title, path: postUrl(post.id) },
   ]),
 ];
@@ -70,9 +70,6 @@ const schema = [
   <article class="post">
     <header class="post-hero">
       <div class="wrap post-hero__inner">
-        <nav class="post-crumbs" aria-label="Breadcrumb">
-          <a href="/blog/">~/blog</a><span aria-hidden="true">/</span><span>{postLabel(post)}</span>
-        </nav>
         <p class="post-meta">
           <span class="label">{post.data.category}</span> · <time datetime={post.data.pubDate.toISOString()}>{shortDate(post.data.pubDate)}</time>
           {post.data.updatedDate ? (
@@ -119,8 +116,8 @@ const schema = [
     <section class="section post-more" aria-labelledby="more-title">
       <div class="wrap">
         <div class="blog-year__head">
-          <h2 id="more-title">More from the archive.</h2>
-          <a class="btn btn--ghost" href="/blog/">All posts <span class="arrow">→</span></a>
+          <h2 id="more-title">More from the archive</h2>
+          <a class="btn btn--ghost" href="/blog/">All papers <span class="arrow">→</span></a>
         </div>
         <div class="grid grid-3">
           {relatedPosts.map((entry, index) => (
