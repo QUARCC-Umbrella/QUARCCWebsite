@@ -1,0 +1,29 @@
+---
+import AsciiArt from "./AsciiArt.astro";
+
+interface Props {
+  /** Lines of the H1; each entry renders on its own line at desktop widths. */
+  title: string[];
+  sub?: string;
+}
+
+const { title, sub } = Astro.props;
+---
+
+<section class="page-hero">
+  <div class="page-hero__art">
+    <AsciiArt variant="logo" />
+  </div>
+  <div class="wrap page-hero__inner">
+    <h1 class="hero-title">
+      {title.map((line, index) => (
+        <>
+          {index ? <>{" "}<br /></> : null}
+          {line}
+        </>
+      ))}
+    </h1>
+    {sub ? <p class="hero-sub">{sub}</p> : null}
+    <slot />
+  </div>
+</section>

@@ -1,6 +1,6 @@
 {
   "name": "Executive Council",
-  "description": "Leadership team responsible for operations, strategy, and execution.",
+  "description": "Leadership team responsible for operations, strategy and execution.",
   "leadLabel": "Executive Team",
   "order": 1,
   "members": [
@@ -47,17 +47,24 @@
       "website": ""
     },
     {
-      "name": "Kyra Rousketos",
-      "role": "VP Marketing",
-      "email": "marketing@quarcc.com",
-      "linkedin": "https://www.linkedin.com/in/kyra-rousketos/",
+      "name": "Malek Khemakhem",
+      "role": "Executive Council Member",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/malek-khemakhem/",
       "website": ""
     },
     {
-      "name": "Alexander Nendsa",
-      "role": "VP Marketing",
-      "email": "marketing@quarcc.com",
-      "linkedin": "https://www.linkedin.com/in/alexander-nendsa-9aa927272/",
+      "name": "Hedi Belkahia",
+      "role": "Executive Council Member",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/hedi-belkahia/",
+      "website": ""
+    },
+    {
+      "name": "Siba Faour",
+      "role": "Executive Council Member",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/siba-faour-56265b25b/",
       "website": ""
     }
   ]

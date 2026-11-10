@@ -1,7 +1,96 @@
 {
-  "paragraphs": [
-    "QUARCC is a student-run club at Concordia University in Montreal, Quebec, Canada, though we have members from other universities & colleges as well.",
-    "Our club is dedicated to providing students with the opportunity to learn about and engage with the field of quantitative finance.",
-    "We host a variety of events throughout the year, including lectures, workshops, and social gatherings."
-  ]
+  "hero": {
+    "title": [
+      "A student-run club",
+      "for quantitative finance"
+    ],
+    "sub": "QUARCC is a student-run club in Montreal, Quebec, with members across universities and colleges as well. We give students the opportunity to learn about, and engage with, the field of quantitative finance."
+  },
+  "offer": {
+    "title": [
+      "Lectures, workshops",
+      "and a research group"
+    ],
+    "sub": "We host a variety of events throughout the year, including lectures, workshops and social gatherings, and we run a research group for members who want to keep building.",
+    "cards": [
+      {
+        "label": "Lectures",
+        "title": "Speaker series",
+        "body": "Practitioners from National Bank, TD Asset Management and Mackenzie Investments on how quant works inside their desks."
+      },
+      {
+        "label": "Workshops",
+        "title": "Hands-on sessions",
+        "body": "Python for data analysis, algorithmic trading and backtesting, from raw data to a working strategy."
+      },
+      {
+        "label": "Research",
+        "title": "Research group",
+        "body": "Teams that manage live paper portfolios across research, development and trading."
+      },
+      {
+        "label": "Social",
+        "title": "Gatherings",
+        "body": "Poker nights and Tuesday meet-ups with puzzles, chess and people who like building things."
+      }
+    ]
+  },
+  "clubDetails": [
+    [
+      "Name",
+      "QUARCC"
+    ],
+    [
+      "Full name",
+      "Quantitative Research and Competitions Club"
+    ],
+    [
+      "Location",
+      "Concordia University, Montreal"
+    ],
+    [
+      "Mission",
+      "Quant finance education & research"
+    ]
+  ],
+  "projectStatus": [
+    {
+      "label": "Events",
+      "value": "Workshops ongoing",
+      "live": true
+    },
+    {
+      "label": "Recruitment",
+      "value": "Open for all students",
+      "live": true
+    },
+    {
+      "label": "Contact",
+      "value": "info@quarcc.com",
+      "live": false
+    }
+  ],
+  "halves": {
+    "title": [
+      "Two halves, one club"
+    ],
+    "sub": "The club hosts events. The research group is for those who want to constantly take on new projects.",
+    "cards": [
+      {
+        "label": "The club",
+        "title": "Events & community",
+        "body": "Speaker series, workshops and socials, open to every student at any level, as long as you're willing to learn.",
+        "cta": "See events",
+        "href": "/events/"
+      },
+      {
+        "label": "QRG",
+        "title": "Quantitative Research Group",
+        "body": "Advanced teams managing paper portfolios across research, development and trading, with analysts on a guided curriculum in systematic trading.",
+        "cta": "Meet the teams",
+        "href": "/teams/"
+      }
+    ]
+  },
+  "faqTitle": "Frequently asked"
 }

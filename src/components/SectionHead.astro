@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string[];
+  sub?: string;
+  id?: string;
+  align?: "center" | "top";
+}
+
+const { title, sub, id, align = "center" } = Astro.props;
+---
+
+<div class:list={["section-head", { "section-head--top": align === "top" }]}>
+  <h2 id={id}>
+    {title.map((line, index) => (
+      <>
+        {index ? <>{" "}<br /></> : null}
+        {line}
+      </>
+    ))}
+  </h2>
+  {sub ? <p>{sub}</p> : <span></span>}
+  <slot />
+</div>

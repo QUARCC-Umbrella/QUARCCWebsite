@@ -1,15 +1,30 @@
 {
-  "clubDetails": [
-    ["Name", "QUARCC"],
-    ["Full Name", "Quantitative Research and Competitions Club"],
-    ["Location", "Concordia University, Montreal"],
-    ["Mission", "Quant Finance Education & Research"]
-  ],
-  "projectStatus": [
-    ["Events", "Workshops ongoing"],
-    ["Recruitment", "Open for all students"],
-    ["Contact", "info@quarcc.com"]
-  ],
-  "welcomeTitle": "Welcome",
-  "welcomeBody": "QUARCC runs workshops, lectures, paper portfolios, and research programs focused on quantitative finance."
+  "hero": {
+    "title": [
+      "The Quantitative Research",
+      "& Competitions Club"
+    ],
+    "sub": "Montreal's student quant club: published research, live paper funds, trading competitions, workshops and speaker series"
+  },
+  "strategies": {
+    "title": "Live strategies"
+  },
+  "research": {
+    "title": [
+      "QRG Research"
+    ],
+    "sub": "QRG members publish quantitative research and open-source projects."
+  },
+  "compete": {
+    "title": [
+      "Competition Placements"
+    ],
+    "sub": "Club teams enter quant competitions and hackathons, from McHacks in Montreal to Cornell."
+  },
+  "people": {
+    "title": [
+      "The people behind it"
+    ],
+    "sub": "The Executive Council, the leadership team responsible for operations, strategy and execution."
+  }
 }

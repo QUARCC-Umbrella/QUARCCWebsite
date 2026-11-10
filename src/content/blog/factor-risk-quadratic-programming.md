@@ -5,6 +5,8 @@ pubDate: 2026-11-02
 updatedDate: 2026-11-04
 heroImage: ../../assets/blog/factor-risk-qp-solve-time.svg
 heroImageAlt: "Bar chart of median solve time on a synthetic 1,000-security problem: CVXPY with Clarabel 1,165.3 milliseconds, hand-built sparse Clarabel 87.9, factored interior point 23.6."
+category: "Research"
+label: "factor-risk-qp"
 tags:
   - Quantitative Finance
   - Portfolio Construction

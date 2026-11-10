@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+---
+
+<BaseLayout title="Page not found | QUARCC" description="This page doesn't exist." noindex partner={false}>
+  <PageHero
+    title={["Signal lost"]}
+    sub="The page you're looking for doesn't exist or has moved."
+  >
+    <div class="hero-actions">
+      <a class="btn btn--cream" href="/">Back home</a>
+      <a class="btn btn--navy" href="/blog/">Read the research</a>
+    </div>
+  </PageHero>
+</BaseLayout>

@@ -1,28 +1,105 @@
 {
-  "sections": [
-    {
-      "title": "Join Us",
-      "lines": [
-        "Interested in Quantitative Finance? Join us!",
-        "We welcome students from all backgrounds (Finance, CS, Math, Engineering).",
-        "Exec & QRG applications open each semester, but feel free to reach out anytime."
+  "hero": {
+    "title": [
+      "Interested in quant?",
+      "Join us"
+    ],
+    "sub": "We welcome students from all backgrounds. Exec and QRG applications open each semester, but feel free to reach out anytime.",
+    "chips": [
+      "Finance",
+      "Computer science",
+      "Math",
+      "Engineering"
+    ]
+  },
+  "paths": {
+    "title": [
+      "The club, or the",
+      "research group"
+    ],
+    "sub": "The club hosts events and is open to everyone. The research group is for those who want to constantly take on new projects.",
+    "cards": [
+      {
+        "label": "The club",
+        "title": "Open for all students",
+        "body": "Events, workshops and a network of like-minded people. No prerequisites. Any education level is fine as long as you're eager to learn.",
+        "rows": [
+          [
+            "Recruitment",
+            "Open year-round"
+          ],
+          [
+            "Prerequisites",
+            "None"
+          ],
+          [
+            "Where",
+            "Tuesdays · Hall Building"
+          ]
+        ],
+        "cta": "Join the Discord",
+        "href": "https://discord.gg/9w7AZxP5",
+        "style": "cream"
+      },
+      {
+        "label": "QRG",
+        "title": "Quantitative Research Group",
+        "body": "Research Leads manage paper portfolios; Analysts follow a guided curriculum on systematic trading and help with the research.",
+        "rows": [
+          [
+            "Applications",
+            "Each semester"
+          ],
+          [
+            "Co-directors",
+            "Chanakya Basupally & Nicolas Romero"
+          ],
+          [
+            "Contact",
+            "research.quarcc@gmail.com"
+          ]
+        ],
+        "cta": "Email the QRG",
+        "href": "mailto:research.quarcc@gmail.com",
+        "style": "navy"
+      }
+    ]
+  },
+  "steps": {
+    "title": [
+      "Three steps, no forms"
+    ],
+    "items": [
+      [
+        "Say hi",
+        "Send us a message on Discord and we'll get you sorted out."
+      ],
+      [
+        "Show up",
+        "Come to a Tuesday meeting after work hours and introduce yourself."
+      ],
+      [
+        "Go deeper",
+        "Exec and QRG applications open every semester for members who want more."
       ]
-    },
-    {
-      "title": "General Inquiries",
-      "lines": [
-        "Email: info@quarcc.com",
-        "Instagram: https://www.instagram.com/quarcc.csu/",
-        "LinkedIn: https://www.linkedin.com/company/quarcc/",
-        "Discord: https://discord.gg/9w7AZxP5"
-      ]
-    },
-    {
-      "title": "Quantitative Research Group",
-      "lines": [
-        "Email: research.quarcc@gmail.com",
-        "Co-Directors: Chanakya Basupally & Nicolas Romero"
-      ]
-    }
-  ]
+    ]
+  },
+  "contact": {
+    "title": [
+      "Find us here"
+    ],
+    "sub": "Questions about events, sponsorship or anything else? Any channel works."
+  },
+  "quote": {
+    "label": "Who succeeds here",
+    "text": "“Someone who likes building and creating, takes initiative and stays organised.”",
+    "chips": [
+      "Puzzles",
+      "Chess",
+      "Anime",
+      "Music",
+      "Video games",
+      "Working out"
+    ]
+  }
 }

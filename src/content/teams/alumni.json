@@ -1,0 +1,72 @@
+{
+  "name": "Alumni",
+  "description": "Co-founders and former members who helped build QUARCC.",
+  "order": 4,
+  "members": [
+    {
+      "name": "Matthieu Huss",
+      "role": "Co-founder",
+      "linkedin": "https://www.linkedin.com/in/matthieu-j-huss/"
+    },
+    {
+      "name": "Valentino Magniette-Bosseboeuf",
+      "role": "Co-founder",
+      "linkedin": "https://www.linkedin.com/in/valentino-mb/"
+    },
+    {
+      "name": "Casey Jussaume",
+      "role": "Co-founder",
+      "linkedin": "https://www.linkedin.com/in/casey-jussaume/"
+    },
+    {
+      "name": "Kenny Chavez",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/kennychavezmtl/"
+    },
+    {
+      "name": "Nicholas Charland Armstrong",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/nicholas-charland/"
+    },
+    {
+      "name": "Luyun Chen",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/luyun-chen/"
+    },
+    {
+      "name": "Inga Fehlhaber",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/ingafehlhaber/"
+    },
+    {
+      "name": "Hani Hishmih",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/hanihishmih/"
+    },
+    {
+      "name": "Kyra Rousketos",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/kyra-rousketos/"
+    },
+    {
+      "name": "Lucas Miranda",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/cielofinsoen/"
+    },
+    {
+      "name": "William Cielen",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/cielen/"
+    },
+    {
+      "name": "Shiri Rosen",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/shiri-rosen/"
+    },
+    {
+      "name": "Thomas Ballard",
+      "role": "Alumni",
+      "linkedin": "https://www.linkedin.com/in/thomas-ballard1/"
+    }
+  ]
+}

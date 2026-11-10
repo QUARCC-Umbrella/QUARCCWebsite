@@ -1,0 +1,41 @@
+---
+import { Image } from "astro:assets";
+import { initials, nameSlug } from "../lib/site";
+
+// Cards link to LinkedIn only; emails in the team data are not shown on the site.
+interface Props {
+  name: string;
+  role: string;
+  linkedin?: string;
+  image?: string;
+}
+
+const { name, role, linkedin, image } = Astro.props;
+
+// A photo saved as src/assets/team/<name-slug>.jpg (or .jpeg/.png/.webp) replaces the
+// initials automatically, resized and optimised at build time. See that folder's README.
+const photos = import.meta.glob<{ default: ImageMetadata }>("../assets/team/*.{jpg,jpeg,png,webp}", { eager: true });
+const slug = nameSlug(name);
+const photo = Object.entries(photos).find(([path]) => path.replace(/^.*\/|\.[a-z]+$/gi, "") === slug)?.[1].default;
+---
+
+<article class="card member">
+  <div class="avatar" aria-hidden="true">
+    {photo ? (
+      <Image src={photo} alt="" width={104} height={104} loading="lazy" />
+    ) : image ? (
+      <img src={image} alt="" loading="lazy" width="52" height="52" />
+    ) : (
+      initials(name)
+    )}
+  </div>
+  <h3 class="member__name">{name}</h3>
+  <p class="member__role">{role}</p>
+  {linkedin ? (
+    <div class="member__links">
+      <a class="is-accent" href={linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${name} on LinkedIn`}>
+        LinkedIn<span class="ext">↗</span>
+      </a>
+    </div>
+  ) : null}
+</article>

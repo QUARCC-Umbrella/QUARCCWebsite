@@ -1,9 +1,54 @@
 ---
-import "../index.css";
-import "../components/Layout.css";
-import "katex/dist/katex.min.css";
+import "../styles/site.css";
+import "../styles/pages.css";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import PartnerCta from "../components/PartnerCta.astro";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_IMAGE,
+  SITE_NAME,
+  absoluteUrl,
+  organizationSchema,
+  websiteSchema,
+} from "../lib/site";
 
-const { title, description, showHomeLink = true, pageClass = "" } = Astro.props;
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+  partner?: boolean;
+  ogType?: "website" | "article";
+  published?: Date | string;
+  modified?: Date | string;
+}
+
+const {
+  title,
+  description = DEFAULT_DESCRIPTION,
+  image = DEFAULT_IMAGE,
+  imageAlt = "QUARCC logo",
+  schema = [],
+  noindex = false,
+  partner = true,
+  ogType = "website",
+  published,
+  modified,
+} = Astro.props;
+
+// Canonical URLs end in a slash: the host 301s "/about" to "/about/".
+const pathname = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonical = absoluteUrl(pathname);
+const imageUrl = absoluteUrl(image);
+const iso = (value?: Date | string) => (value ? new Date(value).toISOString() : undefined);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [organizationSchema, websiteSchema, ...schema],
+};
 ---
 
 <!doctype html>
@@ -11,22 +56,43 @@ const { title, description, showHomeLink = true, pageClass = "" } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png?v=2" />
-    <link rel="shortcut icon" href="/favicon.png?v=2" />
-    <link rel="apple-touch-icon" sizes="96x96" href="/favicon.png?v=2" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex ? null : <link rel="canonical" href={canonical} />}
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
+    <meta name="theme-color" content="#0a060e" />
+
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png?v=2" />
+    <link rel="apple-touch-icon" href="/quarcc-logo-512.png" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="preload" href="/fonts/InstrumentSerif-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:locale" content="en_CA" />
+    {ogType === "article" && published ? <meta property="article:published_time" content={iso(published)} /> : null}
+    {ogType === "article" && modified ? <meta property="article:modified_time" content={iso(modified)} /> : null}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <slot name="head" />
   </head>
   <body>
-    <div class="layout-container">
-      {showHomeLink ? (
-        <a href="/" class="home-link">
-          &lt; Home
-        </a>
-      ) : null}
-      <main class:list={["layout-content", pageClass]}>
-        <slot />
-      </main>
-    </div>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    {partner ? <PartnerCta /> : null}
+    <SiteFooter />
   </body>
 </html>

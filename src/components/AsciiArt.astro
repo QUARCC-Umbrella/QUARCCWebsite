@@ -1,0 +1,417 @@
+---
+// Decorative ASCII art drawn on a canvas, so the characters never become page text.
+//   variant="logo"  – the QUARCC logo as ASCII (inner-page hero backgrounds)
+//   variant="cloud" – the home hero's digit clouds, redrawn from a density map
+//   variant="field" – faint digit noise (blog thumbnails)
+// "logo" and "cloud" animate: glyphs fade in, brightness waves drift across, and a
+// few characters re-roll every tick. Motion stops for prefers-reduced-motion.
+interface Props {
+  variant?: "logo" | "cloud" | "field";
+  seed?: number;
+  /** Where the logo sits when the box is wider than the logo's proportions. */
+  align?: "end" | "center";
+  class?: string;
+}
+
+const { variant = "logo", seed = 1, align = "end", class: className = "" } = Astro.props;
+---
+
+<canvas class:list={["ascii-canvas", className]} data-ascii={variant} data-seed={seed} data-align={align} aria-hidden="true"></canvas>
+
+<script>
+  const LOGO_SRC = "/quarcc-logo.png";
+  // Opaque part of quarcc-logo.png (252x168).
+  const LOGO_BOX = { x: 44, y: 18, w: 178, h: 105 };
+  // Proportions the logo is drawn at (the mockup's 847x545 art box).
+  const LOGO_ASPECT = 847 / 545;
+  const GLYPHS = "#$@%&8BWM0QOZXmwqpdbkhao*+=-:;~^\"'{}[]()<>/\\|!?lIi1rtfjxzcvun_,.";
+  const DIGITS = "0123456789";
+
+  // The home cloud: one density pixel per 6x11 character cell of the 1440x900 mockup
+  // art. It is resampled to fill the whole hero (see cloudDensity).
+  const CLOUD_SRC = "/images/home-hero-density.png";
+  const CLOUD = { width: 1440, cw: 6, ch: 11, minScale: 0.34 };
+  // Denser cells get heavier glyphs, as in the mockup.
+  const CLOUD_RAMP: [number, string][] = [
+    [0.7, "0896850"],
+    [0.45, "0689356982"],
+    [0.25, "1727 0689 1"],
+    [0.12, "1 7 : 2 . -"],
+    [0, ": . - '  "],
+  ];
+
+  function rng(seed: number) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6d2b79f5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const images = new Map<string, Promise<HTMLImageElement>>();
+  function loadImage(src: string) {
+    if (!images.has(src)) {
+      images.set(
+        src,
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        }),
+      );
+    }
+    return images.get(src)!;
+  }
+
+  function pixels(img: HTMLImageElement, sx: number, sy: number, sw: number, sh: number, w: number, h: number) {
+    const off = document.createElement("canvas");
+    off.width = w;
+    off.height = h;
+    const octx = off.getContext("2d", { willReadFrequently: true })!;
+    octx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+    return octx.getImageData(0, 0, w, h).data;
+  }
+
+  function setup(canvas: HTMLCanvasElement) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    const ctx = canvas.getContext("2d")!;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    return { ctx, width: rect.width, height: rect.height, dpr };
+  }
+
+  type Cell = { x: number; y: number; glyph: string; set: string; delay: number; base: number };
+  type Style = { font: string; color: string; cw: number; ch: number; level: number };
+  type Art = { cells: Cell[]; style: Style };
+  type State = { frame?: number; t0: number };
+
+  const states = new WeakMap<HTMLCanvasElement, State>();
+  const visible = new WeakSet<HTMLCanvasElement>();
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  async function buildLogo(canvas: HTMLCanvasElement, width: number, height: number): Promise<Art | null> {
+    const img = await loadImage(LOGO_SRC);
+    const style: Style = { font: `13px "Geist Mono", ui-monospace, monospace`, color: "rgb(170, 140, 190)", cw: 7.8, ch: 13.3, level: 0.72 };
+    // Fit the logo inside the canvas without stretching, so a shorter box shrinks
+    // the art instead of slicing it.
+    const drawW = Math.min(width, height * LOGO_ASPECT);
+    const drawH = drawW / LOGO_ASPECT;
+    const left = (width - drawW) * (canvas.dataset.align === "center" ? 0.5 : 1);
+    const cols = Math.floor(drawW / style.cw);
+    const rows = Math.floor(drawH / style.ch);
+    if (!cols || !rows) return null;
+
+    const alpha = pixels(img, LOGO_BOX.x, LOGO_BOX.y, LOGO_BOX.w, LOGO_BOX.h, cols, rows);
+    const on = (x: number, y: number) =>
+      x >= 0 && y >= 0 && x < cols && y < rows && alpha[(y * cols + x) * 4 + 3] > 70;
+
+    const rand = rng(Number(canvas.dataset.seed) || 1);
+    const cells: Cell[] = [];
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (!on(x, y)) continue;
+        // Hollow out thick strokes so the letters read as outlines, like the mockup.
+        let interior = true;
+        for (let dy = -1; dy <= 1 && interior; dy++) {
+          for (let dx = -3; dx <= 3; dx++) {
+            if (!on(x + dx, y + dy)) {
+              interior = false;
+              break;
+            }
+          }
+        }
+        if (interior) continue;
+        cells.push({
+          x: left + x * style.cw,
+          y: y * style.ch,
+          glyph: GLYPHS[Math.floor(rand() * GLYPHS.length)],
+          set: GLYPHS,
+          // Reveal sweeps in from the top-left with some scatter.
+          delay: (x / cols) * 700 + (y / rows) * 500 + rand() * 900,
+          base: 0.75 + rand() * 0.25,
+        });
+      }
+    }
+    return { cells, style };
+  }
+
+  // Smooth value noise in 0..1 (bilinear between hashed lattice points).
+  function valueNoise(seed: number) {
+    const hash = (x: number, y: number) => {
+      let h = Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(seed, 2246822519);
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+    };
+    return (x: number, y: number) => {
+      const xi = Math.floor(x);
+      const yi = Math.floor(y);
+      const fx = x - xi;
+      const fy = y - yi;
+      const sx = fx * fx * (3 - 2 * fx);
+      const sy = fy * fy * (3 - 2 * fy);
+      const a = hash(xi, yi) + (hash(xi + 1, yi) - hash(xi, yi)) * sx;
+      const b = hash(xi, yi + 1) + (hash(xi + 1, yi + 1) - hash(xi, yi + 1)) * sx;
+      return a + (b - a) * sy;
+    };
+  }
+
+  // The density map, resampled onto this canvas's character grid and made fuller: it is
+  // stretched to fill the whole hero (so the clouds reach every edge at any width), grown
+  // with rounded billows, smoothed, given soft lumps, and its mid-tones lifted.
+  function cloudDensity(img: HTMLImageElement, cols: number, rows: number, width: number, height: number, seed: number) {
+    const mapW = img.naturalWidth;
+    const mapH = img.naturalHeight;
+    const map = pixels(img, 0, 0, mapW, mapH, mapW, mapH);
+    const at = (u: number, v: number) => {
+      if (u < 0 || v < 0 || u > mapW - 1 || v > mapH - 1) return 0;
+      const x0 = Math.floor(u);
+      const y0 = Math.floor(v);
+      const x1 = Math.min(mapW - 1, x0 + 1);
+      const y1 = Math.min(mapH - 1, y0 + 1);
+      const fx = u - x0;
+      const fy = v - y0;
+      const p = (x: number, y: number) => map[(y * mapW + x) * 4] / 255;
+      return (p(x0, y0) * (1 - fx) + p(x1, y0) * fx) * (1 - fy) + (p(x0, y1) * (1 - fx) + p(x1, y1) * fx) * fy;
+    };
+
+    // Wider screens stretch the art to the full width; narrower ones show a centred
+    // window, squeezed enough that both cloud banks still reach the sides on a phone.
+    const scaleX = Math.max(width / CLOUD.width, CLOUD.minScale);
+    const scaleY = Math.max(1, height / (mapH * CLOUD.ch));
+    const base = new Float32Array(cols * rows);
+    for (let r = 0; r < rows; r++) {
+      const v = ((r + 0.5) * CLOUD.ch) / scaleY / CLOUD.ch - 0.5;
+      for (let c = 0; c < cols; c++) {
+        const u = ((c + 0.5) * CLOUD.cw - width / 2) / scaleX / CLOUD.cw + mapW / 2 - 0.5;
+        base[r * cols + c] = at(u, v);
+      }
+    }
+
+    // Soft spread: a near-Gaussian blur (two box passes per axis; cells are ~2x taller
+    // than wide, so the x radius is larger). Taking the max of the art and the boosted
+    // blur swells every cloud outward and fills its gaps, with density tapering off at
+    // the edges instead of stopping at a wall.
+    const blurred = boxBlur(boxBlur(base, cols, rows, 4, 2), cols, rows, 4, 2);
+    const lumps = valueNoise(seed);
+    const out = new Float32Array(cols * rows);
+    for (let i = 0; i < out.length; i++) {
+      const c = i % cols;
+      const r = (i - c) / cols;
+      const spread = Math.max(base[i], blurred[i] * 1.55);
+      // Low-frequency lumps push the outline in and out into rounded billows.
+      const x = (c * CLOUD.cw) / 120;
+      const y = (r * CLOUD.ch) / 85;
+      const lump = 0.6 * lumps(x, y) + 0.4 * lumps(x * 2.2 + 17, y * 2.2 + 5);
+      const d = Math.min(1, spread * (0.5 + 1.0 * lump));
+      // Lift the mid-tones so the cores read denser.
+      out[i] = 1 - (1 - d) ** 1.35;
+    }
+    return out;
+  }
+
+  // Separable box blur with clamped edges.
+  function boxBlur(src: Float32Array, cols: number, rows: number, rx: number, ry: number) {
+    const tmp = new Float32Array(src.length);
+    const dst = new Float32Array(src.length);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        let sum = 0;
+        for (let dx = -rx; dx <= rx; dx++) sum += src[r * cols + Math.min(cols - 1, Math.max(0, c + dx))];
+        tmp[r * cols + c] = sum / (2 * rx + 1);
+      }
+    }
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        let sum = 0;
+        for (let dy = -ry; dy <= ry; dy++) sum += tmp[Math.min(rows - 1, Math.max(0, r + dy)) * cols + c];
+        dst[r * cols + c] = sum / (2 * ry + 1);
+      }
+    }
+    return dst;
+  }
+
+  async function buildCloud(canvas: HTMLCanvasElement, width: number, height: number): Promise<Art> {
+    const img = await loadImage(CLOUD_SRC);
+    const style: Style = { font: `10px "Geist Mono", ui-monospace, monospace`, color: "rgb(204, 190, 222)", cw: CLOUD.cw, ch: CLOUD.ch, level: 1 };
+    const seed = Number(canvas.dataset.seed) || 1;
+    const cols = Math.ceil(width / CLOUD.cw);
+    const rows = Math.ceil(height / CLOUD.ch);
+    const density = cloudDensity(img, cols, rows, width, height, seed);
+    const rand = rng(seed);
+    // The reveal keeps its 1440px timing; wider screens spread the same sweep over their width.
+    const half = Math.max(width, CLOUD.width) / 2;
+    const cells: Cell[] = [];
+    for (let r = 0; r < rows; r++) {
+      const y = r * CLOUD.ch;
+      for (let c = 0; c < cols; c++) {
+        const x = c * CLOUD.cw;
+        const d = density[r * cols + c];
+        if (d < 0.08) continue;
+        const set = CLOUD_RAMP.find(([min]) => d >= min)![1];
+        cells.push({
+          x,
+          y,
+          glyph: set[Math.floor(rand() * set.length)],
+          set,
+          // Reveal spreads out from the centre of the hero.
+          delay: (Math.abs(x - width / 2) / half) * 1100 + (r / rows) * 400 + rand() * 800,
+          base: Math.min(1, 0.16 + d * 0.95),
+        });
+      }
+    }
+    return { cells, style };
+  }
+
+  // Pre-render each glyph once into a cell-sized sprite; drawing sprites is much cheaper
+  // than fillText, and a sprite never spills into the neighbouring cell.
+  function atlas(art: Art, dpr: number) {
+    const chars = [...new Set(art.cells.map((cell) => cell.set).join(""))];
+    const slotW = Math.ceil(art.style.cw * dpr);
+    const slotH = Math.ceil(art.style.ch * dpr);
+    const sheet = document.createElement("canvas");
+    sheet.width = slotW * chars.length;
+    sheet.height = slotH;
+    const sctx = sheet.getContext("2d")!;
+    sctx.font = art.style.font.replace(/^(\d+(?:\.\d+)?)px/, (_, size) => `${Number(size) * dpr}px`);
+    sctx.textBaseline = "top";
+    sctx.fillStyle = art.style.color;
+    const index = new Map<string, number>();
+    chars.forEach((char, i) => {
+      sctx.save();
+      sctx.beginPath();
+      sctx.rect(i * slotW, 0, slotW, slotH);
+      sctx.clip();
+      sctx.fillText(char, i * slotW, 0);
+      sctx.restore();
+      index.set(char, i * slotW);
+    });
+    return { sheet, index, slotW, slotH };
+  }
+
+  // Each glyph is painted once and only repainted when it changes: during the fade-in,
+  // and when it re-rolls. The drifting brightness waves are a CSS mask animation, so the
+  // steady state costs a few dozen sprite draws per tick.
+  async function drawArt(canvas: HTMLCanvasElement) {
+    const { ctx, width, height, dpr } = setup(canvas);
+    if (!width || !height) return;
+    const art = canvas.dataset.ascii === "cloud" ? await buildCloud(canvas, width, height) : await buildLogo(canvas, width, height);
+    if (!art) return;
+    const sprites = atlas(art, dpr);
+    const { cw, ch, level } = art.style;
+    const cellW = sprites.slotW / dpr;
+    const cellH = sprites.slotH / dpr;
+
+    const previous = states.get(canvas);
+    if (previous?.frame) cancelAnimationFrame(previous.frame);
+    const state: State = { t0: previous?.t0 ?? performance.now() };
+    states.set(canvas, state);
+
+    const paintCell = (cell: Cell, reveal: number) => {
+      ctx.clearRect(cell.x, cell.y, cw, ch);
+      ctx.globalAlpha = Math.min(1, reveal * cell.base * level);
+      ctx.drawImage(sprites.sheet, sprites.index.get(cell.glyph)!, 0, sprites.slotW, sprites.slotH, cell.x, cell.y, cellW, cellH);
+    };
+
+    if (reduceMotion.matches) {
+      for (const cell of art.cells) paintCell(cell, 1);
+      return;
+    }
+
+    const FADE = 600;
+    const revealEnd = Math.max(0, ...art.cells.map((cell) => cell.delay)) + FADE;
+    const rand = rng((Number(canvas.dataset.seed) || 1) + 99);
+    const rerolls = Math.max(1, Math.round(art.cells.length * 0.006));
+    let lastTick = 0;
+    let lastT = -1;
+    const step = (now: number) => {
+      state.frame = requestAnimationFrame(step);
+      if (!visible.has(canvas) || document.hidden || now - lastTick < 66) return;
+      lastTick = now;
+      const t = now - state.t0;
+      if (lastT < revealEnd) {
+        // Fade-in: repaint only cells whose fade window overlaps this tick.
+        for (const cell of art.cells) {
+          if (t < cell.delay || lastT >= cell.delay + FADE) continue;
+          paintCell(cell, Math.min(1, (t - cell.delay) / FADE));
+        }
+      } else {
+        for (let i = 0; i < rerolls; i++) {
+          const cell = art.cells[Math.floor(rand() * art.cells.length)];
+          cell.glyph = cell.set[Math.floor(rand() * cell.set.length)];
+          paintCell(cell, 1);
+        }
+      }
+      lastT = t;
+    };
+    state.frame = requestAnimationFrame(step);
+  }
+
+  const observer =
+    "IntersectionObserver" in window
+      ? new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            const canvas = entry.target as HTMLCanvasElement;
+            if (entry.isIntersecting) visible.add(canvas);
+            else visible.delete(canvas);
+          }
+        })
+      : null;
+
+  function drawField(canvas: HTMLCanvasElement) {
+    const { ctx, width, height } = setup(canvas);
+    if (!width || !height) return;
+    const rand = rng(Number(canvas.dataset.seed) || 1);
+    const cw = 6.6;
+    const ch = 11.5;
+    const cols = Math.ceil(width / cw);
+    const rows = Math.ceil(height / ch);
+    const gx = 0.25 + rand() * 0.5;
+    const gy = 0.3 + rand() * 0.4;
+    ctx.font = `11px "Geist Mono", ui-monospace, monospace`;
+    ctx.textBaseline = "top";
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (rand() < 0.18) continue;
+        const dx = x / cols - gx;
+        const dy = y / rows - gy;
+        const glow = Math.max(0, 1 - Math.sqrt(dx * dx * 1.6 + dy * dy) * 1.9);
+        const a = 0.05 + glow * 0.13 + rand() * 0.04;
+        ctx.fillStyle = `rgba(199, 173, 208, ${a.toFixed(3)})`;
+        const glyph = rand() < 0.85 ? DIGITS[Math.floor(rand() * 10)] : " .+-x="[Math.floor(rand() * 6)];
+        ctx.fillText(glyph, x * cw, y * ch);
+      }
+    }
+  }
+
+  function drawAll() {
+    document.querySelectorAll<HTMLCanvasElement>("canvas[data-ascii]").forEach((canvas) => {
+      if (canvas.dataset.ascii === "field") {
+        drawField(canvas);
+        return;
+      }
+      if (observer) observer.observe(canvas);
+      else visible.add(canvas);
+      drawArt(canvas).catch(() => {});
+    });
+  }
+
+  const start = () => {
+    drawAll();
+    let last = window.innerWidth;
+    window.addEventListener("resize", () => {
+      if (Math.abs(window.innerWidth - last) < 2) return;
+      last = window.innerWidth;
+      drawAll();
+    });
+  };
+
+  if (document.fonts?.ready) document.fonts.ready.then(start);
+  else start();
+</script>

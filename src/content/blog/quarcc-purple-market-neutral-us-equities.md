@@ -5,6 +5,8 @@ pubDate: 2026-11-02
 updatedDate: 2026-11-04
 heroImage: ../../assets/blog/quarcc-purple-value.svg
 heroImageAlt: "Line chart of $1 billion from January 2021 to August 2026. QUARCC Purple ends at $1.467 billion, T-bill plus 4% at $1.509 billion, and the S&P 500 price index at $2.046 billion."
+category: "Competition"
+label: "quarcc-purple"
 tags:
   - Quantitative Finance
   - Portfolio Construction

@@ -8,5 +8,8 @@
   "locationLink": "https://goo.gl/maps/example2",
   "room": "M 202",
   "link": "https://github.com/quarcc/algo-workshop",
-  "order": 2
+  "order": 2,
+  "category": "Workshop",
+  "venue": "Math Building, M 202",
+  "summary": "Build and backtest algorithmic trading strategies in Python."
 }

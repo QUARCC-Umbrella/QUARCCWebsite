@@ -1,6 +1,6 @@
 {
-  "name": "Quantitative Research Lead",
-  "description": "Advanced teams managing paper portfolios: Research, Development, Trading.",
+  "name": "Research Leads",
+  "description": "Advanced teams managing paper portfolios across research, development and trading.",
   "leadLabel": "Research Group",
   "order": 2,
   "members": [
@@ -9,20 +9,6 @@
       "role": "Research Lead",
       "email": "Maaitianas@gmail.com",
       "linkedin": "https://linkedin.com/in/anas-maaiti",
-      "website": ""
-    },
-    {
-      "name": "Inga Fehlhaber",
-      "role": "Research Lead",
-      "email": "sma@quarcc.com",
-      "linkedin": "https://www.linkedin.com/in/ingafehlhaber/",
-      "website": ""
-    },
-    {
-      "name": "Thomas Ballard",
-      "role": "Research Lead",
-      "email": "sma@quarcc.com",
-      "linkedin": "https://www.linkedin.com/in/thomas-ballard1/",
       "website": ""
     },
     {
@@ -40,17 +26,31 @@
       "website": ""
     },
     {
-      "name": "Hedi Belkahia",
-      "role": "Research Lead",
-      "email": "sma@quarcc.com",
-      "linkedin": "https://www.linkedin.com/in/hedi-belkahia/",
-      "website": ""
-    },
-    {
       "name": "Félix Aubry DeFilippo",
       "role": "Research Lead",
       "email": "sma@quarcc.com",
       "linkedin": "https://www.linkedin.com/in/felix-aubry-d/",
+      "website": ""
+    },
+    {
+      "name": "Bryan Zhang",
+      "role": "Research Lead",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/bryan-zhg/",
+      "website": ""
+    },
+    {
+      "name": "Nathan Au",
+      "role": "Research Lead",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/-nathanau/",
+      "website": ""
+    },
+    {
+      "name": "Sebastian Bobos",
+      "role": "Research Lead",
+      "email": "sma@quarcc.com",
+      "linkedin": "https://www.linkedin.com/in/sebastian-b-8b670129a/",
       "website": ""
     }
   ]

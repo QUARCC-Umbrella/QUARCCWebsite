@@ -1,0 +1,27 @@
+---
+interface Props {
+  items: { q: string; a: string }[];
+  headingLevel?: "h3" | "h2";
+}
+
+const { items, headingLevel = "h3" } = Astro.props;
+const Heading = headingLevel;
+const half = Math.ceil(items.length / 2);
+const columns = [items.slice(0, half), items.slice(half)];
+---
+
+<div class="faq-grid">
+  {columns.map((column, c) => (
+    <div class="faq-col">
+      {column.map((item, i) => (
+        <div class="faq-item">
+          <div class="faq-q">
+            <span class="faq-num">{String(c * half + i + 1).padStart(2, "0")}</span>
+            <Heading>{item.q}</Heading>
+          </div>
+          <p>{item.a}</p>
+        </div>
+      ))}
+    </div>
+  ))}
+</div>

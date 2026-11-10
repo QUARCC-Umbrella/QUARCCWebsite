@@ -1,8 +1,9 @@
+import AsciiFill from "./AsciiFill.jsx";
 import useLivePortfolios from "./useLivePortfolios.js";
-import { displayName, navBn, marksStamp, num, parsePct, pct, period, signed, tone } from "./format.js";
+import { NA, displayName, navBn, marksStamp, num, parsePct, pct, period, signed, tone } from "./format.js";
 import "./fund.css";
 
-function Spark({ daily }) {
+function Spark({ daily, color }) {
   if (!daily?.length) return null;
   const last = Date.parse(daily[daily.length - 1].date);
   const points = daily.filter((d) => Date.parse(d.date) >= last - 365.25 * 864e5 && Number.isFinite(d.fund));
@@ -13,18 +14,20 @@ function Spark({ daily }) {
   const w = 112;
   const h = 32;
   const t0 = Date.parse(points[0].date);
-  const path = points
-    .map((d, i) => {
-      const x = ((Date.parse(d.date) - t0) / (last - t0 || 1)) * w;
-      const y = h - 2 - ((d.fund - lo) / (hi - lo || 1)) * (h - 4);
-      return `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join("");
+  const xy = points.map((d) => [
+    ((Date.parse(d.date) - t0) / (last - t0 || 1)) * w,
+    h - 2 - ((d.fund - lo) / (hi - lo || 1)) * (h - 4),
+  ]);
+  const path = xy.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join("");
   const up = values[values.length - 1] >= values[0];
+  const stroke = color ?? (up ? "#c45be0" : "#d07ab0");
   return (
-    <svg className="fxi-spark" width={w} height={h} viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
-      <path d={path} fill="none" stroke={up ? "#d1baff" : "#ff8fa0"} strokeWidth="1.4" />
-    </svg>
+    <span className="fxi-spark">
+      <AsciiFill points={xy.map(([x, y]) => [x / w, y / h])} color={stroke} size={5} />
+      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+        <path d={path} fill="none" stroke={stroke} strokeWidth="1.4" vectorEffect="non-scaling-stroke" />
+      </svg>
+    </span>
   );
 }
 
@@ -60,6 +63,7 @@ export default function FundIndex({ portfolios: initial }) {
   const latest = portfolios.map((p) => p.asOf).filter(Boolean).sort().pop();
 
   return (
+    <>
     <div className="fxi-table" role="table" aria-label="QUARCC paper funds">
       <div className="fxi-row fxi-head" role="row">
         <span role="columnheader">Fund</span>
@@ -70,15 +74,15 @@ export default function FundIndex({ portfolios: initial }) {
         ))}
         <span role="columnheader">1Y trend</span>
       </div>
-      {portfolios.map((portfolio) => {
+      {portfolios.map((portfolio, index) => {
         const row = rowFor(portfolio);
         return (
-          <a key={portfolio.slug} className="fxi-row" role="row" href={`/paper-fund/${portfolio.slug}`}>
+          <a key={portfolio.slug} className="fxi-row" role="row" href={`/paper-fund/${portfolio.slug}/`}>
             <span className="fxi-name" role="cell">
               <strong>{displayName(portfolio.name)}</strong>
               <small>
                 {portfolio.factsheet?.keyFacts?.assetClass ?? portfolio.strategy} ·{" "}
-                {portfolio.exposures?.names ?? "—"} names
+                {portfolio.exposures?.names ?? NA} names
               </small>
             </span>
             {COLUMNS.map(([name, key]) => (
@@ -87,14 +91,18 @@ export default function FundIndex({ portfolios: initial }) {
               </span>
             ))}
             <span role="cell" className="fxi-trend">
-              <Spark daily={portfolio.factsheet?.series?.daily} />
+              <Spark daily={portfolio.factsheet?.series?.daily} color={index % 2 ? "#d9c4e2" : "#c45be0"} />
             </span>
           </a>
         );
       })}
+    </div>
+    <div className="fxi-foot">
       <p className="fxi-stamp">
         Marks {marksStamp(latest)} · Returns after modelled costs · NAV from US$1bn at inception
       </p>
+      <span className="fxi-hint">Open a fund for its fact sheet <span className="arrow">→</span></span>
     </div>
+    </>
   );
 }

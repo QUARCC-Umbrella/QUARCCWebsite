@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "q": "Who can join the club?",
+      "a": "Anyone. The ideal candidate is a STEM student, but it isn't required. Any education level is fine as long as you're willing to learn."
+    },
+    {
+      "q": "What are the prerequisites?",
+      "a": "None, as long as you're eager to learn."
+    },
+    {
+      "q": "When and where do you meet?",
+      "a": "Normally on Tuesdays, after work hours."
+    },
+    {
+      "q": "Do you offer workshops or training?",
+      "a": "Yes. We run workshops, and members get a drive library of books and projects on Discord."
+    },
+    {
+      "q": "How do I apply?",
+      "a": "Send us a message on Discord and we'll get you sorted, or show up to a meeting and introduce yourself."
+    },
+    {
+      "q": "Who succeeds here?",
+      "a": "Someone who likes building and creating, with initiative and organisation. Common hobbies: puzzles, chess, anime, music, video games and working out."
+    },
+    {
+      "q": "Why join?",
+      "a": "A network of like-minded people, the chance to develop new skills, and a place to publish your work."
+    },
+    {
+      "q": "How is the club structured?",
+      "a": "Two parts: the club, which hosts events, and the research group, for those who want to constantly take on new projects."
+    }
+  ]
+}

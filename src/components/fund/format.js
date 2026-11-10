@@ -1,11 +1,18 @@
 const missing = (value) => value === null || value === undefined || Number.isNaN(value);
 
-export const pct = (value, digits = 2) => (missing(value) ? "—" : `${(value * 100).toFixed(digits)}%`);
+/** Shown when a value is missing. */
+export const NA = "n/a";
+
+// Feed strings sometimes use a lone dash (hyphen, en or em dash) for "none"; show words instead.
+const DASHES = new Set(["-", String.fromCharCode(8211), String.fromCharCode(8212)]);
+export const text = (value, none = NA) => (value == null || value === "" || DASHES.has(String(value).trim()) ? none : value);
+
+export const pct = (value, digits = 2) => (missing(value) ? NA : `${(value * 100).toFixed(digits)}%`);
 
 export const signed = (value, digits = 2) =>
-  missing(value) ? "—" : `${value > 0 ? "+" : value < 0 ? "−" : ""}${Math.abs(value * 100).toFixed(digits)}%`;
+  missing(value) ? NA : `${value > 0 ? "+" : value < 0 ? "−" : ""}${Math.abs(value * 100).toFixed(digits)}%`;
 
-export const num = (value, digits = 2) => (missing(value) ? "—" : value.toFixed(digits));
+export const num = (value, digits = 2) => (missing(value) ? NA : value.toFixed(digits));
 
 export const tone = (value) => (missing(value) || value === 0 ? "" : value > 0 ? "is-pos" : "is-neg");
 
@@ -15,12 +22,12 @@ export const parsePct = (text) => {
 };
 
 // NAV is stored in US$bn; both funds start at US$1bn.
-export const navBn = (nav, digits = 3) => (missing(nav) ? "—" : `US$${nav.toFixed(digits)}bn`);
+export const navBn = (nav, digits = 3) => (missing(nav) ? NA : `US$${nav.toFixed(digits)}bn`);
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function longDate(iso) {
-  if (!iso) return "—";
+  if (!iso) return NA;
   const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
   return `${d} ${months[m - 1]} ${y}`;
 }
@@ -31,7 +38,7 @@ export function shortDate(time) {
 }
 
 export function marksStamp(iso) {
-  if (!iso) return "—";
+  if (!iso) return NA;
   return new Date(iso).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
