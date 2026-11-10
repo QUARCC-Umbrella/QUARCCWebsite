@@ -93,12 +93,22 @@ export function breadcrumbSchema(items: { name: string; path: string }[]) {
   };
 }
 
+// File-name form of a person's name: "Félix Aubry DeFilippo" -> "felix-aubry-defilippo".
+export function nameSlug(name: string) {
+  return name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export function initials(name: string) {
   const parts = name
     .replace(/[^\p{L}\s-]/gu, "")
     .split(/[\s-]+/)
     .filter(Boolean);
   if (!parts.length) return "";
-  // First letters of the first two name parts: "Giuseppe-Luca Cianflone" -> "GL".
+  // First letters of the first two name parts: "Anne-Marie Smith" -> "AM".
   return (parts[0][0] + (parts[1]?.[0] ?? "")).toUpperCase();
 }

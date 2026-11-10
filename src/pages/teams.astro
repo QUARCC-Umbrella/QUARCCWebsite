@@ -7,6 +7,14 @@ import { getJoinContent, getTeams, toContentSlug } from "../lib/content";
 import { CONTACT, ORG_ID, absoluteUrl, breadcrumbSchema } from "../lib/site";
 
 const teams = await getTeams();
+const isAlumni = (team: (typeof teams)[number]) => toContentSlug(team.id) === "alumni";
+const current = teams.filter((team) => !isAlumni(team));
+const alumni = teams.filter(isAlumni).flatMap((team) => team.data.members);
+const person = (member: { name: string; linkedin: string }) => ({
+  "@type": "Person",
+  name: member.name,
+  ...(member.linkedin ? { sameAs: [member.linkedin] } : {}),
+});
 const join = await getJoinContent();
 const qrgRows = join.paths.cards.find((card) => card.label === "QRG")?.rows ?? [];
 const coDirectors = qrgRows.find(([label]) => label.toLowerCase().startsWith("co-director"))?.[1];
@@ -18,17 +26,14 @@ const schema = [
     name: "The people behind QUARCC",
     about: {
       "@id": ORG_ID,
-      member: teams.flatMap((team) =>
+      member: current.flatMap((team) =>
         team.data.members.map((member) => ({
           "@type": "OrganizationRole",
           roleName: member.role,
-          member: {
-            "@type": "Person",
-            name: member.name,
-            ...(member.linkedin ? { sameAs: [member.linkedin] } : {}),
-          },
+          member: person(member),
         })),
       ),
+      ...(alumni.length ? { alumni: alumni.map(person) } : {}),
     },
   },
   breadcrumbSchema([
@@ -40,7 +45,7 @@ const schema = [
 
 <BaseLayout
   title="Teams | The People Behind QUARCC"
-  description="Meet QUARCC's Executive Council, the Research Leads who manage our paper portfolios, and the Quantitative Analysts on our systematic-trading curriculum."
+  description="Meet QUARCC's Executive Council, the Research Leads who manage our paper portfolios, the Quantitative Analysts on our systematic-trading curriculum, and our co-founders and alumni."
   schema={schema}
 >
   <PageHero
@@ -51,7 +56,7 @@ const schema = [
   <section class="teams-stats">
     <div class="wrap">
       <div class="stat-strip stat-strip--3">
-        {teams.map((team) => (
+        {current.map((team) => (
           <a class="stat" href={`#${toContentSlug(team.id)}`}>
             <p class="stat__head"><span class="stat__num">{team.data.members.length}</span><span class="stat__name">{team.data.name}</span></p>
             <p class="stat__body">{team.data.description}</p>
