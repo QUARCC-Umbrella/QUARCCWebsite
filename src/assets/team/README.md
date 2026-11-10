@@ -20,6 +20,7 @@ The site crops it to a circle and resizes it at build time, so any reasonably si
 - `malek-khemakhem.jpg` (Malek Khemakhem)
 - `hedi-belkahia.jpg` (Hedi Belkahia)
 - `siba-faour.jpg` (Siba Faour)
+- `luke-puccetti.jpg` (Luke Puccetti)
 
 ### Research Leads
 
