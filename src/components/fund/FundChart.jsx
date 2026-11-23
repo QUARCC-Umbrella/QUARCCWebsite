@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import AsciiFill from "./AsciiFill.jsx";
-import { NA, shortDate, longDate } from "./format.js";
+import { NA, dayMonth, shortDate, longDate } from "./format.js";
 
+const DAY_MS = 864e5;
 const RANGES = [
-  { key: "1Y", years: 1 },
-  { key: "3Y", years: 3 },
-  { key: "5Y", years: 5 },
-  { key: "Max", years: null },
+  { key: "1W", days: 7 },
+  { key: "1M", days: 30 },
+  { key: "1Y", days: 365.25 },
+  { key: "3Y", days: 3 * 365.25 },
+  { key: "5Y", days: 5 * 365.25 },
+  { key: "Max", days: null },
 ];
 
 function useWidth(fallback) {
@@ -64,18 +67,20 @@ export default function FundChart({
   const [hover, setHover] = useState(null);
 
   const compact = width < 520;
-  const pad = { top: 14, right: compact ? 8 : 12, bottom: 26, left: compact ? 40 : 52 };
+  const pad = { top: 14, right: compact ? 8 : 12, bottom: 26, left: compact ? 48 : 58 };
 
   const view = useMemo(() => {
     const visible = series.filter((s) => !hidden.has(s.key) && s.data.length);
     const all = series[0]?.data ?? [];
     const last = all.length ? Date.parse(all[all.length - 1].date) : 0;
-    const years = RANGES.find((r) => r.key === range)?.years;
-    const from = years ? last - years * 365.25 * 864e5 : -Infinity;
+    const days = RANGES.find((r) => r.key === range)?.days;
+    const from = days ? last - days * DAY_MS : -Infinity;
     const lines = visible.map((s) => {
-      const points = s.data
+      const allPoints = s.data
         .map((d) => ({ t: Date.parse(d.date), date: d.date, value: d.value }))
-        .filter((d) => d.t >= from && Number.isFinite(d.value));
+        .filter((d) => Number.isFinite(d.value));
+      let points = allPoints.filter((d) => d.t >= from);
+      if (points.length < 2 && allPoints.length >= 2) points = allPoints.slice(-2);
       const base = rebase && points.length ? points[0].value : null;
       return {
         ...s,
@@ -121,7 +126,12 @@ export default function FundChart({
   const x = (t) => pad.left + ((t - t0) / (t1 - t0 || 1)) * plotW;
   const y = (v) => pad.top + (1 - (v - y0) / (y1 - y0 || 1)) * plotH;
   const yTicks = niceTicks(y0, y1, compact ? 4 : 5);
-  const xCount = compact ? 3 : 5;
+  const yStep = yTicks.length > 1 ? Math.abs(yTicks[1] - yTicks[0]) : Math.abs(y1 - y0);
+  const spanDays = (t1 - t0) / DAY_MS;
+  const shortSpan = spanDays < 120;
+  const xFormat = shortSpan ? dayMonth : shortDate;
+  const maxTicks = compact ? 3 : 5;
+  const xCount = shortSpan ? Math.max(2, Math.min(maxTicks, Math.round(spanDays) + 1)) : maxTicks;
   const xTicks = Array.from({ length: xCount }, (_, i) => t0 + (i / (xCount - 1)) * (t1 - t0));
   const liveT = liveSince ? Date.parse(liveSince) : null;
   const showLive = liveT && liveT > t0 && liveT < t1;
@@ -227,7 +237,7 @@ export default function FundChart({
             <g key={tick}>
               <line className="fx-grid" x1={pad.left} x2={pad.left + plotW} y1={y(tick)} y2={y(tick)} />
               <text className="fx-axis" x={pad.left - 8} y={y(tick) + 3.5} textAnchor="end">
-                {yFormat(tick)}
+                {yFormat(tick, yStep)}
               </text>
             </g>
           ))}
@@ -242,7 +252,7 @@ export default function FundChart({
               y={height - 6}
               textAnchor={i === 0 ? "start" : i === xTicks.length - 1 ? "end" : "middle"}
             >
-              {shortDate(tick)}
+              {xFormat(tick)}
             </text>
           ))}
           {[...lines].reverse().map((line) => (

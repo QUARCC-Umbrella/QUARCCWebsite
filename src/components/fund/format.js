@@ -37,6 +37,11 @@ export function shortDate(time) {
   return `${months[date.getUTCMonth()]} ${String(date.getUTCFullYear()).slice(2)}`;
 }
 
+export function dayMonth(time) {
+  const date = new Date(time);
+  return `${date.getUTCDate()} ${months[date.getUTCMonth()]}`;
+}
+
 export function marksStamp(iso) {
   if (!iso) return NA;
   return new Date(iso).toLocaleString("en-US", {

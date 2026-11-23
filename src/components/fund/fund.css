@@ -1080,6 +1080,11 @@ a.fxi-row:hover .fxi-name strong {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .fx-seg button {
+    min-width: 2.35rem;
+    padding: 0.35rem 0.5rem;
+  }
+
   .fx-table th,
   .fx-table td {
     padding-left: 0.4rem;

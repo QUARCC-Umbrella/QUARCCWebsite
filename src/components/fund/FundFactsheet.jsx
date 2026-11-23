@@ -490,7 +490,11 @@ export default function FundFactsheet({ portfolio }) {
                 { key: "benchmark", on: true },
                 ...(spIsBenchmark ? [] : [{ key: "sp500", on: false }]),
               ]}
-              yFormat={(v) => `$${(v / 100).toFixed(1)}bn`}
+              yFormat={(v, step = 10) => {
+                const bnStep = step / 100;
+                const digits = bnStep < 0.01 || Math.abs((bnStep * 100) % 1) > 1e-6 ? 3 : bnStep < 0.1 ? 2 : 1;
+                return `$${(v / 100).toFixed(digits)}bn`;
+              }}
               tipFormat={(v) => `$${(v / 100).toFixed(3)}bn`}
               series={[
                 { key: "fund", name: "Fund", color: COLORS.fund, width: 2, data: daily.map((d) => ({ date: d.date, value: d.fund })) },
