@@ -64,7 +64,6 @@ const schema = [
               <div>
                 <dt>{item.label}</dt>
                 <dd class:list={{ "is-live": item.live }}>
-                  {item.live ? <span class="live-dot"></span> : null}
                   {item.value.includes("@") ? <a href={`mailto:${item.value}`}>{item.value}</a> : item.value}
                 </dd>
               </div>

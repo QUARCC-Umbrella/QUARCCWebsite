@@ -75,7 +75,6 @@ export default function FundCards({ portfolios: initial, variant = "feature" }) 
             <a key={portfolio.slug} className="fc-mini" href={`/paper-fund/${portfolio.slug}/`}>
               <div className={`fc-mini__panel ${index % 2 ? "is-lilac" : ""}`}>
                 <div className="fc-mini__top">
-                  <span className="fc-live"><span className="live-dot" /> Live</span>
                   <span className="fc-mini__ret">
                     {oneDecimal(s.ytd)}
                     <small>YTD</small>
@@ -101,7 +100,7 @@ export default function FundCards({ portfolios: initial, variant = "feature" }) 
         return (
           <article key={portfolio.slug} className={`fc-card ${index % 2 ? "is-lilac" : ""}`}>
             <div className="fc-card__top">
-              <span className="fc-live"><span className="live-dot" /> Marked daily</span>
+              <span className="fc-live">Marked daily</span>
               <a className="fc-card__link" href={`/paper-fund/${portfolio.slug}/`}>
                 Fact sheet <span className="arrow">→</span>
               </a>
