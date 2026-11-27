@@ -386,16 +386,6 @@ p {
   opacity: 0.8;
 }
 
-.live-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--purple);
-  box-shadow: 0 0 0 3px rgba(178, 68, 208, 0.22), 0 0 10px rgba(178, 68, 208, 0.8);
-  flex: none;
-}
-
 /* ---------- Page hero (inner pages) ---------- */
 
 .page-hero {

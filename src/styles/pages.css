@@ -146,7 +146,7 @@
   position: relative;
   z-index: 1;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 16px 16px 0 16px;
 }
 
@@ -159,11 +159,6 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--purple);
-}
-
-.fc-live .live-dot {
-  width: 5px;
-  height: 5px;
 }
 
 .fc-mini__ret {
@@ -498,11 +493,6 @@ a.compete__row:hover .compete__name {
 
 .status dd.is-live {
   color: var(--purple);
-}
-
-.status .live-dot {
-  width: 5px;
-  height: 5px;
 }
 
 .about-halves {
@@ -1325,17 +1315,6 @@ summary:hover .more-toggle::before {
 
 .path-card {
   padding: 38px 36px 36px;
-}
-
-.path-card .label {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.path-card .label .live-dot {
-  width: 5px;
-  height: 5px;
 }
 
 .path-card h3 {
